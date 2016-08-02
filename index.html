@@ -9,7 +9,11 @@
 
     <div class="underline" style="padding:3px;">
       <table width="100%" style="padding:0px;margin:0px;"><tr>
-        <td width="50%" valign="top" ><span id="version" class="silver s80" >**version**</span></td>
+        <td width="50%" valign="top" >
+            <span id="version" class="silver s80" >**version**</span>
+            <span onClick="toggleDevTools()" class="btn s80" >devTools</span>
+
+        </td>
         <td width="50%" align="right" >
           <span id="g_user" class="silver s80" ></span>
           <span onClick="$('#gitconf').toggle();" class="btn s80"> ~/.gitconfig ~/.gitignore_global</span>
@@ -36,20 +40,31 @@
         <span id="local_branch_ct" class="pink">**local_branch_ct**</span>
 
         <span onClick="showIgnore()" class="btn">.gitignore</span>
-        <span onClick="showHooks()" class="btn">hooks</span>
-        <span onClick="showSubmodule()" class="btn">submodule</span>
+        <span onClick="osrun('ls ' + current_repo_path + '/hooks','repo_out'); toggleRepoOut('hooks')" class="btn">hooks</span>
+        <span onClick="osrun(gitcom('git submodule status'),'repo_out'); toggleRepoOut('hooks')" class="btn">submodule</span>
+
         <span onClick="showGitmodules()" class="btn">.gitmodules</span>
 
+        <span onClick="osrun(gitcom('git stsh list'),'repo_out'); toggleRepoOut('stash')" class="btn">stash</span>
+        <span onClick="osrun('cat ' + current_repo_path + '/config','repo_out'); toggleRepoOut('config')" class="btn">config</span>
+
+
         Remote
-        <span onClick="showRemote()" class="btn">repo</span>
-        <span onClick="osrun(gitcom('git branch -r'),'os_result')"  class="btn">branch</span>
+        <span onClick="osrun(gitcom('git remote -v'),'repo_out'); toggleRepoOut('remote')" class="btn">repo</span>
+        <span onClick="osrun(gitcom('git branch -r'),'repo_out'); toggleRepoOut('remotebranch')"  class="btn">branch</span>
         <span id="remote_branch_ct" class="pink">**remote_branch_ct**</span>
 
         <br/>
 
         <div id="repo_out" class="s80 hide detail" >repo_out</div>
 
-        <span onClick="showCurrentBranch()" id="c_branch" class="s120 bold">**c_branch**</span><br/>
+        <span onClick="showCurrentBranch()" id="c_branch" class="s120 bold">**c_branch**</span>
+
+        <span class="gray">
+          files<span id="br_files_ct" class="s120 bold">**br_files_ct**</span>
+          commit<span id="br_commit_ct" class="s120 bold">**br_commit_ct**</span>
+        </span>
+        <br/>
 
         <span onClick="osrun(gitcom('git status -s'),'os_result')"  class="btn">status</span>
         <span onClick="osrun(gitcom('git add .'),'os_result')"  class="btn">add</span>
@@ -67,6 +82,7 @@
 
         <span onClick="osrun(gitcom('git log '),'os_result')" class="btn bold">log</span>
         <span onClick="osrun(gitcom('git log --oneline' ),'os_result')" class="btn s80">log1</span>
+        <span onClick="osrun(gitcom('git log --oneline' ),'os_result')" class="btn s80">customlog</span>
         <span onClick="osrun(gitcom('git log --graph '),'os_result')" class="btn s80">tree</span>
         <span onClick="osrun(gitcom('git log --graph --oneline '),'os_result')" class="btn s80">tree1</span>
 
@@ -100,6 +116,10 @@
         clone url
         <input id="clone_url" type="text" placeholder="clone_url" />
         <br/>
+        stash <span class="silver s80">git stash comment01  </span><br/>
+        <input id="stash_comment" type="text" placeholder="remote_name" />
+        <button onClick="osrun(gitcom('git stash \'' + $('#stash_comment').val() + ''\')" placeholder="git command" />add</button>
+        <br/>
         new remote <span class="silver s80">git remote add branchname01 https://..../.git   </span><br/>
         <input id="remote_name" type="text" placeholder="remote_name" />
         <input id="remote_url" type="text" placeholder="remote_url" />
@@ -113,7 +133,7 @@
         <input id="new_branch_name" type="text" placeholder="branch name" />
         <button onClick="osrun(gitcom('git branch ' + $('#new_branch_name').val()))" placeholder="git command" />add</button>
         <br/>
-        Commit
+        commit<br/>
         <input id="commit_msg" type="text" placeholder="commit_msg name" />
         <button onClick="osrun(gitcom('git commit -m \'' + $('#commit_msg').val() + '\''))" placeholder="git command" />add</button>
         <br/>
@@ -127,6 +147,7 @@
     require('./functions.js')
 
     window.jQuery = window.$ = require('./jquery-3.1.0.js')
+
 
     const BrowserWindow = require('electron').remote.BrowserWindow // windowオブジェクト
     const path = require('path')
@@ -148,28 +169,10 @@
     //       })
     // }
 
-    showHooks = function(){
-        var git_command = 'ls ' + current_repo_path + '/hooks'
-        osrun(git_command,'',
-          function(ret){
-            $('#repo_out').html(sRed(git_command) + " " + sGray(ret_ary.length) + '<br/>')
-            $('#repo_out').append(ret_ary.join('<br/>'))
-            toggleRepoOut('hooks')
-          })
-    }
-    showSubmodule = function(){
-        var git_command = 'git submodule status'
-        osrun(gitcom(git_command),'',
-          function(ret_ary){
-            $('#repo_out').html(sRed(git_command) + " " + sGray(ret_ary.length) + '<br/>')
-            $('#repo_out').append(ret_ary.join('<br/>'))
 
-            toggleRepoOut('submodule')
-        })
-    }
     showGitmodules = function(){
       var git_command = 'cat ' + path2dir( current_repo_path ) + '/.gitmodules'
-      osrun(git_command,'',
+      osRunCb(git_command,
         function(ret_ary){
           $('#repo_out').html(sRed(git_command) + " " + sGray(ret_ary.length) + '<br/>')
           $('#repo_out').append(ret_ary.join('<br/>'))
@@ -179,20 +182,9 @@
 
     }
 
-    showRemote = function(){
-      var git_command = 'git remote -v'
-      osrun(gitcom( git_command),'',function(ret_ary){
-          $('#repo_out').html(sRed(git_command) + " " + sGray(ret_ary.length) + '<br/>')
-          for (var ind in ret_ary ){
-              var v1 = url2link(ret_ary[ind])
-              $('#repo_out').append(v1 +'<br/>')
-          }
-          toggleRepoOut('remote')
-      })
-    }
     showIgnore = function(){
       var git_command = 'cat .gitignore'
-      osrun(gitcom(git_command),'',
+      osRunCb(gitcom(git_command),
           function(ret_ary){
               $('#repo_out').html(sRed(git_command) + " " + sGray(ret_ary.length) + '<br/>' +
                                    ret_ary.join('<br/>'))
@@ -201,7 +193,7 @@
     }
     showBranch = function() {
         var git_command = 'git branch'
-        osrun(gitcom(git_command),'',function(ret_ary){
+        osRunCb(gitcom(git_command),function(ret_ary){
                     $('#repo_out').html(sRed(git_command) + " " + sGray(ret_ary.length) + '<br/>' )
                     for (var ind in ret_ary ){
                         var v1 = ret_ary[ind].trim()
@@ -222,7 +214,7 @@
     }
 
     showCurrentBranch = function(){
-        osrun(gitcom('git branch'),'',function(ret_ary){
+        osRunCb(gitcom('git branch'),function(ret_ary){
             for (var ind in ret_ary){
                 if (ret_ary[ind].match(/\*/)){
                     $('#c_branch').html(ret_ary[ind].replace("*","").trim())
@@ -232,7 +224,7 @@
     }
 
     checkOut = function ( branch_name ){
-        osrun(gitcom("git checkout '" + branch_name+ "'"),'',
+        osRunCb(gitcom("git checkout '" + branch_name+ "'"),
                   function(ret){
                       setRepoPath(current_repo_path)
                   })
@@ -242,9 +234,8 @@
 
 
     searchRepos = function(){
-      osrun("find ~ -type d -maxdepth 7 | egrep '/\.git$' ",'',
+      osRunCb("find ~ -type d -maxdepth 7 | egrep '/\.git$' ",
         function( ret_ary ){
-
             $('#local_repo_pane').html("<table>");
             for (var ind in ret_ary){
                 var full_path = ret_ary[ind]
@@ -282,10 +273,10 @@
         }
 
         // local branch & remote branch
-        osrun(gitcom('git branch'),'',function( ret_ary ){
+        osRunCb(gitcom('git branch'),function( ret_ary ){
             $('#local_branch_ct').html(ret_ary.length)
         })
-        osrun(gitcom('git branch -r'),'',function( ret_ary ){
+        osRunCb(gitcom('git branch -r'),function( ret_ary ){
             $('#remote_branch_ct').html(ret_ary.length)
         })
 
@@ -293,7 +284,7 @@
 
 
         //ファイル一覧
-        osrun('ls ' + full_path ,'',
+        osRunCb('ls ' + full_path ,
           function(ret_ary){
               $('#c_repo_pane').html("")
               for (var ind in ret_ary){
@@ -314,22 +305,23 @@
     }
 
     //初期処理
-    osrun('git version', '' , function (ret_ary){ $('#version').html( ret_ary.join('<br/>') ) } )
+    osRunOneLine('git version', 'version')
+    osRunOneLine(gitcom('git ls-files | wc -l'), 'br_files_ct')
+    osRunOneLine(gitcom('git log --oneline | wc -l'), 'br_commit_ct')
 
     var com2 = 'git config --global --list'
-    osrun( com2 ,'',
+    osRunCb( com2 ,
       function(ret_ary){
         for (var ind in ret_ary ){
             if (ret_ary[ind].match(/(name|email)/)) $('#g_user').append(ret_ary[ind].replace(/.*=/,'') + ' &nbsp; ')
         }
         $('#gitconf').append( sRed(com2) + '<br/>' + ret_ary.join('<br/>') + '<br/>' )
       })
-
-    var com1 = 'cat ~/.gitignore_global'
-    osrun(com1,'',function( ret_ary ){
-        $('#gitconf').append( sRed(com1) + '<br/>' + ret_ary.join('<br/>') + '<br/>' )
-    })
+    osrun('cat ~/.gitignore_global','gitconf')
     searchRepos()
+
+    const {ipcRenderer} = require('electron')
+    toggleDevTools = function(){  ipcRenderer.send('toggleDevTool', 'ping')   }
 
 
     var repo_pane_open = true

@@ -27,11 +27,14 @@ function createWindow () {
     // when you should delete the corresponding element.
     mainWindow = null
   })
-
-
-
-
 }
+
+const {ipcMain} = require('electron')
+// devtools トグル非同期
+ipcMain.on('toggleDevTool', function(event, arg) {
+    mainWindow.webContents.toggleDevTools()
+});
+
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
