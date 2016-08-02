@@ -21,6 +21,7 @@
       </tr></table>
 
       <span onClick="$('#local_repo_pane').slideToggle(10);" class="btn" >Repositories</span>
+      <span onClick="alert('construction');" class="btn s80" >init</span>
       <span id="his_repo"></span>
     </div>
 
@@ -32,11 +33,17 @@
         <br/>
 
         <span onClick="showBranch()" class="btn">branch</span>
-        <span onClick="showRemote()" class="btn">remote</span>
+        <span id="local_branch_ct" class="pink">**local_branch_ct**</span>
+
         <span onClick="showIgnore()" class="btn">.gitignore</span>
         <span onClick="showHooks()" class="btn">hooks</span>
         <span onClick="showSubmodule()" class="btn">submodule</span>
         <span onClick="showGitmodules()" class="btn">.gitmodules</span>
+
+        Remote
+        <span onClick="showRemote()" class="btn">repo</span>
+        <span onClick="osrun(gitcom('git branch -r'),'os_result')"  class="btn">branch</span>
+        <span id="remote_branch_ct" class="pink">**remote_branch_ct**</span>
 
         <br/>
 
@@ -66,14 +73,14 @@
         <input id="git_usercommand" type="text" size="70" placeholder="git command" />
         <button onClick="osrun(gitcom($('#git_usercommand').val()),'os_result')" placeholder="git command" />run</button>
 
-        <div id="os_result" class="s80">os_result</div>
+        <div id="os_result" class="detail s80">os_result</div>
 
         <div class="m10">
             current repo info
             <span onClick="searchRepos()" class="btn s80">files</span>
             <div id="c_repo_info" class="underline s80"> </div>
 
-            <span onClick="$('div[name=file_detail]').toggle();">toggle</span>
+            <span onClick="$('div[name=file_detail]').toggle();" class="btn">toggle</span>
             btn
             <br/>
             <span id="c_repo_pane" >c_repo_pane</span>
@@ -87,14 +94,22 @@
         <div id="os_out" style="font-size:60%;font-color:silver;"></div>
         init
         <input id="init_path" type="text" placeholder="init_path" />
+        <button onClick="osrun(gitcom('git remote add  \'' + $('#remote_name').val() + '\' \'' + $('#remote_url').val() +'\''))" placeholder="git command" />add</button>
+
         <br/>
-        clone
+        clone url
         <input id="clone_url" type="text" placeholder="clone_url" />
-        新サブモジュール
+        <br/>
+        new remote <span class="silver s80">git remote add branchname01 https://..../.git   </span><br/>
+        <input id="remote_name" type="text" placeholder="remote_name" />
+        <input id="remote_url" type="text" placeholder="remote_url" />
+        <button onClick="osrun(gitcom('git remote add  \'' + $('#remote_name').val() + '\' \'' + $('#remote_url').val() +'\''))" placeholder="git command" />add</button>
+        <br/>
+        new sub module <span class="silver s80">git submodule add submodulename01 https://..../.git   </span><br/>
         <input id="submodule_path" type="text" placeholder="submodule_path" />
         <input id="dir_name" type="text" placeholder="dir_name" />
         <br/>
-        新ブランチ
+        new local branch <span class="silver s80">git branch branchname01 </span><br/>
         <input id="new_branch_name" type="text" placeholder="branch name" />
         <button onClick="osrun(gitcom('git branch ' + $('#new_branch_name').val()))" placeholder="git command" />add</button>
         <br/>
@@ -169,7 +184,7 @@
       osrun(gitcom( git_command),'',function(ret_ary){
           $('#repo_out').html(sRed(git_command) + " " + sGray(ret_ary.length) + '<br/>')
           for (var ind in ret_ary ){
-              var v1 = ret_ary[ind].replace(/(http.*?) /, '<span onClick="osrun(\'open $1\')" class="btn">$1</span> ')
+              var v1 = url2link(ret_ary[ind])
               $('#repo_out').append(v1 +'<br/>')
           }
           toggleRepoOut('remote')
@@ -180,7 +195,7 @@
       osrun(gitcom(git_command),'',
           function(ret_ary){
               $('#repo_out').html(sRed(git_command) + " " + sGray(ret_ary.length) + '<br/>' +
-                                  ret_ary.join('<br/>'))
+                                   ret_ary.join('<br/>'))
               toggleRepoOut('ignore')
       })
     }
@@ -189,8 +204,8 @@
         osrun(gitcom(git_command),'',function(ret_ary){
                     $('#repo_out').html(sRed(git_command) + " " + sGray(ret_ary.length) + '<br/>' )
                     for (var ind in ret_ary ){
-                        var v1 = ret_ary[ind].replace(/(http.*?) /, '<span onClick="osrun(\'open $1\')" class="btn">$1</span> ')
-                        $('#repo_out').append('<span onclick="checkOut(' + v1 + ')" class="btn">' + v1 +'</span><br/>')
+                        var v1 = ret_ary[ind].trim()
+                        $('#repo_out').append('<span onclick="checkOut(\'' + v1 + '\')" class="btn">' + v1 +'</span><br/>')
                     }
                     toggleRepoOut('branch')
         })
@@ -217,7 +232,10 @@
     }
 
     checkOut = function ( branch_name ){
-
+        osrun(gitcom("git checkout '" + branch_name+ "'"),'',
+                  function(ret){
+                      setRepoPath(current_repo_path)
+                  })
 
 
     }
@@ -263,6 +281,17 @@
             if ( line.match(/\[.*submodule/)) $('#c_repo_info').append( sRed('submodule ') + line.replace(/(.*")(.*?)(".*)/,'$2')  + '<br/>')
         }
 
+        // local branch & remote branch
+        osrun(gitcom('git branch'),'',function( ret_ary ){
+            $('#local_branch_ct').html(ret_ary.length)
+        })
+        osrun(gitcom('git branch -r'),'',function( ret_ary ){
+            $('#remote_branch_ct').html(ret_ary.length)
+        })
+
+
+
+
         //ファイル一覧
         osrun('ls ' + full_path ,'',
           function(ret_ary){
@@ -285,11 +314,8 @@
     }
 
     //初期処理
-    osrun('git version', '' ,
-      function (ret_ary){
-        $('#version').html( ret_ary.join('<br/>') )
-      }
-   )
+    osrun('git version', '' , function (ret_ary){ $('#version').html( ret_ary.join('<br/>') ) } )
+
     var com2 = 'git config --global --list'
     osrun( com2 ,'',
       function(ret_ary){
@@ -305,6 +331,7 @@
     })
     searchRepos()
 
+
     var repo_pane_open = true
     repoPaneToggle = function(){
 
@@ -317,7 +344,6 @@
         //     $('#repo_info').css('opacity','1')
         //     repo_pane_open = false
         // }
-
     }
     </script>
 </html>
