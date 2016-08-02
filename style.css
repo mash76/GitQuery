@@ -1,0 +1,29 @@
+body { font-family: sans-serif; color:#444444;}
+
+a:link {color: SteelBlue;text-decoration: none; }
+a:visited {color: SteelBlue;text-decoration: none; }
+a:hover {color: SteelBlue;text-decoration: underline; }
+
+.btn { color: SteelBlue; cursor:pointer;}
+.history { color: DeepPink; cursor:pointer;}
+.detail{ background-color:#fbfbfb;
+        padding:7px;
+        margin:10px;
+        -webkit-border-radius:7px; }
+
+.s60 { font-size:60%;}
+.s80 { font-size:80%;}
+.s120 { font-size:120%;}
+.s150 { font-size:150%;}
+.s200 { font-size:200%;}
+
+.bold { font-weight:bold;}
+.gray { color:gray;}
+.pink { color:DeepPink;}
+.silver { color:silver;}
+
+.hide { display:none;}
+
+.underline { border-bottom:1px solid silver;}
+.m10 { margin:10px;}
+.p10 { padding:10px;}
