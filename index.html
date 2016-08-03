@@ -45,7 +45,7 @@
 
         <span onClick="showGitmodules()" class="btn">.gitmodules</span>
 
-        <span onClick="osrun(gitcom('git stsh list'),'repo_out'); toggleRepoOut('stash')" class="btn">stash</span>
+        <span onClick="osrun(gitcom('git stsah list'),'repo_out'); toggleRepoOut('stash')" class="btn">stash</span>
         <span onClick="osrun('cat ' + current_repo_path + '/config','repo_out'); toggleRepoOut('config')" class="btn">config</span>
 
 
@@ -63,6 +63,8 @@
         <span class="gray">
           files<span id="br_files_ct" class="s120 bold">**br_files_ct**</span>
           commit<span id="br_commit_ct" class="s120 bold">**br_commit_ct**</span>
+           <span id="latest_commit" class="s80 gray">97f809b  4 minutes ago</span>
+
         </span>
         <br/>
 
@@ -80,9 +82,7 @@
         <span onClick="osrun(gitcom('git diff HEAD~30 HEAD --name-only '),'os_result')" class="btn s80">30c</span>
         <span onClick="osrun(gitcom('git diff HEAD~100 HEAD --name-only '),'os_result')" class="btn s80">100c</span>
 
-        <span onClick="osrun(gitcom('git log '),'os_result')" class="btn bold">log</span>
-        <span onClick="osrun(gitcom('git log --oneline' ),'os_result')" class="btn s80">log1</span>
-        <span onClick="osrun(gitcom('git log --oneline' ),'os_result')" class="btn s80">customlog</span>
+        <span onClick="logTable('')" class="btn s80">log2</span>
         <span onClick="osrun(gitcom('git log --graph '),'os_result')" class="btn s80">tree</span>
         <span onClick="osrun(gitcom('git log --graph --oneline '),'os_result')" class="btn s80">tree1</span>
 
@@ -170,6 +170,26 @@
     // }
 
 
+    logTable = function( filter ){
+      var git_command = 'git log --date=relative --pretty=format:"<tr><td nowrap > %ad </td><td nowrap > %h </td><td nowrap > %an </td><td nowrap > %s </td></tr>"'
+      if (filter) git_command += " | egrep -i '" + filter + "'"
+
+      osRunCb(gitcom(git_command),
+        function(ret_ary){
+
+          var htmlstr= '  <input type="text" id="log_filter" value="' + filter + '"size=10 > ' +
+                       '  <button onClick="logTable($(\'#log_filter\').val())" >filter</button> <br/>'
+
+          $('#os_result').html(htmlstr)
+          $('#os_result').append(sRed(escapeHTML(git_command)) + " " + sGray(ret_ary.length) + '<br/>')
+          var str_out = ret_ary.join('')
+          if (filter) str_out = str_out.replace(new RegExp('(' + filter.trim() + ')','g'),sRed('$1') )
+
+          $('#os_result').append('<table>' + str_out + '</table>')
+      })
+
+    }
+
     showGitmodules = function(){
       var git_command = 'cat ' + path2dir( current_repo_path ) + '/.gitmodules'
       osRunCb(git_command,
@@ -228,13 +248,11 @@
                   function(ret){
                       setRepoPath(current_repo_path)
                   })
-
-
     }
 
 
     searchRepos = function(){
-      osRunCb("find ~ -type d -maxdepth 7 | egrep '/\.git$' ",
+      osRunCb("find ~ -type d -maxdepth 7  | egrep '/\.git$' ",
         function( ret_ary ){
             $('#local_repo_pane').html("<table>");
             for (var ind in ret_ary){
@@ -262,6 +280,11 @@
         showCurrentBranch()
         repoPaneToggle()
 
+        //ブランチ基本情報
+        osRunOneLine(gitcom('git ls-files | wc -l'), 'br_files_ct')
+        osRunOneLine(gitcom('git log --oneline | wc -l'), 'br_commit_ct')
+        osRunOneLine(gitcom('git log --date=relative --pretty=format:"%ad  : %h  : %an : %s" | head -1'), 'latest_commit')
+
         //サブモジュールやremote情報
         $('#c_repo_info').html("")
         var config_lines = fs.readFileSync (full_path + '/config').toString().split(/\n/)
@@ -277,7 +300,14 @@
             $('#local_branch_ct').html(ret_ary.length)
         })
         osRunCb(gitcom('git branch -r'),function( ret_ary ){
+
+            // gitflowのfeature hotfixなど
+            for (var ind in ret_ary){
+                var line = ret_ary[ind]
+
+            }
             $('#remote_branch_ct').html(ret_ary.length)
+          //  $('#remote_branch_ct').append(ret_ary.length)
         })
 
 
@@ -306,8 +336,8 @@
 
     //初期処理
     osRunOneLine('git version', 'version')
-    osRunOneLine(gitcom('git ls-files | wc -l'), 'br_files_ct')
-    osRunOneLine(gitcom('git log --oneline | wc -l'), 'br_commit_ct')
+
+
 
     var com2 = 'git config --global --list'
     osRunCb( com2 ,
@@ -315,7 +345,7 @@
         for (var ind in ret_ary ){
             if (ret_ary[ind].match(/(name|email)/)) $('#g_user').append(ret_ary[ind].replace(/.*=/,'') + ' &nbsp; ')
         }
-        $('#gitconf').append( sRed(com2) + '<br/>' + ret_ary.join('<br/>') + '<br/>' )
+        $('#gitconf').append( sRed(com2) + ' ' + ret_ary.length + '<br/>' + ret_ary.join('<br/>') + '<br/>' )
       })
     osrun('cat ~/.gitignore_global','gitconf')
     searchRepos()
