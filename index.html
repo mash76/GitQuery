@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Git-tron</title>
+    <title>GitQuery</title>
     <link href="./style.css" rel="stylesheet" type="text/css" />
   </head>
   <body>
@@ -14,27 +14,23 @@
         <td width="50%" valign="top" >
             <span id="version" class="silver s80" >**version**</span>
             <span onClick="toggleDevTools()" class="btn s80" >devTools</span>
-            <span onClick="$('#node_info').slideToggle(10)" class="btn s80" >node</span>
-
+            <span onClick="$('#node_info').slideToggle(10)" class="btn s80" >node-<span id="node_version"></span></span>
         </td>
         <td width="50%" align="right" >
           <span id="g_user" class="silver s80" ></span>
           <span onClick="$('#gitconf').toggle();" class="btn s80"> ~/.gitconfig ~/.gitignore_global</span>
-
-          <br/>
-          <div id="gitconf" class="hide s80 detail" style="text-align:left;"></div>
-
         </td>
       </tr></table>
 
-      <div id="node_info" class="detail hide">aaaa</div>
+      <div id="node_info" class="detail hide s80"></div>
+      <div id="gitconf" class="hide s80 detail" style="text-align:left;"></div>
 
-      <span onClick="toggleLocalRepoListPane()" class="btn" >Repositories</span>
+      <span onClick="togglePaneLocalRepoList()" class="btn" >Repositories</span>
       <span onClick="alert('construction');" class="btn s80" >init</span>
       <span id="his_repo"></span>
     </div>
 
-    <!-- local repositories -->
+    <!-- local repositories list-->
 
     <div id="local_repo_pane" class="detail" >
       <input type="text" id="filter_l_repo" size=20 />
@@ -50,38 +46,48 @@
         <span id="local_branch_ct" class="pink">**local_branch_ct**</span>
 
         <span onClick="showIgnore()" class="btn">.gitignore</span>
-        <span onClick="osrun('ls ' + current_repo_path + '/hooks','repo_out'); toggleLocalRepoInfoPane('hooks')" class="btn">hooks</span>
-        <span onClick="osrun('git submodule status','repo_out'); toggleLocalRepoInfoPane('hooks')" class="btn">submodule</span>
+        <span onClick="osrun('ls ' + current_repo_path + '/hooks','repo_out'); togglePaneCurrentRepoDesc('hooks')" class="btn">hooks</span>
+        <span onClick="osrun('git submodule status','repo_out'); togglePaneCurrentRepoDesc('hooks')" class="btn">submodule</span>
 
         <span onClick="showGitmodules()" class="btn">.gitmodules</span>
 
-        <span onClick="osrun('git stash list','repo_out'); toggleLocalRepoInfoPane('stash')" class="btn">stash</span>
-        <span onClick="osrun('cat ' + current_repo_path + '/config','repo_out'); toggleLocalRepoInfoPane('config')" class="btn">config</span>
+        <span onClick="osrun('git stash list','repo_out'); togglePaneCurrentRepoDesc('stash')" class="btn">stash</span>
+        <span onClick="osrun('cat ' + current_repo_path + '/config','repo_out'); togglePaneCurrentRepoDesc('config')" class="btn">config</span>
 
 
         Remote
-        <span onClick="osrun('git remote -v','repo_out'); toggleLocalRepoInfoPane('remote')" class="btn">repo</span>
-        <span onClick="osrun('git branch -r','repo_out'); toggleLocalRepoInfoPane('remotebranch')"  class="btn">branch</span>
+        <span onClick="osrun('git remote -v','repo_out'); togglePaneCurrentRepoDesc('remote')" class="btn">repo</span>
+        <span onClick="osrun('git branch -r','repo_out'); togglePaneCurrentRepoDesc('remotebranch')"  class="btn">branch</span>
         <span id="remote_branch_ct" class="pink">**remote_branch_ct**</span>
 
         <br/>
 
         <div id="repo_out" class="s80 hide detail" >repo_out</div>
 
+        <!-- current branch -->
+
         <span id="c_branch" class="s150 bold">**c_branch**</span>
 
         <span class="gray">
-          files<span id="br_files_ct" class="s120 bold">**br_files_ct**</span>
-          commit<span id="br_commit_ct" class="s120 bold">**br_commit_ct**</span>
+          <a href="javascript:void(0)" onClick="showFiles('')" >
+            files<span id="br_files_ct" class="bold">**br_files_ct**</span>
+          </a>
+          <a href="javascript:void(0)" onClick="logTable('')" >
+            commit<span id="br_commit_ct" class="bold">**br_commit_ct**</span>
+          </a>
+
+
+
            <span id="latest_commit" class="s80 gray">97f809b  4 minutes ago</span>
-        </span>
+           <a href="javascript:void(0)" onClick="showMemberList()" >
+             comitter<span id="br_member_ct" class="bold">**br_member_ct**</span>
+           </a>
         <br/>
 
         <span onClick="osrun('git status -s','os_result')"  class="btn">status</span>
         <span onClick="osrun('git add .','os_result')"  class="btn">add</span>
         <span onClick="osrun('git reset','os_result')"  class="btn">reset</span>
         <span onClick="osrun('git diff ','os_result')"  class="btn s80">diff</span>
-        <span onClick="osrun('git ls-files ','os_result')"  class="btn s80">allfiles</span>
 
         <span class="s80 gray">ChangeFiles</span>
 
@@ -91,12 +97,8 @@
         <span onClick="osrun('git diff HEAD~30 HEAD --name-only ','os_result')" class="btn s80">30c</span>
         <span onClick="osrun('git diff HEAD~100 HEAD --name-only ','os_result')" class="btn s80">100c</span>
 
-        <span onClick="logTable('')" class="btn s80">Log</span>
-        <span onClick="osrun('git log --graph ','os_result')" class="btn s80">tree</span>
-        <span onClick="osrun('git log --graph --oneline ','os_result')" class="btn s80">tree1</span>
 
-        <input id="git_usercommand" type="text" size="70" placeholder="git command" />
-        <button onClick="osrun($('#git_usercommand').val(),'os_result')" placeholder="git command" />run</button>
+        <span onClick="osrun('git log --graph --oneline ','os_result')" class="btn s80">tree1</span>
 
         <div id="os_result" class="detail s80">os_result</div>
 
@@ -119,6 +121,10 @@
         <input id="init_path" type="text" placeholder="init_path" />
         <button onClick="osrun('git remote add  \'' + $('#remote_name').val() + '\' \'' + $('#remote_url').val() +'\'')" placeholder="git command" />add</button>
 
+        <br/>
+        git command <br/>
+        <input id="git_usercommand" type="text" size="70" placeholder="git command" />
+        <button onClick="osrun($('#git_usercommand').val(),'os_result')" placeholder="git command" />run</button>
         <br/>
         clone url<br/>
         <input id="clone_url" type="text" placeholder="clone_url" />
@@ -149,29 +155,32 @@
   </body>
 
   <script>
+
+      window.jQuery = window.$ = require('./jquery-3.1.0.js')
+
+      const BrowserWindow = require('electron').remote.BrowserWindow // windowオブジェクト
+      const path = require('path')
+
+      local_repos =[]
+      local_files =[]
+      his_repo =[] // リポジトリ選択履歴
+      current_repo_path = ""
+      interval_log_filter = null // 入力完了からログ検索までの秒数
+
+      execOption = { encoding: 'utf8',
+                        timeout: 0,
+                        maxBuffer: 2000*1024,  //200*1024
+                        killSignal: 'SIGTERM',
+                        cwd: '',
+                        env: null }
+
+
+      repo_btn_prev_push = "";//リポジトリ以下の母tなで直前push したもの
+
+
     // You can also require other files to run in this process
     require('./renderer.js')
     require('./functions.js')
-
-    window.jQuery = window.$ = require('./jquery-3.1.0.js')
-
-    const BrowserWindow = require('electron').remote.BrowserWindow // windowオブジェクト
-    const path = require('path')
-
-    local_repos =[]
-    local_files =[]
-    his_repo =[] // リポジトリ選択履歴
-    current_repo_path = ""
-
-    execOption = { encoding: 'utf8',
-                      timeout: 0,
-                      maxBuffer: 2000*1024,  //200*1024
-                      killSignal: 'SIGTERM',
-                      cwd: '',
-                      env: null }
-
-
-    repo_btn_prev_push = "";//リポジトリ以下の母tなで直前push したもの
 
     showGitmodules = function(){
       var git_command = 'cat ' + path2dir( current_repo_path ) + '/.gitmodules'
@@ -180,7 +189,7 @@
           $('#repo_out').html(sRed(git_command) + " " + sGray(ret_ary.length) + '<br/>')
           $('#repo_out').append(ret_ary.join('<br/>'))
 
-          toggleLocalRepoInfoPane('gitmodule')
+          togglePaneCurrentRepoDesc('gitmodule')
       })
 
     }
@@ -191,7 +200,7 @@
           function(ret_ary){
               $('#repo_out').html(sRed(git_command) + " " + sGray(ret_ary.length) + '<br/>' +
                                    ret_ary.join('<br/>'))
-              toggleLocalRepoInfoPane('ignore')
+              togglePaneCurrentRepoDesc('ignore')
       })
     }
     showBranchList = function() {
@@ -202,14 +211,17 @@
                   var v1 = ret_ary[ind].trim()
                   $('#repo_out').append('<span onclick="checkOut(\'' + v1 + '\')" class="btn">' + v1 +'</span><br/>')
               }
-              toggleLocalRepoInfoPane('branch')
+              togglePaneCurrentRepoDesc('branch')
         })
     }
 
+    showMemberList = function(){
+        osrun('git log --pretty=format:"%an" | sort | uniq -c | sort -r','os_result')
+    }
 
-    toggleLocalRepoListPane = function (){
-      if ($('#toggleLocalRepoListPane').css('display') == 'block' ){
-          $('#toggleLocalRepoListPane').slideUp(10)
+    togglePaneLocalRepoList = function (){
+      if ($('#togglePaneLocalRepoList').css('display') == 'block' ){
+          $('#togglePaneLocalRepoList').slideUp(10)
       }else{
           $('#local_repo_pane').slideDown(10)
           $('#filter_l_repo').val('')
@@ -218,7 +230,7 @@
       }
     }
 
-    toggleLocalRepoInfoPane = function (key){
+    togglePaneCurrentRepoDesc = function (key){
 
       //初回なら閉じる
       if (key == "") {
@@ -257,7 +269,7 @@
         function( ret_ary ){
 
             local_repos = ret_ary
-            toggleLocalRepoListPane()
+            togglePaneLocalRepoList()
             filterLocalRepos('')
         }
       )
@@ -277,7 +289,7 @@
               if (!fname.match(re)) continue;
               fname_disp = fname_disp.replace(re,sRed('$1'))
           }
-          $('#local_repo_list').prepend('<tr><td> <span onClick="setRepoPath(\'' + full_path + '\')" class="btn s150">' +
+          $('#local_repo_list').prepend('<tr><td> <a href="javascript:void(0)" onClick="setRepoPath(\'' + full_path + '\')" class="btn s150">' +
                                     fname_disp + '</span> </td><td> &nbsp; ' + sSilver(s80(full_path.replace(fname,sGray2(fname)) )) + '</td></tr>')
       }
       $('#local_repo_list').append("</table>");
@@ -299,21 +311,24 @@
           $('#his_repo').append('<span onClick="setRepoPath(\'' + name + '\');" class="history s80">' + path2pjname(name) + '</span> ');
         }
         setCurrentBranchName()
-        toggleLocalRepoInfoPane("") // close
+        togglePaneCurrentRepoDesc("") // close
 
         osRunOneLine('git ls-files | wc -l', 'br_files_ct')
         osRunOneLine('git log --oneline | wc -l', 'br_commit_ct')
-        osRunOneLine('git log --date=relative --pretty=format:"%ad  : %h  : %an : %s" | head -1', 'latest_commit')
+        //osRunOneLine('git log --date=relative --pretty=format:"%ad  : %h  : %an : %s" | head -1', 'latest_commit')
+        osRunOneLine('git log --date=relative --pretty=format:"%ad" | head -1', 'latest_commit')
+        osRunOneLine('git log --pretty=format:"%an" | sort | uniq | wc -l', 'br_member_ct')
+
 
         //サブモジュールやremote情報
-        $('#c_repo_info').html("")
-        var config_lines = fs.readFileSync (full_path + '/config').toString().split(/\n/)
-        for (var ind in config_lines){
-            var line = config_lines[ind]
-            if ( line.match(/\[.*remote/)) $('#c_repo_info').append( sRed('remote ') + line.replace(/(.*")(.*?)(".*)/,'$2') + '<br/>')
-            if ( line.match(/\[.*branch/)) $('#c_repo_info').append( sRed('branch ') + line.replace(/(.*")(.*?)(".*)/,'$2')  + '<br/>')
-            if ( line.match(/\[.*submodule/)) $('#c_repo_info').append( sRed('submodule ') + line.replace(/(.*")(.*?)(".*)/,'$2')  + '<br/>')
-        }
+        // $('#c_repo_info').html("")
+        // var config_lines = fs.readFileSync (full_path + '/config').toString().split(/\n/)
+        // for (var ind in config_lines){
+        //     var line = config_lines[ind]
+        //     if ( line.match(/\[.*remote/)) $('#c_repo_info').append( sRed('remote ') + line.replace(/(.*")(.*?)(".*)/,'$2') + '<br/>')
+        //     if ( line.match(/\[.*branch/)) $('#c_repo_info').append( sRed('branch ') + line.replace(/(.*")(.*?)(".*)/,'$2')  + '<br/>')
+        //     if ( line.match(/\[.*submodule/)) $('#c_repo_info').append( sRed('submodule ') + line.replace(/(.*")(.*?)(".*)/,'$2')  + '<br/>')
+        // }
 
         // local branch & remote branch
         osRunCb('git branch',function( ret_ary ){
@@ -344,40 +359,74 @@
         $('#repo_info').show()
     }
 
+
+    showFiles = function(filter){
+        var git_command = 'git ls-files '
+        if (filter) git_command += " | egrep -i '" + filter + "'"
+        git_command += ' | head -2000'
+
+        osRunCb(git_command,
+          function(ret_ary){
+
+            var htmlstr= '  <div class="s150">Files</div> <input type="text" id="filter_files" value="' + filter + '"size=10 > <br/>'
+            $('#os_result').html(htmlstr)
+            $('#os_result').append(sRed(escapeHTML(git_command)) + " " + sGray(ret_ary.length) + '<br/>')
+            var str_out = ret_ary.join('<br/>')
+            if (filter) str_out = str_out.replace(new RegExp('(' + filter.trim() + ')','ig'),sRed('$1') )
+
+           $('#os_result').append('<table>' + str_out + '</table>')
+           $('#filter_files').focus()
+
+           //0.2秒たったら
+           //interval_log_filter =
+
+           //enter押したら
+           $('#filter_files').keyup(function(e){
+             console.log(e.which)
+               if (e.which == 13) showFiles( $('#filter_files').val() )
+           })
+        })
+    }
+
     logTable = function( filter ){
          var git_command = 'git log --date=relative --pretty=format:"<tr><td nowrap > %ad </td><td nowrap > %h </td><td nowrap > %an </td><td nowrap > %s </td></tr>"'
          if (filter) git_command += " | egrep -i '" + filter + "'"
-         git_command += ' | head -2000' 
+         git_command += ' | head -2000'
 
          osRunCb(git_command,
            function(ret_ary){
 
-             var htmlstr= '  <input type="text" id="filter_log" value="' + filter + '"size=10 > <br/>'
+             var htmlstr= '  <div class="s150">Log</div> <input type="text" id="filter_log" value="' + filter + '"size=10 > <br/>'
              $('#os_result').html(htmlstr)
              $('#os_result').append(sRed(escapeHTML(git_command)) + " " + sGray(ret_ary.length) + '<br/>')
              var str_out = ret_ary.join('')
              if (filter) str_out = str_out.replace(new RegExp('(' + filter.trim() + ')','ig'),sRed('$1') )
 
             $('#os_result').append('<table>' + str_out + '</table>')
-
             $('#filter_log').focus()
+
+            //0.2秒たったら
+            //interval_log_filter =
+
+            //enter押したら
+            $('#filter_log').keyup(function(e){
+              console.log(e.which)
+                if (e.which == 13) logTable( $('#filter_log').val() )
+            })
          })
      }
 
-
-
-
-
     //初期処理
     osRunOneLine('git version', 'version')
+    osRunOneLine('node -v', 'node_version')
 
-    git_command = 'node -v'
-    osRunCb(git_command, function(ret_ary){
-      $('#node_info').append(ret_ary.join('<br/>'))
+    var git_command1 = 'node -v'
+    osRunCb(git_command1, function(ret_ary){
+      $('#node_info').append(sRed(git_command1) + '<br/>' + ret_ary.join('<br/>') + '<br/>')
     })
-    git_command = 'node -v'
-    osRunCb( git_command, function(ret_ary){
-      $('#node_info').append(ret_ary.join('<br/>'))
+    var git_command2 = 'npm -g list'
+    osRunCb( git_command2, function(ret_ary){
+      $('#node_info').append(sRed(git_command2) + '<br/>' + ret_ary.join('<br/>') + '<br/>')
     })
     osRunCb('npm -g list', 'node_info')
 
@@ -392,12 +441,14 @@
     osrun('cat ~/.gitignore_global','gitconf')
     findLocalRepos()
 
+
     const {ipcRenderer} = require('electron')
     toggleDevTools = function(){  ipcRenderer.send('toggleDevTool', 'ping')   }
+
+
     $('#filter_l_repo').keyup(function(e){
         filterLocalRepos()
     })
-
 
     </script>
 </html>

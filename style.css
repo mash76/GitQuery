@@ -1,10 +1,10 @@
-body { font-family: sans-serif; color:#444444;}
+body { font-family: sans-serif; color:#444444; }
 input { font-size:120%; margin-bottom:8px;}
 td { border-bottom:1px solid #eeeeee; padding:3px;}
 
-a:link {color: SteelBlue;text-decoration: none; }
-a:visited {color: SteelBlue;text-decoration: none; }
-a:hover {color: SteelBlue;text-decoration: underline; }
+a:link {color: SteelBlue;text-decoration: none; opacity:1; }
+a:visited {color: SteelBlue;text-decoration: none; opacity:1; }
+a:hover {color: SteelBlue;text-decoration: none; opacity:0.7; } /* underlineなしにする */
 
 .btn { color: SteelBlue; cursor:pointer;}
 .history { color: DeepPink; cursor:pointer;}
