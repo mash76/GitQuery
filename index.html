@@ -10,40 +10,51 @@
     <!-- header -->
 
     <div class="underline" style="padding:3px;">
-      <table width="100%" style="padding:0px;margin:0px;"><tr>
-        <td width="50%" valign="top" >
+      <table width="100%" style="padding:0px;margin:0px;">
+        <tr>
+          <td width="50%" valign="top" >
             <span id="version" class="silver s80" >**version**</span>
             <span onClick="toggleDevTools()" class="btn s80" >devTools</span>
-            <span onClick="$('#node_info').slideToggle(10)" class="btn s80" >node-<span id="node_version"></span></span>
-        </td>
-        <td width="50%" align="right" >
-          <span id="g_user" class="silver s80" ></span>
-          <span onClick="$('#gitconf').toggle();" class="btn s80"> ~/.gitconfig ~/.gitignore_global</span>
-        </td>
-      </tr></table>
+            <span onClick="$('#nodejs_info').slideToggle(10)" class="btn s80" >node-<span id="node_version"></span></span>
+          </td>
+          <td width="50%" align="right" >
+            <span id="g_user" class="silver s80" ></span>
+            <span onClick="$('#gitconf').toggle();" class="btn s80"> ~/.gitconfig ~/.gitignore_global</span>
+          </td>
+        </tr>
+      </table>
 
-      <div id="node_info" class="detail hide s80"></div>
+      <div id="nodejs_info" class="detail hide s80"></div>
       <div id="gitconf" class="hide s80 detail" style="text-align:left;"></div>
 
-      <span onClick="togglePaneLocalRepoList()" class="btn" >Repositories</span>
-      <span onClick="alert('construction');" class="btn s80" >init</span>
+      <span onClick="togglePaneLocalRepoList()" class="btn s120" >Repositories</span>
+      <span onClick="alert('construction');" class="btn" >init</span>
       <span id="his_repo"></span>
     </div>
 
-    <!-- local repositories list-->
+    <!-- list : local repositories -->
 
     <div id="local_repo_pane" class="detail" >
       <input type="text" id="filter_l_repo" size=20 />
       <div id="local_repo_list"></div>
     </div>
 
+    <!-- current repository  -->
+
     <div id="repo_info" class="m10 hide">
-        <span id="current_repo_path" class="bold">**current_repo**</span>
+        <span id="current_repo_name" class="bold s170">**current_repo**</span>
+        <span id="current_repo_path" class="silver">**current_repo_path**</span>
         <span onClick="osrun('open ' + path2dir(current_repo_path) )"  class="btn s80">finder</span>
+
+        <span onClick="osRunOut('git fetch','os_result')" class="btn s120">fetch</span>
+        <span onClick="osRunOut('git pull','os_result')" class="btn s120">pull</span>
+        <span onClick="osRunOut('git push','os_result')" class="btn s120">push</span>
+
         <br/>
 
-        <span onClick="showBranchList()" class="btn">branch</span>
-        <span id="local_branch_ct" class="pink">**local_branch_ct**</span>
+        <span onClick="showBranchList()" >
+          <span class="btn">branch</span><span id="local_branch_ct" class="btn s120 bold">**local_branch_ct**</span>
+        </span>
 
         <span onClick="showIgnore()" class="btn">.gitignore</span>
         <span onClick="osrun('ls ' + current_repo_path + '/hooks','repo_out'); togglePaneCurrentRepoDesc('hooks')" class="btn">hooks</span>
@@ -57,8 +68,10 @@
 
         Remote
         <span onClick="osrun('git remote -v','repo_out'); togglePaneCurrentRepoDesc('remote')" class="btn">repo</span>
-        <span onClick="osrun('git branch -r','repo_out'); togglePaneCurrentRepoDesc('remotebranch')"  class="btn">branch</span>
-        <span id="remote_branch_ct" class="pink">**remote_branch_ct**</span>
+
+        <span onClick="osrun('git branch -r','repo_out'); togglePaneCurrentRepoDesc('remotebranch')" >
+          <span class="btn">branch</span><span id="remote_branch_ct" class="btn s120 bold">**remote_branch_ct**</span>
+        </span>
 
         <br/>
 
@@ -66,39 +79,39 @@
 
         <!-- current branch -->
 
-        <span id="c_branch" class="s150 bold">**c_branch**</span>
+        <span id="c_branch" class="s170 bold">**c_branch**</span>
 
         <span class="gray">
           <a href="javascript:void(0)" onClick="showFiles('')" >
-            files<span id="br_files_ct" class="bold">**br_files_ct**</span>
+            files<span id="br_files_ct" class="bold s150">**br_files_ct**</span>
           </a>
           <a href="javascript:void(0)" onClick="logTable('')" >
-            commit<span id="br_commit_ct" class="bold">**br_commit_ct**</span>
+            commit<span id="br_commit_ct" class="bold s150">**br_commit_ct**</span>
           </a>
 
 
 
            <span id="latest_commit" class="s80 gray">97f809b  4 minutes ago</span>
            <a href="javascript:void(0)" onClick="showMemberList()" >
-             comitter<span id="br_member_ct" class="bold">**br_member_ct**</span>
+             comitter<span id="br_member_ct" class="bold s150">**br_member_ct**</span>
            </a>
         <br/>
 
-        <span onClick="osrun('git status -s','os_result')"  class="btn">status</span>
-        <span onClick="osrun('git add .','os_result')"  class="btn">add</span>
-        <span onClick="osrun('git reset','os_result')"  class="btn">reset</span>
-        <span onClick="osrun('git diff ','os_result')"  class="btn s80">diff</span>
+        <span onClick="osRunOut('git status -s','os_result')"  class="btn">status</span>
+        <span onClick="osRunOut('git add .','os_result')"  class="btn">add</span>
+        <span onClick="osRunOut('git reset','os_result')"  class="btn">reset</span>
+        <span onClick="osRunOut('git diff ','os_result')"  class="btn s80">diff</span>
 
         <span class="s80 gray">ChangeFiles</span>
 
 
-        <span onClick="osrun('git diff HEAD~5 HEAD --name-only ','os_result')" class="btn s80">5c</span>
-        <span onClick="osrun('git diff HEAD~10 HEAD --name-only ','os_result')" class="btn s80">10c</span>
-        <span onClick="osrun('git diff HEAD~30 HEAD --name-only ','os_result')" class="btn s80">30c</span>
-        <span onClick="osrun('git diff HEAD~100 HEAD --name-only ','os_result')" class="btn s80">100c</span>
+        <span onClick="osRunOut('git diff HEAD~5 HEAD --name-only ','os_result')" class="btn s80">5c</span>
+        <span onClick="osRunOut('git diff HEAD~10 HEAD --name-only ','os_result')" class="btn s80">10c</span>
+        <span onClick="osRunOut('git diff HEAD~30 HEAD --name-only ','os_result')" class="btn s80">30c</span>
+        <span onClick="osRunOut('git diff HEAD~100 HEAD --name-only ','os_result')" class="btn s80">100c</span>
 
 
-        <span onClick="osrun('git log --graph --oneline ','os_result')" class="btn s80">tree1</span>
+        <span onClick="osRunOut('git log --graph --oneline ','os_result')" class="btn s80">tree1</span>
 
         <div id="os_result" class="detail s80">os_result</div>
 
@@ -148,13 +161,16 @@
         <br/>
         commit<br/>
         <input id="commit_msg" type="text" placeholder="commit_msg name" />
-        <button onClick="osrun('git commit -m \'' + $('#commit_msg').val() + '\'')" placeholder="git command" />add</button>
+        <button onClick="osRunOut('git commit -m \'' + $('#commit_msg').val() + '\'','os_result')" placeholder="git command" />add</button>
         <br/>
     </div>
 
   </body>
 
   <script>
+
+    require('./renderer.js')
+    require('./functions.js')
 
       window.jQuery = window.$ = require('./jquery-3.1.0.js')
 
@@ -175,12 +191,17 @@
                         env: null }
 
 
-      repo_btn_prev_push = "";//リポジトリ以下の母tなで直前push したもの
-
+      repo_btn_prev_push = "" //リポジトリ以下の母tなで直前push したもの
+      top_filtered_repo = ""
 
     // You can also require other files to run in this process
-    require('./renderer.js')
-    require('./functions.js')
+
+    //enter押したら
+    $('#filter_l_repo').keyup(function(e){
+        console.log(e.which)
+        if (e.which == 13 && top_filtered_repo) setRepoPath( top_filtered_repo )
+    })
+
 
     showGitmodules = function(){
       var git_command = 'cat ' + path2dir( current_repo_path ) + '/.gitmodules'
@@ -256,7 +277,7 @@
             }
         })
     }
-
+ 
     checkOut = function ( branch_name ){
         osRunCb("git checkout '" + branch_name+ "'",
                   function(ret){
@@ -279,14 +300,18 @@
       var filter = $('#filter_l_repo').val()
 
       $('#local_repo_list').html("<table>");
+      top_filtered_repo =""
       for (var ind in local_repos){
           var full_path = local_repos[ind]
           fname = path2pjname(full_path)
           fname_disp = fname
 
           if (filter) {
+
               var re = new RegExp('('+filter+')','i')
               if (!fname.match(re)) continue;
+
+              if (!top_filtered_repo) top_filtered_repo = full_path
               fname_disp = fname_disp.replace(re,sRed('$1'))
           }
           $('#local_repo_list').prepend('<tr><td> <a href="javascript:void(0)" onClick="setRepoPath(\'' + full_path + '\')" class="btn s150">' +
@@ -302,7 +327,8 @@
         console.log(full_path)
         current_repo_path = full_path
         execOption.cwd = current_repo_path
-        $('#current_repo_path').html( s150(path2pjname(full_path)) + ' ' + s80(sSilver(full_path)) )
+        $('#current_repo_name').html( path2pjname(full_path) )
+        $('#current_repo_path').html( full_path )
         $('#local_repo_pane').slideUp(10)
 
         his_repo[current_repo_path] = "";
@@ -422,13 +448,13 @@
 
     var git_command1 = 'node -v'
     osRunCb(git_command1, function(ret_ary){
-      $('#node_info').append(sRed(git_command1) + '<br/>' + ret_ary.join('<br/>') + '<br/>')
+      $('#nodejs_info').append(sRed(git_command1) + '<br/>' + ret_ary.join('<br/>') + '<br/>')
     })
     var git_command2 = 'npm -g list'
     osRunCb( git_command2, function(ret_ary){
-      $('#node_info').append(sRed(git_command2) + '<br/>' + ret_ary.join('<br/>') + '<br/>')
+      $('#nodejs_info').append(sRed(git_command2) + '<br/>' + ret_ary.join('<br/>') + '<br/>')
     })
-    osRunCb('npm -g list', 'node_info')
+    osRunCb('npm -g list', 'nodejs_info')
 
     var com2 = 'git config --global --list'
     osRunCb( com2 ,
