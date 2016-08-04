@@ -24,10 +24,13 @@ path2dir =function(full_path){ return full_path.replace(/\/.git/,'') }
 url2link = function(line ){ return line.replace(/(http.*?) /, '<span onClick="osrun(\'open $1\')" class="btn">$1</span> ')}
 escapeHTML = function(html) { return $('<div>').text(html).html() }
 
+
+
+
 //osコマンド非同期実行
 osrun = function(command , out_html_id){
   console.log(command)
-  exec(command, (error, stdout, stderr) => {
+  exec(command,execOption, (error, stdout, stderr) => {
     ret_ary = stdout.trim().split(/\n/)
     outText( command, out_html_id, ret_ary )
   });
@@ -35,14 +38,14 @@ osrun = function(command , out_html_id){
 //一行だけ返す
 osRunOneLine = function(command , out_html_id){
   console.log(command)
-  exec(command, (error, stdout, stderr) => {
+  exec(command,execOption, (error, stdout, stderr) => {
     $('#' + out_html_id).html(stdout.trim())
   });
 }
 
 osRunCb = function(command , cb){
   console.log(command)
-  exec(command, (error, stdout, stderr) => {
+  exec(command,execOption, (error, stdout, stderr) => {
     ret_ary = stdout.trim().split(/\n/)
     if (typeof cb == "function") ret_ary = cb(ret_ary)
   });
@@ -55,13 +58,6 @@ osRunOut = function(command , out_html_id ){
     outText( command, out_html_id, ret_ary )
 
   });
-}
-
-//git commandを shell commandに
-gitcom = function(git_command){
-  var path = path2dir(current_repo_path)
-  var com = "git -C '" + path + "' " + git_command.replace(/git/,'')
-  return com
 }
 
 outText = function(git_command,id_tag,ret_ary){
