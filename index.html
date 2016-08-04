@@ -97,7 +97,7 @@
            </a>
         <br/>
 
-        <span onClick="osRunOut('git status -s','os_result')"  class="btn">status</span>
+        <span onClick="showGitStatus()"  class="btn">status</span>
         <span onClick="osRunOut('git add .','os_result')"  class="btn">add</span>
         <span onClick="osRunOut('git reset','os_result')"  class="btn">reset</span>
         <span onClick="osRunOut('git diff ','os_result')"  class="btn s80">diff</span>
@@ -237,7 +237,28 @@
     }
 
     showMemberList = function(){
-        osrun('git log --pretty=format:"%an" | sort | uniq -c | sort -r','os_result')
+        var cmd = 'git log --pretty=format:"%an" | sort | uniq -c | sort -r'
+        osRunCb(cmd,
+          function(ret_ary){
+            out_str = sRed(cmd) + " " + ret_ary.length + '<br/>'
+            out_str += "<table>"
+            for (var ind in ret_ary) {
+
+                var line = ret_ary[ind].trim()
+                line_ary = line.match(/(\d+ )(.*$)/)
+
+                class_str =""
+                if (ind <= 20) class_str = 'class="s120"'
+                if (ind <= 10) class_str = 'class="s150"'
+
+                out_str += '<tr><td ' + class_str + '>' + sSilver((parseInt(ind) + 1 )) + '</td>' +
+                              '<td ' + class_str + '><span onClick="logTable(\'' + line_ary[2] + '\')" class="btn">' + line_ary[2] + '</span></td>' +
+                              '<td ' + class_str + '>' + line_ary[1] + '</td></tr>'
+            }
+            out_str += '<table>'
+            $('#os_result').html(out_str)
+          }
+        )
     }
 
     togglePaneLocalRepoList = function (){
@@ -268,6 +289,43 @@
       repo_btn_prev_push=key
     }
 
+    diffColor = function (ary){
+        for (var ind in ary){
+          var line = ary[ind]
+          //line = escapeHTML(line)
+           if (line[0]=='-') ary[ind] = sBlue(line)
+           if (line[0]=='+') ary[ind] = sGreen(line)
+
+        }
+        return ary
+    }
+
+    showGitStatus = function(){
+
+        osRunOut('git status -s','os_result')
+
+        var com2 = 'git diff --cached'
+        osRunCb(com2,
+          function(ret_ary){
+            for (var ind in ret_ary){
+              var line = ret_ary[ind]
+              line = escapeHTML(line)
+
+               ret_ary[ind] = line
+               if (line[0]=='-') ret_ary[ind] = sBlue(line)
+               if (line[0]=='+') ret_ary[ind] = sGreen(line)
+
+            }
+
+            ret_ary = diffColor(ret_ary)
+            var ret_out_str = ret_ary.join('<br/>')
+            $('#os_result').append('<br/>' + sRed(escapeHTML(com2)) + " " + sGray(ret_ary.length) + '<br/>' + ret_out_str )
+          }
+        )
+    }
+
+
+
     setCurrentBranchName = function(){
         osRunCb('git branch',function(ret_ary){
             for (var ind in ret_ary){
@@ -277,10 +335,11 @@
             }
         })
     }
- 
+
     checkOut = function ( branch_name ){
         osRunCb("git checkout '" + branch_name+ "'",
-                  function(ret){
+                  function(ret_ary){
+                      console.log(ret_ary.join('<br/>'))
                       setRepoPath(current_repo_path)
                   })
     }
@@ -325,8 +384,10 @@
     // set local repository
     setRepoPath = function(full_path) {
         console.log(full_path)
+
         current_repo_path = full_path
-        execOption.cwd = current_repo_path
+        execOption.cwd = path2dir(current_repo_path)
+
         $('#current_repo_name').html( path2pjname(full_path) )
         $('#current_repo_path').html( full_path )
         $('#local_repo_pane').slideUp(10)
@@ -397,10 +458,13 @@
             var htmlstr= '  <div class="s150">Files</div> <input type="text" id="filter_files" value="' + filter + '"size=10 > <br/>'
             $('#os_result').html(htmlstr)
             $('#os_result').append(sRed(escapeHTML(git_command)) + " " + sGray(ret_ary.length) + '<br/>')
-            var str_out = ret_ary.join('<br/>')
-            if (filter) str_out = str_out.replace(new RegExp('(' + filter.trim() + ')','ig'),sRed('$1') )
 
-           $('#os_result').append('<table>' + str_out + '</table>')
+            var str_out =""
+            for (var ind in ret_ary){
+              str_out += '<a onClick="fileStat(\'' + ret_ary[ind].trim() + '\')" href="javascript:void(0);" >' + ret_ary[ind].replace(new RegExp('(' + filter.trim() + ')','ig'),sRed('$1') ) + '</a><br/>'
+            }
+
+           $('#os_result').append(str_out )
            $('#filter_files').focus()
 
            //0.2秒たったら
@@ -414,8 +478,43 @@
         })
     }
 
+    fileStat = function(filepath){
+
+      $('#os_result').html("")
+
+      var git_command = 'git log -p --oneline --follow --name-status --date=short --pretty=format:" %ad %h  %an %s " '  + filepath.trim()
+      osRunCb(git_command,
+        function(ret_ary){
+          console.log('retary',ret_ary)
+
+          var htmlstr = s150(filepath) + '<br/>'
+          htmlstr += sRed(escapeHTML(git_command)) + " " + sGray(ret_ary.length) + '<br/>'
+          var str_out = ret_ary.join('<br/>')
+          $('#os_result').append( htmlstr + str_out + '<br/><br/>')
+      })
+
+      var git_command2 = 'git log -p --oneline --pretty=format:" %ad %x09 %h %x09 %an %x09 %s" '  + filepath.trim()
+      osRunCb(git_command2,
+        function(ret_ary){
+
+
+          htmlstr = sRed(escapeHTML(git_command)) + " " + sGray(ret_ary.length) + '<br/>'
+          for (var ind in ret_ary){
+            ret_ary[ind] = escapeHTML(ret_ary[ind])
+          //  str_out += '<a onClick="fileStat(\'' + ret_ary[ind].trim() + '\')" href="javascript:void(0);" >' + ret_ary[ind].replace(new RegExp('(' + filter.trim() + ')','ig'),sRed('$1') ) + '</a><br/>'
+          }
+          ret_ary = diffColor(ret_ary)
+
+          var str_out = ret_ary.join('<br/>')
+          $('#os_result').append( htmlstr + str_out )
+      })
+
+
+
+    }
+
     logTable = function( filter ){
-         var git_command = 'git log --date=relative --pretty=format:"<tr><td nowrap > %ad </td><td nowrap > %h </td><td nowrap > %an </td><td nowrap > %s </td></tr>"'
+         var git_command = 'git log --date=relative --pretty=format:"<tr><td nowrap > %ad %x09 %h %x09 %an %x09 %s </td></tr>"'
          if (filter) git_command += " | egrep -i '" + filter + "'"
          git_command += ' | head -2000'
 
@@ -426,6 +525,7 @@
              $('#os_result').html(htmlstr)
              $('#os_result').append(sRed(escapeHTML(git_command)) + " " + sGray(ret_ary.length) + '<br/>')
              var str_out = ret_ary.join('')
+             str_out = str_out.replace(/\t/g,'</td><td nowrap >')
              if (filter) str_out = str_out.replace(new RegExp('(' + filter.trim() + ')','ig'),sRed('$1') )
 
             $('#os_result').append('<table>' + str_out + '</table>')
@@ -462,7 +562,7 @@
         for (var ind in ret_ary ){
             if (ret_ary[ind].match(/(name|email)/)) $('#g_user').append(ret_ary[ind].replace(/.*=/,'') + ' &nbsp; ')
         }
-        $('#gitconf').append( sRed(com2) + '<br/>' + ret_ary.join('<br/>') + '<br/>' )
+        $('#gitconf').append( sRed(com2) + '<br/>' + ret_ary.join('<br/>').replace(/ /g,'&nbsp;') + '<br/>' )
       })
     osrun('cat ~/.gitignore_global','gitconf')
     findLocalRepos()

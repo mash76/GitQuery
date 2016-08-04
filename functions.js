@@ -12,6 +12,7 @@ s150= function(str){ return '<span style="font-size:150%;">'+str+'</span>'}
 sRed= function(str){ return '<span style="color:red;">'+str+'</span>'}
 sBlue= function(str){ return '<span style="color:blue;">'+str+'</span>'}
 sPink= function(str){ return '<span style="color:DeepPink;">'+str+'</span>'}
+sGreen= function(str){ return '<span style="color:green;">'+str+'</span>'}
 sGray= function(str){ return '<span style="color:gray;">'+str+'</span>'}
 sGray2 = function(str){ return '<span style="color:darkGray;">'+str+'</span>'}
 sSilver= function(str){ return '<span style="color:silver;">'+str+'</span>'}
@@ -52,7 +53,7 @@ osRunCb = function(command , cb){
 }
 osRunOut = function(command , out_html_id ){
   console.log(command)
-  exec(command, (error, stdout, stderr) => {
+  exec(command,execOption, (error, stdout, stderr) => {
     ret_ary = stdout.trim().split(/\n/)
     if (typeof cb == "function") ret_ary = cb(ret_ary)
     outText( command, out_html_id, ret_ary )
