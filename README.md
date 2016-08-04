@@ -1,4 +1,4 @@
-# electron-gitclient
+# GitQuery - electron-gitclient
 
 for MAC.  
 Simple,Quick,Easy.  
