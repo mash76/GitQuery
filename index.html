@@ -13,12 +13,12 @@
       <table width="100%" style="padding:0px;margin:0px;">
         <tr>
           <td width="50%" valign="top" >
-            <span id="version" class="silver s80" >**version**</span>
+            <span id="version" class="gray s80" >**version**</span>
             <span onClick="toggleDevTools()" class="btn s80" >devTools</span>
             <span onClick="$('#nodejs_info').slideToggle(10)" class="btn s80" >node-<span id="node_version"></span></span>
           </td>
           <td width="50%" align="right" >
-            <span id="g_user" class="silver s80" ></span>
+            <span id="g_user" class="gray s80" ></span>
             <span onClick="$('#gitconf').toggle();" class="btn s80"> ~/.gitconfig ~/.gitignore_global</span>
           </td>
         </tr>
@@ -62,12 +62,12 @@
 
     <div id="repo_info" class="m10 hide">
         <span id="current_repo_name" class="bold s170">**current_repo**</span>
-        <span id="current_repo_path" class="silver">**current_repo_path**</span>
+        <span id="current_repo_path" class="gray">**current_repo_path**</span>
         <span onClick="osrun('open ' + path2dir(current_repo_path) )"  class="btn s80">finder</span>
 
-        <span onClick="osRunOut('git fetch','os_result')" class="btn s120">fetch</span>
-        <span onClick="osRunOut('git pull','os_result')" class="btn s120">pull</span>
-        <span onClick="osRunOut('git push','os_result')" class="btn s120">push</span>
+        <span onClick="osRunOut('git fetch','pane_remote')" class="btn s120">fetch</span>
+        <span onClick="osRunOut('git pull','pane_remote')" class="btn s120">pull</span>
+        <span onClick="osRunOut('git push','pane_remote')" class="btn s120">push</span>
 
         <br/>
 
@@ -100,7 +100,6 @@
 
         <span id="c_branch" class="s170 bold">**c_branch**</span>
 
-        <span class="gray">
           <a href="javascript:void(0)" onClick="showFiles('')" >
             files<span id="br_files_ct" class="bold s150">**br_files_ct**</span>
           </a>
@@ -108,11 +107,10 @@
             commit<span id="br_commit_ct" class="bold s150">**br_commit_ct**</span>
           </a>
 
+           <span id="latest_commit" class="s80 gray">97f809b  4 minutes ago </span>
 
-
-           <span id="latest_commit" class="s80 gray">97f809b  4 minutes ago</span>
            <a href="javascript:void(0)" onClick="showMemberList('')" >
-             comitter<span id="br_member_ct" class="bold s150">**br_member_ct**</span>
+             comitter <span id="br_member_ct" class="bold s150">**br_member_ct**</span>
            </a>
         <br/>
 
@@ -123,7 +121,6 @@
 
         <span class="s80 gray">ChangeFiles</span>
 
-
         <span onClick="osRunOut('git diff HEAD~5 HEAD --name-only ','pane_diff_detail')" class="btn s80">5c</span>
         <span onClick="osRunOut('git diff HEAD~10 HEAD --name-only ','pane_diff_detail')" class="btn s80">10c</span>
         <span onClick="osRunOut('git diff HEAD~30 HEAD --name-only ','pane_diff_detail')" class="btn s80">30c</span>
@@ -132,8 +129,8 @@
 
         <span onClick="osRunOut('git log --graph --oneline ','pane_diff_detail')" class="btn s80">tree1</span>
 
-        <div id="os_result" class="detail code">
-          os_result
+        <div id="pane_remote" class="detail code">
+          pane_remote
         </div>
 
         <div id="pane_status" class="detail code">
@@ -144,8 +141,8 @@
         <div id="pane_file" class="detail code">
             pane_file
             <input type="text" id="filter_file" value="" size=10 >
-            <div id="pane_file_detail_1"></div>
-            <div id="pane_file_detail_2"></div>
+            pane_file_detail_1<div id="pane_file_detail_1"></div>
+            pane_file_detail_2<div id="pane_file_detail_2"></div>
         </div>
 
         <div id="pane_filelist" class="detail code">
@@ -199,7 +196,7 @@
         <br/>
         git command <br/>
         <input id="git_usercommand" type="text" size="70" placeholder="git command" />
-        <button onClick="osrun($('#git_usercommand').val(),'os_result')" placeholder="git command" />run</button>
+        <button onClick="osrun($('#git_usercommand').val(),'pane_remote')" placeholder="git command" />run</button>
         <br/>
 
         stash <span class="silver s80">git stash comment01  </span><br/>
@@ -221,7 +218,7 @@
         <br/>
         commit<br/>
         <input id="commit_msg" type="text" placeholder="commit_msg name" />
-        <button onClick="osRunOut('git commit -m \'' + $('#commit_msg').val() + '\'','os_result')" placeholder="git command" />add</button>
+        <button onClick="osRunOut('git commit -m \'' + $('#commit_msg').val() + '\'','pane_status')" placeholder="git command" />add</button>
         <br/>
     </div>
 
@@ -546,14 +543,15 @@
 
     fileStat = function(filepath){
 
-      $('#os_result').html("")
+      $('#pane_file_detail_1').html("")
+      $('#pane_file_detail_2').html("")
 
-      var git_command = 'git log -p --oneline --follow --name-status --date=short --pretty=format:" %ad %h  %an %s " '  + filepath.trim()
+      var git_command = 'git log --oneline --follow --name-status --date=short --pretty=format:" %ad %h  %an %s " '  + filepath.trim()
       osRunCb(git_command,
         function(ret_ary){
           console.log('retary',ret_ary)
 
-          var htmlstr = s150(filepath) + '<br/>'
+          var htmlstr = s150(sBold(filepath)) + '<br/>'
           htmlstr += sRed(escapeHTML(git_command)) + " " + sGray(ret_ary.length) + '<br/>'
           var str_out = ret_ary.join('<br/>')
           $('#pane_file_detail_1').append( htmlstr + str_out + '<br/><br/>')
@@ -561,16 +559,16 @@
 
       var git_command2 = 'git log -p --oneline --pretty=format:" %ad %x09 %h %x09 %an %x09 %s" '  + filepath.trim()
       osRunCb(git_command2,
-        function(ret_ary){
-          htmlstr = sRed(escapeHTML(git_command)) + " " + sGray(ret_ary.length) + '<br/>'
-          for (var ind in ret_ary){
-            ret_ary[ind] = escapeHTML(ret_ary[ind])
+        function(ret_ary2){
+          htmlstr = sRed(escapeHTML(git_command2)) + " " + sGray(ret_ary2.length) + '<br/>'
+          for (var ind in ret_ary2){
+            ret_ary2[ind] = escapeHTML(ret_ary[ind])
           //  str_out += '<a onClick="fileStat(\'' + ret_ary[ind].trim() + '\')" href="javascript:void(0);" >' + ret_ary[ind].replace(new RegExp('(' + filter.trim() + ')','ig'),sRed('$1') ) + '</a><br/>'
           }
-          ret_ary = diffColor(ret_ary)
+          ret_ary2 = diffColor(ret_ary2)
 
-          var str_out = ret_ary.join('<br/>')
-          $('#pane_file_detail_2').append( htmlstr + str_out )
+          var str_out2 = ret_ary2.join('<br/>')
+          $('#pane_file_detail_2').append( htmlstr + str_out2 )
       })
 
 

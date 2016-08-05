@@ -1,6 +1,6 @@
 body { font-family: sans-serif; color:#444444; }
 input { font-size:120%; margin-bottom:8px;}
-td { border-bottom:1px solid #eeeeee; padding:3px;}
+td { border-bottom:1px solid #e0e0e0; padding:3px;}
 
 a:link {color: SteelBlue;text-decoration: none; opacity:1; }
 a:visited {color: SteelBlue;text-decoration: none; opacity:1; }
@@ -8,11 +8,11 @@ a:hover {color: SteelBlue;text-decoration: none; opacity:0.7; } /* underline„Å™„
 
 .btn { color: SteelBlue; cursor:pointer;}
 .history { color: DeepPink; cursor:pointer;}
-.detail{ background-color:#fbfbfb;
+.detail{ background-color:#f0f0f0;
         padding:7px;
         margin:10px;
         -webkit-border-radius:7px; }
-.code { font-family:monospace; }
+.code { font-family:Osaka-Mono,Osaka,monospace; }
 
 .s60 { font-size:60%;}
 .s80 { font-size:80%;}

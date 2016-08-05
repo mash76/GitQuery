@@ -8,6 +8,7 @@ s60= function(str){ return '<span style="font-size:60%;">'+str+'</span>'}
 s80= function(str){ return '<span style="font-size:80%;">'+str+'</span>'}
 s120= function(str){ return '<span style="font-size:120%;">'+str+'</span>'}
 s150= function(str){ return '<span style="font-size:150%;">'+str+'</span>'}
+s200= function(str){ return '<span style="font-size:200%;">'+str+'</span>'}
 
 sRed= function(str){ return '<span style="color:red;">'+str+'</span>'}
 sBlue= function(str){ return '<span style="color:blue;">'+str+'</span>'}
@@ -23,7 +24,9 @@ path2pjname =function(full_path){ return full_path.replace(/\/.git/,'').replace(
 path2dir =function(full_path){ return full_path.replace(/\/.git/,'') }
 
 url2link = function(line ){ return line.replace(/(http.*?) /, '<span onClick="osrun(\'open $1\')" class="btn">$1</span> ')}
+
 escapeHTML = function(html) { return $('<div>').text(html).html() }
+
 matchRed = function(str,filter) { return str.replace(new RegExp('(' + filter.trim() + ')','ig'),sRed('$1') ) }
 
 
