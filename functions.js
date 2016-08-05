@@ -24,7 +24,7 @@ path2dir =function(full_path){ return full_path.replace(/\/.git/,'') }
 
 url2link = function(line ){ return line.replace(/(http.*?) /, '<span onClick="osrun(\'open $1\')" class="btn">$1</span> ')}
 escapeHTML = function(html) { return $('<div>').text(html).html() }
-
+matchRed = function(str,filter) { return str.replace(new RegExp('(' + filter.trim() + ')','ig'),sRed('$1') ) }
 
 
 

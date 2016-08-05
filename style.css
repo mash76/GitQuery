@@ -12,6 +12,7 @@ a:hover {color: SteelBlue;text-decoration: none; opacity:0.7; } /* underline„Å™„
         padding:7px;
         margin:10px;
         -webkit-border-radius:7px; }
+.code { font-family:monospace; }
 
 .s60 { font-size:60%;}
 .s80 { font-size:80%;}

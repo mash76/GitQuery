@@ -24,12 +24,31 @@
         </tr>
       </table>
 
-      <div id="nodejs_info" class="detail hide s80"></div>
-      <div id="gitconf" class="hide s80 detail" style="text-align:left;"></div>
+      <div id="nodejs_info" class="detail hide"></div>
+      <div id="gitconf" class="hide code detail" style="text-align:left;"></div>
 
       <span onClick="togglePaneLocalRepoList()" class="btn s120" >Repositories</span>
-      <span onClick="alert('construction');" class="btn" >init</span>
+      <span onClick="$('#gitinit_pane').slideToggle(10);" class="btn" >init</span>
+      <span onClick="$('#gitclone_pane').slideToggle(10);" class="btn" >clone</span>
       <span id="his_repo"></span>
+    </div>
+
+
+    <div id="gitinit_pane" class="detail hide">
+        init<br/>
+        <input id="init_path" type="text" placeholder="init_path" />
+        <input id="init_path" type="text" placeholder="project name" />
+        <button onClick="osrun('git remote add  \'' + $('#remote_name').val() + '\' \'' + $('#remote_url').val() +'\'')" />add</button>
+    </div>
+
+    <div id="gitclone_pane" class="detail hide">
+        git crone from remote<br/>
+        <input id="gitclone_dir"  type="text" size=50 placeholder="clone_dir" />
+        <input id="gitclone_name" type="text" size=20 placeholder="clone_name" /><br/>
+        <input id="gitclone_url"  type="text" size=80 placeholder="clone_url" />
+        <br/>
+                <button onClick="osrun('git clone add  \'' + $('#remote_name').val() + '\' \'' + $('#remote_url').val() +'\'')" />clone</button>
+        <br/>
     </div>
 
     <!-- list : local repositories -->
@@ -75,7 +94,7 @@
 
         <br/>
 
-        <div id="repo_out" class="s80 hide detail" >repo_out</div>
+        <div id="repo_out" class="code hide detail" >repo_out</div>
 
         <!-- current branch -->
 
@@ -92,28 +111,72 @@
 
 
            <span id="latest_commit" class="s80 gray">97f809b  4 minutes ago</span>
-           <a href="javascript:void(0)" onClick="showMemberList()" >
+           <a href="javascript:void(0)" onClick="showMemberList('')" >
              comitter<span id="br_member_ct" class="bold s150">**br_member_ct**</span>
            </a>
         <br/>
 
         <span onClick="showGitStatus()"  class="btn">status</span>
-        <span onClick="osRunOut('git add .','os_result')"  class="btn">add</span>
-        <span onClick="osRunOut('git reset','os_result')"  class="btn">reset</span>
-        <span onClick="osRunOut('git diff ','os_result')"  class="btn s80">diff</span>
+        <span onClick="osRunOut('git add .','pane_status_detail')"  class="btn">add</span>
+        <span onClick="osRunOut('git reset','pane_status_detail')"  class="btn">reset</span>
+        <span onClick="osRunOut('git diff ','pane_status_detail')"  class="btn s80">diff</span>
 
         <span class="s80 gray">ChangeFiles</span>
 
 
-        <span onClick="osRunOut('git diff HEAD~5 HEAD --name-only ','os_result')" class="btn s80">5c</span>
-        <span onClick="osRunOut('git diff HEAD~10 HEAD --name-only ','os_result')" class="btn s80">10c</span>
-        <span onClick="osRunOut('git diff HEAD~30 HEAD --name-only ','os_result')" class="btn s80">30c</span>
-        <span onClick="osRunOut('git diff HEAD~100 HEAD --name-only ','os_result')" class="btn s80">100c</span>
+        <span onClick="osRunOut('git diff HEAD~5 HEAD --name-only ','pane_diff_detail')" class="btn s80">5c</span>
+        <span onClick="osRunOut('git diff HEAD~10 HEAD --name-only ','pane_diff_detail')" class="btn s80">10c</span>
+        <span onClick="osRunOut('git diff HEAD~30 HEAD --name-only ','pane_diff_detail')" class="btn s80">30c</span>
+        <span onClick="osRunOut('git diff HEAD~100 HEAD --name-only ','pane_diff_detail')" class="btn s80">100c</span>
 
 
-        <span onClick="osRunOut('git log --graph --oneline ','os_result')" class="btn s80">tree1</span>
+        <span onClick="osRunOut('git log --graph --oneline ','pane_diff_detail')" class="btn s80">tree1</span>
 
-        <div id="os_result" class="detail s80">os_result</div>
+        <div id="os_result" class="detail code">
+          os_result
+        </div>
+
+        <div id="pane_status" class="detail code">
+          pane_status
+          <div id="pane_status_detail"></div>
+        </div>
+
+        <div id="pane_file" class="detail code">
+            pane_file
+            <input type="text" id="filter_file" value="" size=10 >
+            <div id="pane_file_detail_1"></div>
+            <div id="pane_file_detail_2"></div>
+        </div>
+
+        <div id="pane_filelist" class="detail code">
+            pane_filelist
+            <input type="text" id="filter_filelist" value="" size=10 >
+            <div id="pane_filelist_detail"></div>
+        </div>
+
+        <div id="pane_diff" class="detail code">
+          pane_diff
+          <input type="text" id="filter_diff" value="" size=10 >
+          <div id="pane_diff_detail"></div>
+        </div>
+
+        <div id="pane_log" class="detail code">
+            pane_log
+            <input type="text" id="filter_log" value="" size=10 >
+            <div id="pane_log_detail"></div>
+
+        </div>
+
+        <div id="pane_user" class="detail code">
+            pane_user
+            <input type="text" id="filter_user" value="" size=10 >
+            <div id="pane_user_detail"></div>
+        </div>
+
+        <div id="pane_commit" class="detail code">
+          pane_commit
+
+        </div>
 
         <div class="m10">
             current repo info
@@ -130,18 +193,15 @@
         <div id="real_files"></div>
 
         <div id="os_out" style="font-size:60%;font-color:silver;"></div>
-        init<br/>
-        <input id="init_path" type="text" placeholder="init_path" />
-        <button onClick="osrun('git remote add  \'' + $('#remote_name').val() + '\' \'' + $('#remote_url').val() +'\'')" placeholder="git command" />add</button>
+
+
 
         <br/>
         git command <br/>
         <input id="git_usercommand" type="text" size="70" placeholder="git command" />
         <button onClick="osrun($('#git_usercommand').val(),'os_result')" placeholder="git command" />run</button>
         <br/>
-        clone url<br/>
-        <input id="clone_url" type="text" placeholder="clone_url" />
-        <br/>
+
         stash <span class="silver s80">git stash comment01  </span><br/>
         <input id="stash_comment" type="text" placeholder="remote_name" />
         <button onClick="osrun('git stash \'' + $('#stash_comment').val() + '\'')" placeholder="git command" />add</button>
@@ -236,30 +296,7 @@
         })
     }
 
-    showMemberList = function(){
-        var cmd = 'git log --pretty=format:"%an" | sort | uniq -c | sort -r'
-        osRunCb(cmd,
-          function(ret_ary){
-            out_str = sRed(cmd) + " " + ret_ary.length + '<br/>'
-            out_str += "<table>"
-            for (var ind in ret_ary) {
 
-                var line = ret_ary[ind].trim()
-                line_ary = line.match(/(\d+ )(.*$)/)
-
-                class_str =""
-                if (ind <= 20) class_str = 'class="s120"'
-                if (ind <= 10) class_str = 'class="s150"'
-
-                out_str += '<tr><td ' + class_str + '>' + sSilver((parseInt(ind) + 1 )) + '</td>' +
-                              '<td ' + class_str + '><span onClick="logTable(\'' + line_ary[2] + '\')" class="btn">' + line_ary[2] + '</span></td>' +
-                              '<td ' + class_str + '>' + line_ary[1] + '</td></tr>'
-            }
-            out_str += '<table>'
-            $('#os_result').html(out_str)
-          }
-        )
-    }
 
     togglePaneLocalRepoList = function (){
       if ($('#togglePaneLocalRepoList').css('display') == 'block' ){
@@ -302,8 +339,9 @@
 
     showGitStatus = function(){
 
-        osRunOut('git status -s','os_result')
+        osRunOut('git status -s','pane_status_detail')
 
+        $('#pane_status_detail').html('')
         var com2 = 'git diff --cached'
         osRunCb(com2,
           function(ret_ary){
@@ -314,12 +352,23 @@
                ret_ary[ind] = line
                if (line[0]=='-') ret_ary[ind] = sBlue(line)
                if (line[0]=='+') ret_ary[ind] = sGreen(line)
-
             }
 
             ret_ary = diffColor(ret_ary)
             var ret_out_str = ret_ary.join('<br/>')
-            $('#os_result').append('<br/>' + sRed(escapeHTML(com2)) + " " + sGray(ret_ary.length) + '<br/>' + ret_out_str )
+            $('#pane_status_detail').append('<br/>' + sRed(escapeHTML(com2)) + " " + sGray(ret_ary.length) + '<br/>' + ret_out_str )
+          }
+        )
+
+        var com3 = 'git diff '
+        osRunCb(com3,
+          function(ret_ary){
+            ret_ary = diffColor(ret_ary)
+            var ret_out_str = ret_ary.join('<br/>')
+
+            $('#pane_status_detail').append('<br/>' + sRed(escapeHTML(com3)) + " " + sGray(ret_ary.length) + '<br/>' + ret_out_str )
+
+
           }
         )
     }
@@ -446,6 +495,32 @@
         $('#repo_info').show()
     }
 
+    showMemberList = function(filter){
+        var git_command = 'git log --pretty=format:"%an" | sort | uniq -c | sort -r '
+        if (filter) git_command += " | egrep -i '" + filter + "'"
+        osRunCb(git_command,
+          function(ret_ary){
+            out_str = sRed(git_command) + " " + ret_ary.length + '<br/>'
+            out_str += "<table>"
+            for (var ind in ret_ary) {
+
+                var line = ret_ary[ind].trim()
+                line_ary = line.match(/(\d+ )(.*$)/)
+
+                class_str =""
+                if (ind <= 20) class_str = 'class="s120"'
+                if (ind <= 10) class_str = 'class="s150"'
+
+                out_str += '<tr><td ' + class_str + '>' + sSilver((parseInt(ind) + 1 )) + '</td>' +
+                              '<td ' + class_str + '><span onClick="logTable(\'' + line_ary[2] + '\')" class="btn">' + matchRed(line_ary[2],filter) + '</span></td>' +
+                              '<td ' + class_str + '>' + line_ary[1] + '</td></tr>'
+            }
+            out_str += '<table>'
+            $('#pane_user_detail').html(out_str)
+            $('#filter_user').focus()
+          }
+        )
+    }
 
     showFiles = function(filter){
         var git_command = 'git ls-files '
@@ -454,27 +529,18 @@
 
         osRunCb(git_command,
           function(ret_ary){
-
-            var htmlstr= '  <div class="s150">Files</div> <input type="text" id="filter_files" value="' + filter + '"size=10 > <br/>'
-            $('#os_result').html(htmlstr)
-            $('#os_result').append(sRed(escapeHTML(git_command)) + " " + sGray(ret_ary.length) + '<br/>')
+            $('#pane_filelist_detail').html('')
+            $('#pane_filelist_detail').append(sRed(escapeHTML(git_command)) + " " + sGray(ret_ary.length) + '<br/>')
 
             var str_out =""
             for (var ind in ret_ary){
-              str_out += '<a onClick="fileStat(\'' + ret_ary[ind].trim() + '\')" href="javascript:void(0);" >' + ret_ary[ind].replace(new RegExp('(' + filter.trim() + ')','ig'),sRed('$1') ) + '</a><br/>'
+              str_out += '<a onClick="fileStat(\'' + ret_ary[ind].trim() + '\')" href="javascript:void(0);" >' + matchRed(ret_ary[ind],filter) + '</a><br/>'
             }
 
-           $('#os_result').append(str_out )
-           $('#filter_files').focus()
+           $('#pane_filelist_detail').append(str_out )
+           $('#filter_filelist').focus()
 
            //0.2秒たったら
-           //interval_log_filter =
-
-           //enter押したら
-           $('#filter_files').keyup(function(e){
-             console.log(e.which)
-               if (e.which == 13) showFiles( $('#filter_files').val() )
-           })
         })
     }
 
@@ -490,14 +556,12 @@
           var htmlstr = s150(filepath) + '<br/>'
           htmlstr += sRed(escapeHTML(git_command)) + " " + sGray(ret_ary.length) + '<br/>'
           var str_out = ret_ary.join('<br/>')
-          $('#os_result').append( htmlstr + str_out + '<br/><br/>')
+          $('#pane_file_detail_1').append( htmlstr + str_out + '<br/><br/>')
       })
 
       var git_command2 = 'git log -p --oneline --pretty=format:" %ad %x09 %h %x09 %an %x09 %s" '  + filepath.trim()
       osRunCb(git_command2,
         function(ret_ary){
-
-
           htmlstr = sRed(escapeHTML(git_command)) + " " + sGray(ret_ary.length) + '<br/>'
           for (var ind in ret_ary){
             ret_ary[ind] = escapeHTML(ret_ary[ind])
@@ -506,9 +570,8 @@
           ret_ary = diffColor(ret_ary)
 
           var str_out = ret_ary.join('<br/>')
-          $('#os_result').append( htmlstr + str_out )
+          $('#pane_file_detail_2').append( htmlstr + str_out )
       })
-
 
 
     }
@@ -520,27 +583,18 @@
 
          osRunCb(git_command,
            function(ret_ary){
-
-             var htmlstr= '  <div class="s150">Log</div> <input type="text" id="filter_log" value="' + filter + '"size=10 > <br/>'
-             $('#os_result').html(htmlstr)
-             $('#os_result').append(sRed(escapeHTML(git_command)) + " " + sGray(ret_ary.length) + '<br/>')
+             $('#pane_log_detail').html('')
+             $('#pane_log_detail').append(sRed(escapeHTML(git_command)) + " " + sGray(ret_ary.length) + '<br/>')
              var str_out = ret_ary.join('')
              str_out = str_out.replace(/\t/g,'</td><td nowrap >')
              if (filter) str_out = str_out.replace(new RegExp('(' + filter.trim() + ')','ig'),sRed('$1') )
 
-            $('#os_result').append('<table>' + str_out + '</table>')
+            $('#pane_log_detail').append('<table>' + str_out + '</table>')
             $('#filter_log').focus()
-
-            //0.2秒たったら
-            //interval_log_filter =
-
-            //enter押したら
-            $('#filter_log').keyup(function(e){
-              console.log(e.which)
-                if (e.which == 13) logTable( $('#filter_log').val() )
-            })
          })
      }
+
+
 
     //初期処理
     osRunOneLine('git version', 'version')
@@ -575,6 +629,18 @@
     $('#filter_l_repo').keyup(function(e){
         filterLocalRepos()
     })
+    //enter押したら
+    $('#filter_filelist').keyup(function(e){
+        if (e.which == 13) showFiles( $('#filter_filelist').val() )
+    })
+    $('#filter_log').keyup(function(e){
+        if (e.which == 13) logTable( $('#filter_log').val() )
+    })
+    $('#filter_user').keyup(function(e){
+        if (e.which == 13) showMemberList( $('#filter_user').val() )
+    })
+
+
 
     </script>
 </html>
