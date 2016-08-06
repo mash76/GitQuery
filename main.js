@@ -18,7 +18,7 @@ function createWindow () {
   mainWindow.loadURL(`file://${__dirname}/index.html`)
 
   // Open the DevTools.
-  //mainWindow.webContents.openDevTools()
+//  mainWindow.webContents.openDevTools()
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
@@ -31,10 +31,16 @@ function createWindow () {
 
 const {ipcMain} = require('electron')
 // devtools トグル非同期
-ipcMain.on('toggleDevTool', function(event, arg) {
+ipcMain.on('ipcDevTool', function(event, arg) {
     mainWindow.webContents.toggleDevTools()
 });
-
+ipcMain.on('ipcFullScreen', function(event, arg) {
+    if (mainWindow.isFullScreen()){
+        mainWindow.setFullScreen(false)
+    }else{
+        mainWindow.setFullScreen(true)
+    }
+});
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.

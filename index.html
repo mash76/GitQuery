@@ -16,6 +16,8 @@
             <span id="version" class="gray s80" >**version**</span>
             <span onClick="toggleDevTools()" class="btn s80" >devTools</span>
             <span onClick="$('#nodejs_info').slideToggle(10)" class="btn s80" >node-<span id="node_version"></span></span>
+            <span onClick="toggleFullScreen()" class="btn s80" >fullScreen</span>
+
           </td>
           <td width="50%" align="right" >
             <span id="g_user" class="gray s80" ></span>
@@ -27,18 +29,22 @@
       <div id="nodejs_info" class="detail hide"></div>
       <div id="gitconf" class="hide code detail" style="text-align:left;"></div>
 
-      <span onClick="togglePaneLocalRepoList()" class="btn s120" >Repositories</span>
-      <span onClick="$('#gitinit_pane').slideToggle(10);" class="btn" >init</span>
-      <span onClick="$('#gitclone_pane').slideToggle(10);" class="btn" >clone</span>
-      <span id="his_repo"></span>
+      <div class="m5">
+          <span onClick="togglePaneLocalRepoList()" class="btn bold s120" >Repositories</span>
+          <span onClick="$('#gitinit_pane').slideToggle(10);" class="btn" >init</span>
+          <span onClick="$('#gitclone_pane').slideToggle(10);" class="btn" >clone</span>
+          <span id="his_repo"></span>
+      </div>
+
     </div>
+
 
 
     <div id="gitinit_pane" class="detail hide">
         init<br/>
         <input id="init_path" type="text" placeholder="init_path" />
-        <input id="init_path" type="text" placeholder="project name" />
-        <button onClick="osrun('git remote add  \'' + $('#remote_name').val() + '\' \'' + $('#remote_url').val() +'\'')" />add</button>
+        <input id="init_name" type="text" placeholder="project_name" />
+        <button onClick="osRunOut('git remote add  \'' + $('#remote_name').val() + '\' \'' + $('#remote_url').val() +'\'')" />add</button>
     </div>
 
     <div id="gitclone_pane" class="detail hide">
@@ -47,7 +53,7 @@
         <input id="gitclone_name" type="text" size=20 placeholder="clone_name" /><br/>
         <input id="gitclone_url"  type="text" size=80 placeholder="clone_url" />
         <br/>
-                <button onClick="osrun('git clone add  \'' + $('#remote_name').val() + '\' \'' + $('#remote_url').val() +'\'')" />clone</button>
+                <button onClick="osRunOut('git clone add  \'' + $('#remote_name').val() + '\' \'' + $('#remote_url').val() +'\'')" />clone</button>
         <br/>
     </div>
 
@@ -65,9 +71,9 @@
         <span id="current_repo_path" class="gray">**current_repo_path**</span>
         <span onClick="osrun('open ' + path2dir(current_repo_path) )"  class="btn s80">finder</span>
 
-        <span onClick="osRunOut('git fetch','pane_remote')" class="btn s120">fetch</span>
-        <span onClick="osRunOut('git pull','pane_remote')" class="btn s120">pull</span>
-        <span onClick="osRunOut('git push','pane_remote')" class="btn s120">push</span>
+        <span onClick="osRunOut('git fetch','pane_remote'); openPaneCenter('pane_remote')" class="btn s120">fetch</span>
+        <span onClick="osRunOut('git pull','pane_remote'); openPaneCenter('pane_remote')" class="btn s120">pull</span>
+        <span onClick="osRunOut('git push','pane_remote'); openPaneCenter('pane_remote')" class="btn s120">push</span>
 
         <br/>
 
@@ -100,78 +106,90 @@
 
         <span id="c_branch" class="s170 bold">**c_branch**</span>
 
-          <a href="javascript:void(0)" onClick="showFiles('')" >
+          <a href="javascript:void(0)" onClick="makePaneFilelist(''); openPaneCenter('pane_filelist');" >
             files<span id="br_files_ct" class="bold s150">**br_files_ct**</span>
           </a>
-          <a href="javascript:void(0)" onClick="logTable('')" >
+          <a href="javascript:void(0)" onClick="makePaneLog('') " >
             commit<span id="br_commit_ct" class="bold s150">**br_commit_ct**</span>
           </a>
 
            <span id="latest_commit" class="s80 gray">97f809b  4 minutes ago </span>
 
-           <a href="javascript:void(0)" onClick="showMemberList('')" >
-             comitter <span id="br_member_ct" class="bold s150">**br_member_ct**</span>
+           <a href="javascript:void(0)" onClick="makePaneUser(''); openPaneCenter('pane_user');" >
+             comitter<span id="br_member_ct" class="bold s150">**br_member_ct**</span>
            </a>
         <br/>
 
-        <span onClick="showGitStatus()"  class="btn">status</span>
-        <span onClick="osRunOut('git add .','pane_status_detail')"  class="btn">add</span>
-        <span onClick="osRunOut('git reset','pane_status_detail')"  class="btn">reset</span>
-        <span onClick="osRunOut('git diff ','pane_status_detail')"  class="btn s80">diff</span>
+        <span onClick="makePaneStatus()"  class="btn">status</span>
 
-        <span class="s80 gray">ChangeFiles</span>
-
-        <span onClick="osRunOut('git diff HEAD~5 HEAD --name-only ','pane_diff_detail')" class="btn s80">5c</span>
-        <span onClick="osRunOut('git diff HEAD~10 HEAD --name-only ','pane_diff_detail')" class="btn s80">10c</span>
-        <span onClick="osRunOut('git diff HEAD~30 HEAD --name-only ','pane_diff_detail')" class="btn s80">30c</span>
-        <span onClick="osRunOut('git diff HEAD~100 HEAD --name-only ','pane_diff_detail')" class="btn s80">100c</span>
-
+        <span onClick="osRunOut('git diff ','pane_status_detail'); openPaneCenter('pane_status'); "  class="btn ">diff</span>
+        <span onClick="openPaneCenter('pane_gitcommand'); $('#git_usercommand').focus() "  class="btn ">git_command</span>
 
         <span onClick="osRunOut('git log --graph --oneline ','pane_diff_detail')" class="btn s80">tree1</span>
 
-        <div id="pane_remote" class="detail code">
+        <div id="pane_gitcommand" pane="center" class="detail code">
+            <input id="git_usercommand" type="text" size="70" placeholder="git command" />
+            <button onClick="osRunOut($('#git_usercommand').val(),'pane_gitcommand_detail')" placeholder="git command" />run</button>
+            <br/>
+            <div id="pane_gitcommand_detail"></div>
+        </div>
+
+
+
+
+        <div id="pane_remote" pane="center" class="detail code">
           pane_remote
         </div>
 
-        <div id="pane_status" class="detail code">
-          pane_status
+        <div id="pane_status" pane="center" class="detail code">
+          <span onClick="osRunOut('git add .','pane_status_detail'); openPaneCenter('pane_status'); "  class="btn s150">add</span>
+          <span onClick="osRunOut('git reset','pane_status_detail'); openPaneCenter('pane_status'); "  class="btn s150">reset</span>
           <div id="pane_status_detail"></div>
         </div>
 
-        <div id="pane_file" class="detail code">
-            pane_file
+        <div id="pane_file" pane="center" class="detail code">
             <input type="text" id="filter_file" value="" size=10 >
-            pane_file_detail_1<div id="pane_file_detail_1"></div>
-            pane_file_detail_2<div id="pane_file_detail_2"></div>
+            <div id="pane_file_detail_1" >  </div>
+            <div id="pane_file_detail_2" >  </div>
         </div>
 
-        <div id="pane_filelist" class="detail code">
-            pane_filelist
-            <input type="text" id="filter_filelist" value="" size=10 >
-            <div id="pane_filelist_detail"></div>
+        <div id="pane_filelist" pane="center" class="detail code">
+                <table ><tr><td valign=top >
+                    Dir<br/>
+                    <span id="pane_filelist_detail" >   </span>
+                </td><td valign=top >
+                      File<br/>
+                      <input type="text" id="filter_filelist" value="" size=10 >
+
+                      <span class="s80 gray">RecentCommit</span>
+
+                      <span onClick="makePaneFilelist( $('#filter_filelist').val() , 'git diff HEAD~5 HEAD --name-only ')" class="btn ">〜5c</span>
+                      <span onClick="makePaneFilelist( $('#filter_filelist').val() , 'git diff HEAD~10 HEAD --name-only ')" class="btn ">10c</span>
+                      <span onClick="makePaneFilelist( $('#filter_filelist').val() , 'git diff HEAD~30 HEAD --name-only ')" class="btn ">30c</span>
+                      <span onClick="makePaneFilelist( $('#filter_filelist').val() , 'git diff HEAD~100 HEAD --name-only ')" class="btn ">100c</span>
+                      <br/>
+
+                      <span id="pane_filelist_detail_r" >  </span>
+                </td></tr></table>
         </div>
 
-        <div id="pane_diff" class="detail code">
-          pane_diff
+        <div id="pane_diff" pane="center" class="detail code">
           <input type="text" id="filter_diff" value="" size=10 >
           <div id="pane_diff_detail"></div>
         </div>
 
-        <div id="pane_log" class="detail code">
-            pane_log
+        <div id="pane_log" pane="center" class="detail code">
             <input type="text" id="filter_log" value="" size=10 >
             <div id="pane_log_detail"></div>
 
         </div>
 
-        <div id="pane_user" class="detail code">
-            pane_user
+        <div id="pane_user" pane="center" class="detail code">
             <input type="text" id="filter_user" value="" size=10 >
             <div id="pane_user_detail"></div>
         </div>
 
-        <div id="pane_commit" class="detail code">
-          pane_commit
+        <div id="pane_commit" pane="center" class="detail code">
 
         </div>
 
@@ -194,10 +212,7 @@
 
 
         <br/>
-        git command <br/>
-        <input id="git_usercommand" type="text" size="70" placeholder="git command" />
-        <button onClick="osrun($('#git_usercommand').val(),'pane_remote')" placeholder="git command" />run</button>
-        <br/>
+
 
         stash <span class="silver s80">git stash comment01  </span><br/>
         <input id="stash_comment" type="text" placeholder="remote_name" />
@@ -253,11 +268,10 @@
 
     // You can also require other files to run in this process
 
-    //enter押したら
-    $('#filter_l_repo').keyup(function(e){
-        console.log(e.which)
-        if (e.which == 13 && top_filtered_repo) setRepoPath( top_filtered_repo )
-    })
+
+
+
+
 
 
     showGitmodules = function(){
@@ -301,19 +315,18 @@
       }else{
           $('#local_repo_pane').slideDown(10)
           $('#filter_l_repo').val('')
-          filterLocalRepos()
+          filterLocalRepos('')
           $('#filter_l_repo').focus()
       }
     }
 
+    //個別のペーンを出す方式に
     togglePaneCurrentRepoDesc = function (key){
-
       //初回なら閉じる
       if (key == "") {
           $('#repo_out').slideUp(10)
           return
       }
-
       //開いてる項目を押したら閉じる
       if (repo_btn_prev_push == key && $('#repo_out').css('display') == 'block' ){
           $('#repo_out').slideUp(10)
@@ -332,42 +345,6 @@
 
         }
         return ary
-    }
-
-    showGitStatus = function(){
-
-        osRunOut('git status -s','pane_status_detail')
-
-        $('#pane_status_detail').html('')
-        var com2 = 'git diff --cached'
-        osRunCb(com2,
-          function(ret_ary){
-            for (var ind in ret_ary){
-              var line = ret_ary[ind]
-              line = escapeHTML(line)
-
-               ret_ary[ind] = line
-               if (line[0]=='-') ret_ary[ind] = sBlue(line)
-               if (line[0]=='+') ret_ary[ind] = sGreen(line)
-            }
-
-            ret_ary = diffColor(ret_ary)
-            var ret_out_str = ret_ary.join('<br/>')
-            $('#pane_status_detail').append('<br/>' + sRed(escapeHTML(com2)) + " " + sGray(ret_ary.length) + '<br/>' + ret_out_str )
-          }
-        )
-
-        var com3 = 'git diff '
-        osRunCb(com3,
-          function(ret_ary){
-            ret_ary = diffColor(ret_ary)
-            var ret_out_str = ret_ary.join('<br/>')
-
-            $('#pane_status_detail').append('<br/>' + sRed(escapeHTML(com3)) + " " + sGray(ret_ary.length) + '<br/>' + ret_out_str )
-
-
-          }
-        )
     }
 
 
@@ -391,7 +368,7 @@
     }
 
     findLocalRepos = function(){
-      osRunCb("find ~ -type d -maxdepth 7 | egrep '/\.git$' ",
+      osRunCb("find ~ -type d -maxdepth 5 | egrep '/\.git$' ",
         function( ret_ary ){
 
             local_repos = ret_ary
@@ -400,9 +377,7 @@
         }
       )
     }
-    filterLocalRepos = function (){
-
-      var filter = $('#filter_l_repo').val()
+    filterLocalRepos = function (filter){
 
       $('#local_repo_list').html("<table>");
       top_filtered_repo =""
@@ -420,10 +395,15 @@
               fname_disp = fname_disp.replace(re,sRed('$1'))
           }
           $('#local_repo_list').prepend('<tr><td> <a href="javascript:void(0)" onClick="setRepoPath(\'' + full_path + '\')" class="btn s150">' +
-                                    fname_disp + '</span> </td><td> &nbsp; ' + sSilver(s80(full_path.replace(fname,sGray2(fname)) )) + '</td></tr>')
+                                    fname_disp + '</span> </td><td> &nbsp; ' + sGray(full_path.replace(fname,sGray2(fname)) ) + '</td></tr>')
       }
       $('#local_repo_list').append("</table>");
 
+    }
+
+    openPaneCenter = function( pane_name ){
+      $('div[pane=center]').hide()
+      $('#' + pane_name).slideDown(10)
     }
 
 
@@ -452,17 +432,6 @@
         osRunOneLine('git log --date=relative --pretty=format:"%ad" | head -1', 'latest_commit')
         osRunOneLine('git log --pretty=format:"%an" | sort | uniq | wc -l', 'br_member_ct')
 
-
-        //サブモジュールやremote情報
-        // $('#c_repo_info').html("")
-        // var config_lines = fs.readFileSync (full_path + '/config').toString().split(/\n/)
-        // for (var ind in config_lines){
-        //     var line = config_lines[ind]
-        //     if ( line.match(/\[.*remote/)) $('#c_repo_info').append( sRed('remote ') + line.replace(/(.*")(.*?)(".*)/,'$2') + '<br/>')
-        //     if ( line.match(/\[.*branch/)) $('#c_repo_info').append( sRed('branch ') + line.replace(/(.*")(.*?)(".*)/,'$2')  + '<br/>')
-        //     if ( line.match(/\[.*submodule/)) $('#c_repo_info').append( sRed('submodule ') + line.replace(/(.*")(.*?)(".*)/,'$2')  + '<br/>')
-        // }
-
         // local branch & remote branch
         osRunCb('git branch',function( ret_ary ){
             $('#local_branch_ct').html(ret_ary.length)
@@ -471,28 +440,32 @@
             $('#remote_branch_ct').html(ret_ary.length)
         })
 
-        //ファイル一覧
-        osRunCb('ls ' + full_path ,
-          function(ret_ary){
-              $('#c_repo_pane').html("")
-              for (var ind in ret_ary){
-                  file_disp = ret_ary[ind]
-                  var stat = fs.statSync(full_path + '/' + file_disp )
-                  if (stat.isDirectory()) file_disp = sBlue(file_disp)
-                  $('#c_repo_pane').append(file_disp + '<br/>')
+        makePaneLog('')
 
-                  if (stat.isFile()) {
-                      var ret = fs.readFileSync (full_path + '/' + file_disp)
-                      ret = ret.toString().substring(0,500).replace(/\n/g,'<br/>')
-                      $('#c_repo_pane').append('<div name="file_detail" class="m10 hide">' + s60(sSilver(ret)) + '</div>')
-                  }
-              }
-          }
-        )
-        $('#repo_info').show()
+        //ファイル一覧
+        // osRunCb('ls ' + full_path ,
+        //   function(ret_ary){
+        //       $('#c_repo_pane').html("")
+        //       for (var ind in ret_ary){
+        //           file_disp = ret_ary[ind]
+        //           var stat = fs.statSync(full_path + '/' + file_disp )
+        //           if (stat.isDirectory()) file_disp = sBlue(file_disp)
+        //           $('#c_repo_pane').append(file_disp + '<br/>')
+        //
+        //           if (stat.isFile()) {
+        //               var ret = fs.readFileSync (full_path + '/' + file_disp)
+        //               ret = ret.toString().substring(0,500).replace(/\n/g,'<br/>')
+        //               $('#c_repo_pane').append('<div name="file_detail" class="m10 hide">' + s60(sSilver(ret)) + '</div>')
+        //           }
+        //       }
+        //   }
+        // )
+        $('#repo_info').show() // 初回のrepo選択時は隠しているので
+
+
     }
 
-    showMemberList = function(filter){
+    makePaneUser = function(filter){
         var git_command = 'git log --pretty=format:"%an" | sort | uniq -c | sort -r '
         if (filter) git_command += " | egrep -i '" + filter + "'"
         osRunCb(git_command,
@@ -509,36 +482,85 @@
                 if (ind <= 10) class_str = 'class="s150"'
 
                 out_str += '<tr><td ' + class_str + '>' + sSilver((parseInt(ind) + 1 )) + '</td>' +
-                              '<td ' + class_str + '><span onClick="logTable(\'' + line_ary[2] + '\')" class="btn">' + matchRed(line_ary[2],filter) + '</span></td>' +
+                              '<td ' + class_str + '><span onClick="makePaneLog(\'' + line_ary[2] + '\')" class="btn">' + matchRed(line_ary[2],filter) + '</span></td>' +
                               '<td ' + class_str + '>' + line_ary[1] + '</td></tr>'
             }
             out_str += '<table>'
             $('#pane_user_detail').html(out_str)
+            openPaneCenter('pane_user');
             $('#filter_user').focus()
           }
         )
     }
 
-    showFiles = function(filter){
+    makePaneFilelist = function(filter,base_command){
+
+        $('#pane_filelist_detail').html('')
+        $('#pane_filelist_detail_r').html('')
+
+        //ファイル検索
         var git_command = 'git ls-files '
+        if (base_command) git_command = base_command
+
         if (filter) git_command += " | egrep -i '" + filter + "'"
-        git_command += ' | head -2000'
-
+        git_command += ' | head -1000'
         osRunCb(git_command,
-          function(ret_ary){
-            $('#pane_filelist_detail').html('')
-            $('#pane_filelist_detail').append(sRed(escapeHTML(git_command)) + " " + sGray(ret_ary.length) + '<br/>')
+          function( ret_ary){
 
-            var str_out =""
-            for (var ind in ret_ary){
-              str_out += '<a onClick="fileStat(\'' + ret_ary[ind].trim() + '\')" href="javascript:void(0);" >' + matchRed(ret_ary[ind],filter) + '</a><br/>'
-            }
+              $('#pane_filelist_detail_r').append(sRed(escapeHTML(git_command)) + " " + sGray(ret_ary.length) + '<br/>')
+              var str_out =""
+              for (var ind in ret_ary){
+                  str_out += '<a onClick="fileStat(\'' + ret_ary[ind].trim() + '\')" href="javascript:void(0);" >' + matchRed(ret_ary[ind],filter) + '</a><br/>'
+              }
+              $('#pane_filelist_detail_r').append(str_out )
 
-           $('#pane_filelist_detail').append(str_out )
-           $('#filter_filelist').focus()
-
-           //0.2秒たったら
+              openPaneCenter('pane_filelist');
+              $('#filter_filelist').focus()
         })
+
+
+        //スラッシュのないもの
+
+        //拡張子でまとめ
+
+
+
+        //dir 1階層でまとめ
+        var com1 = "git ls-files | egrep -i '\/' | perl -ple 's/(.*?\\/)(.*)/$1/' | sort | uniq -c | head -100"
+        //com1 = "git ls-files | egrep -i '\/' | sort | uniq -c | head -10"
+        console.log(com1)
+        var str_out1 = ""
+        var str_out2 = ""
+        var writeLeftPane = function(){
+            if (str_out1 && str_out2) $('#pane_filelist_detail').append(str_out1 + str_out2 )
+        }
+
+        osRunCb(com1,
+          function( ret_ary){
+              console.log('str_out1',ret_ary)
+              str_out1 ="<table>"
+              for (var ind in ret_ary){
+                  var ary = ret_ary[ind].trim().split(/\s+/)
+                  str_out1 += '<tr><td> <a onClick="fileStat(\'' + ary[1].trim() + '\')" href="javascript:void(0);" >' + matchRed(ary[1],filter) + '</a> </td><td> ' + ary[0] + ' </td></tr>'
+              }
+              str_out1 +="</table>"
+              writeLeftPane()
+          }
+        )
+
+        //dir 2階層でまとめ
+        var com2 = "git ls-files | egrep -i '\\/.*\\/' | perl -ple 's/(.*?\\/.*?\\/)(.*)/$1/' | sort | uniq -c"
+        osRunCb(com2,
+          function( ret_ary){
+            str_out2 = "<table>"
+            for (var ind in ret_ary){
+                var ary = ret_ary[ind].trim().split(/\s+/)
+                str_out2 += '<tr><td> <a onClick="fileStat(\'' + ary[1].trim() + '\')" href="javascript:void(0);" >' + matchRed(ary[1],filter) + '</a> </td><td> ' + ary[0] + ' </td></tr>'
+            }
+            str_out2 +="</table>"
+            writeLeftPane()
+          }
+        )
     }
 
     fileStat = function(filepath){
@@ -559,25 +581,34 @@
 
       var git_command2 = 'git log -p --oneline --pretty=format:" %ad %x09 %h %x09 %an %x09 %s" '  + filepath.trim()
       osRunCb(git_command2,
-        function(ret_ary2){
-          htmlstr = sRed(escapeHTML(git_command2)) + " " + sGray(ret_ary2.length) + '<br/>'
-          for (var ind in ret_ary2){
-            ret_ary2[ind] = escapeHTML(ret_ary[ind])
+        function(ret_ary){
+          var htmlstr = s150(sBold('diff')) + '<br/>' +
+                       sRed(escapeHTML(git_command2)) + " " + sGray(ret_ary.length) + '<br/>'
+          for (var ind in ret_ary){
+            ret_ary[ind] = escapeHTML(ret_ary[ind]).replace(/ /,'&nbsp;')
           //  str_out += '<a onClick="fileStat(\'' + ret_ary[ind].trim() + '\')" href="javascript:void(0);" >' + ret_ary[ind].replace(new RegExp('(' + filter.trim() + ')','ig'),sRed('$1') ) + '</a><br/>'
           }
-          ret_ary2 = diffColor(ret_ary2)
+          ret_ary = diffColor(ret_ary)
 
-          var str_out2 = ret_ary2.join('<br/>')
+          var str_out2 = ret_ary.join('<br/>')
           $('#pane_file_detail_2').append( htmlstr + str_out2 )
+
+          openPaneCenter('pane_file');
       })
 
 
     }
 
-    logTable = function( filter ){
+    makePaneLog = function( filter ){
          var git_command = 'git log --date=relative --pretty=format:"<tr><td nowrap > %ad %x09 %h %x09 %an %x09 %s </td></tr>"'
-         if (filter) git_command += " | egrep -i '" + filter + "'"
-         git_command += ' | head -2000'
+
+        $('#filter_log').val(filter) // 引数で来たフィルターもテキストボックスにセット
+
+         filter_ary = filter.trim().split(/\s+/)
+         for (var ind in filter_ary){
+            git_command += " | egrep -i '" + filter_ary[ind] + "'"
+         }
+         git_command += ' | head -1000'
 
          osRunCb(git_command,
            function(ret_ary){
@@ -585,11 +616,48 @@
              $('#pane_log_detail').append(sRed(escapeHTML(git_command)) + " " + sGray(ret_ary.length) + '<br/>')
              var str_out = ret_ary.join('')
              str_out = str_out.replace(/\t/g,'</td><td nowrap >')
-             if (filter) str_out = str_out.replace(new RegExp('(' + filter.trim() + ')','ig'),sRed('$1') )
-
+             for (var ind in filter_ary){
+                if (!filter_ary[ind]) continue;
+                str_out = str_out.replace(new RegExp('(' + filter_ary[ind].trim() + ')','ig'),sRed('$1') )
+             }
             $('#pane_log_detail').append('<table>' + str_out + '</table>')
+            openPaneCenter('pane_log');
             $('#filter_log').focus()
          })
+     }
+
+     makePaneStatus = function(){
+
+         osRunOut('git status -s -b','pane_status_detail')
+
+         $('#pane_status_detail').html('')
+         var com2 = 'git diff --cached #最後のcommitと現在変更してstageしたものの違い'
+         osRunCb(com2,
+           function(ret_ary){
+             for (var ind in ret_ary){
+               ret_ary[ind] = escapeHTML(ret_ary[ind]).replace(/ /,'&nbsp;')
+             }
+             ret_ary = diffColor(ret_ary)
+             var ret_out_str = ret_ary.join('<br/>')
+             $('#pane_status_detail').append('<br/>' + sRed(escapeHTML(com2)) + " " + sGray(ret_ary.length) + '<br/>' + ret_out_str )
+           }
+         )
+
+//aaaa
+
+         var com3 = 'git diff #addした後の再変更'
+         osRunCb(com3,
+           function(ret_ary){
+             for (var ind in ret_ary){
+               ret_ary[ind] = escapeHTML(ret_ary[ind]).replace(/ /,'&nbsp;')
+             }
+             ret_ary = diffColor(ret_ary)
+             var ret_out_str = ret_ary.join('<br/>')
+
+             $('#pane_status_detail').append('<br/>' + sRed(escapeHTML(com3)) + " " + sGray(ret_ary.length) + '<br/>' + ret_out_str )
+           }
+         )
+         openPaneCenter('pane_status');
      }
 
 
@@ -621,21 +689,29 @@
 
 
     const {ipcRenderer} = require('electron')
-    toggleDevTools = function(){  ipcRenderer.send('toggleDevTool', 'ping')   }
+    toggleDevTools = function(){  ipcRenderer.send('ipcDevTool', 'ping')   }
+    toggleFullScreen = function(){  ipcRenderer.send('ipcFullScreen', 'ping')   }
 
 
+    // keyevent
+
+    //enterなら候補1に確定、それ以外ならキー押すごとに検索
     $('#filter_l_repo').keyup(function(e){
-        filterLocalRepos()
+        if (e.which == 13 && top_filtered_repo) {
+          setRepoPath( top_filtered_repo )
+          return ;
+        }
+        filterLocalRepos($('#filter_l_repo').val())
     })
-    //enter押したら
+
     $('#filter_filelist').keyup(function(e){
-        if (e.which == 13) showFiles( $('#filter_filelist').val() )
+        if (e.which == 13) makePaneFilelist( $('#filter_filelist').val() )
     })
     $('#filter_log').keyup(function(e){
-        if (e.which == 13) logTable( $('#filter_log').val() )
+        if (e.which == 13) makePaneLog( $('#filter_log').val() )
     })
     $('#filter_user').keyup(function(e){
-        if (e.which == 13) showMemberList( $('#filter_user').val() )
+        if (e.which == 13) makePaneUser( $('#filter_user').val() )
     })
 
 
