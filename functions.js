@@ -75,6 +75,9 @@ osRunOut = function(command , out_html_id ){
     var ret_ary = escapeHTML(stdout).split(/\n/)
     $('#' + out_html_id).html(s120(sRed(escapeHTML(command)) + " " + sGray(ret_ary.length)) + '<br/>')
     $('#' + out_html_id).append(replaceTabSpc(ret_ary.join('<br/>')))
+
+    $('#' + out_html_id).append( sRed(stderr.replace(/\n/g,'<br/>')))
+
   });
 }
 

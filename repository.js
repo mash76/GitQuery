@@ -69,12 +69,11 @@ setCurrentBranchName = function(){
 }
 
 checkOut = function ( branch_name ){
-    osRunCb("git checkout '" + branch_name+ "'",
-              function(ret_ary){
-                  console.log(ret_ary.join('<br/>'))
-                  setRepoPath(current_repo_path)
-              })
+    $('#repo_out').html('')
+    var com = "git checkout '" + branch_name+ "'"
+    osRunOut(com,'repo_out' )
 }
+
 
 findLocalRepos = function(){
   osRunCb("find ~ -type d -maxdepth 5 | egrep '/\.git$' ",
