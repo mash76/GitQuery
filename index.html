@@ -144,11 +144,11 @@
           <div id="pane_status_commit" class="hide">
               stash <span class="silver s80">git stash comment01 </span><br/>
               <input id="stash_comment" type="text" placeholder="remote_name" />
-              <button onClick="osRunOut('git stash \'' + $('#stash_comment').val() + '\'')" placeholder="git command" />add</button>
+              <button onClick="osRunOut('git stash \'' + $('#stash_comment').val() + '\'','pane_status') " placeholder="stash message" />stash</button>
               <br/>
               commit<br/>
               <input id="commit_msg" type="text" placeholder="commit_msg name" />
-              <button onClick="osRunOut('git commit -m \'' + $('#commit_msg').val() + '\'','pane_status')" placeholder="git command" />add</button>
+              <button onClick="osRunOut('git commit -m \\'' + $('#commit_msg').val() + '\\'','pane_status')" placeholder="commit message" />commit</button>
               <br/>
           </div>
 
@@ -190,10 +190,10 @@
         </div>
 
         <div id="pane_log" pane="center" class="detail code">
-            <span onClick="makePaneLog($('#filter_log').html())" class="btn s120">log</span>
-            <span onClick="osRunOut('git log --graph --oneline ','pane_log_detail')" class="btn s120">tree</span>
+            <span onClick="makePaneLog($('#filter_log').html())" class="btn s150">log</span>
+            <span onClick="osRunOut('git log --graph --oneline ','pane_log_detail')" class="btn s150">tree</span>
             <br/>
-
+ｘｃｚっｃ
             <input type="text" id="filter_log" value="" size=20 >
             <div id="pane_log_detail"></div>
 
