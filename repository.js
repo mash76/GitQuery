@@ -76,14 +76,36 @@ checkOut = function ( branch_name ){
 
 
 findLocalRepos = function(){
-  osRunCb("find ~ -type d -maxdepth 5 | egrep '/\.git$' ",
-    function( ret_ary ){
+  //保存ファイルがなければ取得
 
-        local_repos = ret_ary
-        togglePaneLocalRepoList()
-        filterLocalRepos('')
-    }
-  )
+  file_fullpath = save_path　+ '/local_repos.txt'
+  if (fs.statSync(file_fullpath) ){
+
+    var text = fs.readFileSync(file_fullpath, 'utf-8');
+    local_repos = JSON.parse(text)
+    togglePaneLocalRepoList()
+    filterLocalRepos('')
+
+  }else{
+    osRunCb("find ~ -type d -maxdepth 5 | egrep '/\.git$' ",
+      function( ret_ary ){
+          local_repos = ret_ary
+
+          fs.writeFile(file_fullpath, JSON.stringify(ret_ary), function (error) {
+               if (error != null) {
+                  alert('error : ' + error);
+                  return;
+               }
+            });
+
+          togglePaneLocalRepoList()
+          filterLocalRepos('')
+      }
+    )
+
+  }
+
+
 }
 filterLocalRepos = function (filter){
 
