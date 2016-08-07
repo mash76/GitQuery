@@ -86,11 +86,13 @@ outText = function(git_command,id_tag,ret_ary){
       $('#' + id_tag).html(sRed(escapeHTML(git_command)) + " " + sGray(ret_ary.length) + '<hr/>' + ret_out_str )
   }
 }
-outHtml =function(git_command,id_tag,ret_ary){
-  if (typeof ret_ary != "object" || ret_ary.length == 0 || ret_ary == null) return
-  var ret_out_str = ret_ary.join('<br/>')
-  if (id_tag){
-      $('#' + id_tag).html(sRed(escapeHTML(git_command)) + " " + sGray(ret_ary.length) + '<hr/>' +
-                       escapeHTML(ret_out_str) )
-  }
+
+diffColor = function (ary){
+    for (var ind in ary){
+      var line = ary[ind]
+      //line = escapeHTML(line)
+       if (line[0]=='-') ary[ind] = sBlue(line)
+       if (line[0]=='+') ary[ind] = sGreen(line)
+    }
+    return ary
 }
