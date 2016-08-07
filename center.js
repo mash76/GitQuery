@@ -11,6 +11,7 @@
                 var line = ret_ary[ind].trim()
                 line_ary = line.match(/(\d+ )(.*$)/)
 
+                // top ranker = big font
                 class_str =""
                 if (ind <= 20) class_str = 'class="s120"'
                 if (ind <= 10) class_str = 'class="s150"'
@@ -32,11 +33,17 @@
         $('#pane_filelist_detail').html('')
         $('#pane_filelist_detail_r').html('')
 
+        $('#filter_filelist').val(filter)
+
         //ファイル検索
         var git_command = 'git ls-files '
-        if (base_command) git_command = base_command
+        console.log('base_command**',base_command)
+        if (base_command != undefined && base_command) git_command = base_command
 
-        if (filter) git_command += " | egrep -i '" + filter + "'"
+        filter_ary = filter.trim().split(/\s+/)
+        for (var ind in filter_ary){
+           git_command += " | egrep -i '" + filter_ary[ind] + "'"
+        }
         git_command += ' | head -1000'
         osRunCb(git_command,
           function( ret_ary){
@@ -44,7 +51,10 @@
               $('#pane_filelist_detail_r').append(sRed(escapeHTML(git_command)) + " " + sGray(ret_ary.length) + '<br/>')
               var str_out =""
               for (var ind in ret_ary){
-                  str_out += '<a onClick="fileStat(\'' + ret_ary[ind].trim() + '\')" href="javascript:void(0);" >' + matchRed(ret_ary[ind],filter) + '</a><br/>'
+                for (var ind2 in filter_ary){
+                  ret_ary[ind] = '<a onClick="makePaneFileStat(\'' + ret_ary[ind].trim() + '\')" href="javascript:void(0);" >' + matchRed(ret_ary[ind],filter_ary[ind2]) + '</a><br/>'
+                }
+                str_out += ret_ary[ind]
               }
               $('#pane_filelist_detail_r').append(str_out )
 
@@ -52,10 +62,26 @@
               $('#filter_filelist').focus()
         })
 
-
         //スラッシュのないもの
 
         //拡張子でまとめ
+        var comExt = "git ls-files | egrep -i '\\.' | perl -ple 's/(.*)(\\..*)/$2/' | sort | uniq -c | sort -r | head -20"
+        //com1 = "git ls-files | egrep -i '\/' | sort | uniq -c | head -10"
+        console.log('extension ' , comExt)
+        osRunCb(comExt,
+          function( ret_ary){
+              console.log('str_out1',ret_ary)
+              var str_out_ext =""
+              for (var ind in ret_ary){
+                  var ary = ret_ary[ind].trim().split(/\s+/)
+                  str_out_ext += '<a onClick="makePaneFilelist(\'' +  ary[1] + '\')" href="javascript:void(0);" >' + matchRed(ary[1],filter) + '</a>' + ary[0] + ' &nbsp; '
+              }
+              str_out_ext +="</table>"
+              $('#pane_filelist_ext').html(str_out_ext)
+
+              //writeLeftPane()
+          }
+        )
 
         //dir 1階層でまとめ
         var com1 = "git ls-files | egrep -i '\/' | perl -ple 's/(.*?\\/)(.*)/$1/' | sort | uniq -c | head -100"
@@ -73,7 +99,7 @@
               str_out1 ="<table>"
               for (var ind in ret_ary){
                   var ary = ret_ary[ind].trim().split(/\s+/)
-                  str_out1 += '<tr><td> <a onClick="fileStat(\'' + ary[1].trim() + '\')" href="javascript:void(0);" >' + matchRed(ary[1],filter) + '</a> </td><td> ' + ary[0] + ' </td></tr>'
+                  str_out1 += '<tr><td> <a onClick="makePaneFileStat(\'' + ary[1].trim() + '\')" href="javascript:void(0);" >' + matchRed(ary[1],filter) + '</a> </td><td> ' + ary[0] + ' </td></tr>'
               }
               str_out1 +="</table>"
               writeLeftPane()
@@ -87,7 +113,7 @@
             str_out2 = "<table>"
             for (var ind in ret_ary){
                 var ary = ret_ary[ind].trim().split(/\s+/)
-                str_out2 += '<tr><td> <a onClick="fileStat(\'' + ary[1].trim() + '\')" href="javascript:void(0);" >' + matchRed(ary[1],filter) + '</a> </td><td> ' + ary[0] + ' </td></tr>'
+                str_out2 += '<tr><td> <a onClick="makePaneFileStat(\'' + ary[1].trim() + '\')" href="javascript:void(0);" >' + matchRed(ary[1],filter) + '</a> </td><td> ' + ary[0] + ' </td></tr>'
             }
             str_out2 +="</table>"
             writeLeftPane()
@@ -95,30 +121,43 @@
         )
     }
 
-    fileStat = function(filepath){
+    makePaneFileStat = function(filepath){
 
       $('#pane_file_detail_1').html("")
       $('#pane_file_detail_2').html("")
 
+      //最新と最後の日付
+      var com2 = 'git log --oneline --follow --date=short --pretty=format:"%ad%x09%an" '  + filepath.trim()
+      osRunCb(com2,
+        function(ret_ary){
+          $('#pane_file_desc').html( s120(ret_ary.length) + "commits " + s120(ret_ary[0]) + ' - ' + s120(ret_ary[ ret_ary.length -1 ]) + '<hr/>')
+      })
+
+      //ファイル変更
       var git_command = 'git log --oneline --follow --name-status --date=short --pretty=format:" %ad %h  %an %s " '  + filepath.trim()
       osRunCb(git_command,
         function(ret_ary){
-          console.log('retary',ret_ary)
 
-          var htmlstr = s150(sBold(filepath)) + '<br/>'
-          htmlstr += sRed(escapeHTML(git_command)) + " " + sGray(ret_ary.length) + '<br/>'
-          var str_out = ret_ary.join('<br/>')
-          $('#pane_file_detail_1').append( htmlstr + str_out + '<br/><br/>')
+          var full_path = path2dir(current_repo_path) + "/" + filepath
+          var stat = fs.statSync( full_path )
+
+          var ntype = "File"
+          if (stat.isDirectory()) ntype = "Dir "
+
+          $('#pane_file_filename').html( s150(sBold( sBlue(ntype) + " " + filepath)))
+          htmlstr = sRed(escapeHTML(git_command)) + " " + sGray(ret_ary.length) + '<br/>'
+          $('#pane_file_detail_1').append( htmlstr + ret_ary.join('<br/>') + '<br/><br/>')
       })
 
+      //diff
       var git_command2 = 'git log -p --oneline --pretty=format:" %ad %x09 %h %x09 %an %x09 %s" '  + filepath.trim()
       osRunCb(git_command2,
         function(ret_ary){
-          var htmlstr = s150(sBold('diff')) + '<br/>' +
+          var htmlstr = s150(sBold('diff')) + '<hr/>' +
                        sRed(escapeHTML(git_command2)) + " " + sGray(ret_ary.length) + '<br/>'
           for (var ind in ret_ary){
-            ret_ary[ind] = escapeHTML(ret_ary[ind]).replace(/ /,'&nbsp;')
-          //  str_out += '<a onClick="fileStat(\'' + ret_ary[ind].trim() + '\')" href="javascript:void(0);" >' + ret_ary[ind].replace(new RegExp('(' + filter.trim() + ')','ig'),sRed('$1') ) + '</a><br/>'
+            ret_ary[ind] = replaceTabSpc(escapeHTML(ret_ary[ind]))
+          //  str_out += '<a onClick="makePaneFileStat(\'' + ret_ary[ind].trim() + '\')" href="javascript:void(0);" >' + ret_ary[ind].replace(new RegExp('(' + filter.trim() + ')','ig'),sRed('$1') ) + '</a><br/>'
           }
           ret_ary = diffColor(ret_ary)
 
@@ -127,15 +166,13 @@
 
           openPaneCenter('pane_file');
       })
-
-
     }
 
     makePaneLog = function( filter ){
+
          var git_command = 'git log --date=relative --pretty=format:"<tr><td nowrap > %ad %x09 %h %x09 %an %x09 %s </td></tr>"'
 
         $('#filter_log').val(filter) // 引数で来たフィルターもテキストボックスにセット
-
          filter_ary = filter.trim().split(/\s+/)
          for (var ind in filter_ary){
             git_command += " | egrep -i '" + filter_ary[ind] + "'"
@@ -160,14 +197,15 @@
 
      makePaneStatus = function(){
 
+         $('#pane_status_detail').html('')
          osRunOut('git status -s -b','pane_status_detail')
 
-         $('#pane_status_detail').html('')
+
          var com2 = 'git diff --cached #最後のcommitと現在変更してstageしたものの違い'
          osRunCb(com2,
            function(ret_ary){
              for (var ind in ret_ary){
-               ret_ary[ind] = escapeHTML(ret_ary[ind]).replace(/ /,'&nbsp;')
+               ret_ary[ind] = replaceTabSpc(escapeHTML(ret_ary[ind]))
              }
              ret_ary = diffColor(ret_ary)
              var ret_out_str = ret_ary.join('<br/>')
@@ -179,7 +217,7 @@
          osRunCb(com3,
            function(ret_ary){
              for (var ind in ret_ary){
-               ret_ary[ind] = escapeHTML(ret_ary[ind]).replace(/ /,'&nbsp;')
+               ret_ary[ind] = replaceTabSpc(escapeHTML(ret_ary[ind]))
              }
              ret_ary = diffColor(ret_ary)
              var ret_out_str = ret_ary.join('<br/>')

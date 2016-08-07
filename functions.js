@@ -26,17 +26,17 @@ path2dir =function(full_path){ return full_path.replace(/\/.git/,'') }
 url2link = function(line ){ return line.replace(/(http.*?) /, '<span onClick="osrun(\'open $1\')" class="btn">$1</span> ')}
 
 escapeHTML = function(html) { return $('<div>').text(html).html() }
+replaceTabSpc = function(str) { return str.replace(/ /ig,'&nbsp;').replace(/\t/ig,'&nbsp;&nbsp;&nbsp;&nbsp;')}
 
 matchRed = function(str,filter) { return str.replace(new RegExp('(' + filter.trim() + ')','ig'),sRed('$1') ) }
-
 
 
 //osコマンド非同期実行 結果出力不要のとき
 osrun = function(command , out_html_id){
   console.log(command)
   exec(command,execOption, (error, stdout, stderr) => {
-    ret_ary = stdout.trim().split(/\n/)
-    outText( command, out_html_id, ret_ary )
+    if (error) console.log('error',error)
+    if (stderr) console.log('stderr',stderr)
   });
 }
 //一行だけ返す sqlを返さない。一行だけ、項目だけ出したい時に
@@ -74,8 +74,7 @@ osRunOut = function(command , out_html_id ){
 
     var ret_ary = escapeHTML(stdout).split(/\n/)
     $('#' + out_html_id).html(s120(sRed(escapeHTML(command)) + " " + sGray(ret_ary.length)) + '<br/>')
-    $('#' + out_html_id).append(ret_ary.join('<br/>').replace(/ /,'&nbsp;'))
-
+    $('#' + out_html_id).append(replaceTabSpc(ret_ary.join('<br/>')))
   });
 }
 
