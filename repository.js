@@ -35,8 +35,6 @@ showIgnore = function(){
                                ret_ary.join('<br/>'))
           togglePaneCurrentRepoDesc('ignore')
   })
-
-
 }
 
 showBranchList = function() {
@@ -94,7 +92,6 @@ checkOut = function ( branch_name ){
     osRunOut(com,'repo_out' )
 }
 
-
 findLocalRepos = function(){
   //保存ファイルがなければ取得
 
@@ -123,6 +120,7 @@ findLocalRepos = function(){
     )
   }
 }
+
 filterLocalRepos = function (filter){
 
   $('#local_repo_list').html("<table>");
@@ -174,6 +172,7 @@ setRepoPath = function(full_path) {
     togglePaneCurrentRepoDesc("") // close
 
     //repository basic info
+    osRunOneLine('git submodule status | wc -l', 'submodule_count')
     osRunOneLine('du -d0 -h', 'current_repo_size')
     osRunOneLine('git ls-files | wc -l', 'br_files_ct')
     osRunOneLine('git log --oneline | wc -l', 'br_commit_ct')

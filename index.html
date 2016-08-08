@@ -65,7 +65,7 @@
 
     <div id="repo_info" class="m10 hide">
         <span id="current_repo_name" class="bold s170">**current_repo**</span>
-        <span id="current_repo_size" class="bold s150 gray">**current_repo_size**</span>
+        <span id="current_repo_size" onClick="osRunOut('du -d1 -h ','repo_out'); togglePaneCurrentRepoDesc('pane_reposize')" class="bold s150 btn">**current_repo_size**</span>
 
         <span id="current_repo_path" class="gray">**current_repo_path**</span>
         <span onClick="osrun('open ' + path2dir(current_repo_path) )"  class="btn s80">finder</span>
@@ -82,7 +82,7 @@
 
         <span onClick="showIgnore()" class="btn">ignore</span>
         <span onClick="osRunOut('ls ' + current_repo_path + '/hooks','repo_out'); togglePaneCurrentRepoDesc('hooks')" class="btn">hooks</span>
-        <span onClick="osRunOut('git submodule status','repo_out'); togglePaneCurrentRepoDesc('hooks')" class="btn">submodule</span>
+        <span onClick="osRunOut('git submodule status','repo_out'); togglePaneCurrentRepoDesc('hooks')" class="btn">submodule</span><span id="submodule_count" class="btn s120 bold">**submodule_count**</span>
 
         <span onClick="showGitmodules()" class="btn">.gitmodules</span>
 
@@ -126,6 +126,10 @@
             <button onClick="osRunOut($('#git_usercommand').val(),'pane_gitcommand_detail')" placeholder="git command" />run</button>
             <br/>
             <div id="pane_gitcommand_detail"></div>
+        </div>
+
+        <div id="pane_reposize" pane="center" class="detail code">
+          pane_reposize
         </div>
 
         <div id="pane_remote" pane="center" class="detail code">
