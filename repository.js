@@ -9,14 +9,34 @@ showGitmodules = function(){
   })
 }
 
+showStashList = function(){
+  var com = 'git stash list'
+  osRunCb(com,function(ret_ary){
+
+      $('#repo_out').html( sRed(com) + " " + sGray(ret_ary.length) + '<br/>' )
+      $('#repo_out').append( replaceTabSpc(ret_ary.join('<br/>')) + '<br/>' )
+      $('#stash_count').html(ret_ary.length)
+  });
+}
+
 showIgnore = function(){
+  $('#repo_out').html('')
+
   var git_command = 'cat .gitignore'
   osRunCb(git_command,
       function(ret_ary){
-          $('#repo_out').html(sRed(git_command) + " " + sGray(ret_ary.length) + '<br/>' +
+          $('#repo_out').append(s150(sBold('ignore setting<br/>')) + sRed(git_command) + " " + sGray(ret_ary.length) + '<br/>' +
+                               ret_ary.join('<br/>') + '<br/><br/>')
+  })
+  var com2 = "git status --ignored -s | grep '!!'"
+  osRunCb(com2,
+      function(ret_ary){
+          $('#repo_out').append(s150(sBold('ignored files<br/>')) + sRed(com2) + " " + sGray(ret_ary.length) + '<br/>' +
                                ret_ary.join('<br/>'))
           togglePaneCurrentRepoDesc('ignore')
   })
+
+
 }
 
 showBranchList = function() {
@@ -97,15 +117,11 @@ findLocalRepos = function(){
                   return;
                }
             });
-
           togglePaneLocalRepoList()
           filterLocalRepos('')
       }
     )
-
   }
-
-
 }
 filterLocalRepos = function (filter){
 
@@ -117,7 +133,6 @@ filterLocalRepos = function (filter){
       fname_disp = fname
 
       if (filter) {
-
           var re = new RegExp('('+filter+')','i')
           if (!fname.match(re)) continue;
 
@@ -152,6 +167,9 @@ setRepoPath = function(full_path) {
     for (var name in his_repo){
       $('#his_repo').append('<span onClick="setRepoPath(\'' + name + '\');" class="history s80">' + path2pjname(name) + '</span> ');
     }
+
+    showStashList();
+
     setCurrentBranchName()
     togglePaneCurrentRepoDesc("") // close
 

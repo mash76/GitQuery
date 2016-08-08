@@ -42,7 +42,7 @@
 
         filter_ary = filter.trim().split(/\s+/)
         for (var ind in filter_ary){
-           git_command += " | egrep -i '" + filter_ary[ind] + "'"
+           git_command += " | egrep -i '" + escapeRegExp(filter_ary[ind]) + "'"
         }
         git_command += ' | head -1000'
         osRunCb(git_command,

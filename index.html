@@ -80,13 +80,13 @@
           <span class="btn">branch</span><span id="local_branch_ct" class="btn s120 bold">**local_branch_ct**</span>
         </span>
 
-        <span onClick="showIgnore()" class="btn">.gitignore</span>
+        <span onClick="showIgnore()" class="btn">ignore</span>
         <span onClick="osRunOut('ls ' + current_repo_path + '/hooks','repo_out'); togglePaneCurrentRepoDesc('hooks')" class="btn">hooks</span>
         <span onClick="osRunOut('git submodule status','repo_out'); togglePaneCurrentRepoDesc('hooks')" class="btn">submodule</span>
 
         <span onClick="showGitmodules()" class="btn">.gitmodules</span>
 
-        <span onClick="osRunOut('git stash list','repo_out'); togglePaneCurrentRepoDesc('stash')" class="btn">stash</span>
+        <span onClick="showStashList(); togglePaneCurrentRepoDesc('stash')" class="btn">stash</span><span id="stash_count" class="btn s120 bold"></span>
         <span onClick="osRunOut('cat ' + current_repo_path + '/config','repo_out'); togglePaneCurrentRepoDesc('config')" class="btn">config</span>
 
         Remote
@@ -119,8 +119,6 @@
            </a>
 
         <span onClick="makePaneStatus()"  class="btn">status</span>
-
-        <span onClick="osRunOut('git diff ','pane_status_detail'); openPaneCenter('pane_status'); "  class="btn ">diff</span>
         <span onClick="openPaneCenter('pane_gitcommand'); $('#git_usercommand').focus() "  class="btn ">git_command</span>
 
         <div id="pane_gitcommand" pane="center" class="detail code">

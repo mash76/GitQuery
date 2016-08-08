@@ -28,6 +28,10 @@ url2link = function(line ){ return line.replace(/(http.*?) /, '<span onClick="os
 escapeHTML = function(html) { return $('<div>').text(html).html() }
 replaceTabSpc = function(str) { return str.replace(/ /ig,'&nbsp;').replace(/\t/ig,'&nbsp;&nbsp;&nbsp;&nbsp;')}
 
+escapeRegExp = function(string) {
+  return string.replace(/([.*+?^=!:${}()|[\]\/\\])/g, "\\$1");
+}
+
 matchRed = function(str,filter) { return str.replace(new RegExp('(' + filter.trim() + ')','ig'),sRed('$1') ) }
 
 
