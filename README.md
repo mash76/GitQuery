@@ -8,7 +8,7 @@ Shortest Code.
 
 npm -g install electron-prebuilt   
 git clone https://github.com/mash76/GitQuery.git  
-cd electron-gitclient  
+cd GitQuery  
 npm start   
   
 ## if you test big repository , clone big project.
