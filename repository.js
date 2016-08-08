@@ -79,7 +79,7 @@ findLocalRepos = function(){
   //保存ファイルがなければ取得
 
   file_fullpath = save_path　+ '/local_repos.txt'
-  if (fs.statSync(file_fullpath) ){
+  if (fs.existsSync(file_fullpath) ){
 
     var text = fs.readFileSync(file_fullpath, 'utf-8');
     local_repos = JSON.parse(text)
