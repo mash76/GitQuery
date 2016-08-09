@@ -49,9 +49,10 @@ showBranchList = function() {
     })
 }
 
-togglePaneLocalRepoList = function (){
-  if ($('#togglePaneLocalRepoList').css('display') == 'block' ){
-      $('#togglePaneLocalRepoList').slideUp(10)
+toggleRepoList = function (){
+
+  if ($('#local_repo_pane').css('display') == 'block' ){
+      $('#local_repo_pane').slideUp(10)
   }else{
       $('#local_repo_pane').slideDown(10)
       $('#filter_l_repo').val('')
@@ -100,7 +101,7 @@ findLocalRepos = function(){
 
     var text = fs.readFileSync(file_fullpath, 'utf-8');
     local_repos = JSON.parse(text)
-    togglePaneLocalRepoList()
+    toggleRepoList()
     filterLocalRepos('')
 
   }else{
@@ -114,7 +115,7 @@ findLocalRepos = function(){
                   return;
                }
             });
-          togglePaneLocalRepoList()
+          toggleRepoList()
           filterLocalRepos('')
       }
     )

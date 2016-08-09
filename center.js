@@ -130,7 +130,7 @@
       var com2 = 'git log --oneline --follow --date=short --pretty=format:"%ad%x09%an" '  + filepath.trim()
       osRunCb(com2,
         function(ret_ary){
-          $('#pane_file_desc').html( s120(ret_ary.length) + "commits " + s120(ret_ary[0]) + ' - ' + s120(ret_ary[ ret_ary.length -1 ]) + '<hr/>')
+          $('#pane_file_desc').html( s120(ret_ary.length) + "commits " + s120(ret_ary[ ret_ary.length -1 ]) + ' - ' + s120(ret_ary[ 0 ]) + '<hr/>')
       })
 
       //ファイル変更
@@ -183,6 +183,11 @@
            function(ret_ary){
              $('#pane_log_detail').html('')
              $('#pane_log_detail').append(sRed(escapeHTML(git_command)) + " " + sGray(ret_ary.length) + '<br/>')
+             for (var ind in ret_ary){
+                 line_ary = ret_ary[ind].split(/\t/)
+                 line_ary[1] = '<a href="aa">' + line_ary[1].trim() + '</a>'
+                 ret_ary[ind] = line_ary.join('\t')
+             }
              var str_out = ret_ary.join('')
              str_out = str_out.replace(/\t/g,'</td><td nowrap >')
              for (var ind in filter_ary){

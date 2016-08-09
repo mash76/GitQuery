@@ -32,7 +32,6 @@ osRunCb(com3,
 
 findLocalRepos()
 
-
 // ipc関連初期化
 const {ipcRenderer} = require('electron')
 toggleDevTools = function(){  ipcRenderer.send('ipcDevTool', 'ping')   }
