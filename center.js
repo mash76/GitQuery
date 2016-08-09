@@ -130,7 +130,23 @@
       var com2 = 'git log --oneline --follow --date=short --pretty=format:"%ad%x09%an" '  + filepath.trim()
       osRunCb(com2,
         function(ret_ary){
+
           $('#pane_file_desc').html( s120(ret_ary.length) + "commits " + s120(ret_ary[ ret_ary.length -1 ]) + ' - ' + s120(ret_ary[ 0 ]) + '<hr/>')
+
+          var names = []
+          for (var ind in ret_ary){
+              var name = ret_ary[ind].split(/\t/)[1].trim()
+              if (!names[name]) names[name] =1
+              else names[name]++
+          }
+          var str ="<table>"
+          for (var ind in names){
+              str += '<tr><td>' + ind + "</td><td>" +names[ind] + '</td></tr>'
+          }
+          str +="</table>"
+          $('#pane_file_desc').append(str + '<br/>')
+
+
       })
 
       //ファイル変更

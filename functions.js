@@ -22,16 +22,11 @@ sBold= function(str){ return '<span style="font-weight:bold;">'+str+'</span>'}
 
 path2pjname =function(full_path){ return full_path.replace(/\/.git/,'').replace(/.*\//,'') } // 後ろの.gitと 直前のスラッシュまでを除去
 path2dir =function(full_path){ return full_path.replace(/\/.git/,'') }
-
 url2link = function(line ){ return line.replace(/(http.*?) /, '<span onClick="osrun(\'open $1\')" class="btn">$1</span> ')}
 
 escapeHTML = function(html) { return $('<div>').text(html).html() }
+escapeRegExp = function(string) {  return string.replace(/([.*+?^=!:${}()|[\]\/\\])/g, "\\$1");}
 replaceTabSpc = function(str) { return str.replace(/ /ig,'&nbsp;').replace(/\t/ig,'&nbsp;&nbsp;&nbsp;&nbsp;')}
-
-escapeRegExp = function(string) {
-  return string.replace(/([.*+?^=!:${}()|[\]\/\\])/g, "\\$1");
-}
-
 matchRed = function(str,filter) { return str.replace(new RegExp('(' + filter.trim() + ')','ig'),sRed('$1') ) }
 
 

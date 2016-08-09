@@ -56,7 +56,7 @@
 
     <!-- list : local repositories -->
 
-    <div id="local_repo_pane" class="detail" >
+    <div id="local_repo_pane" class="detail hide" >
       <input type="text" id="filter_l_repo" size=20 />
       <div id="local_repo_list"></div>
     </div>
@@ -251,6 +251,7 @@
 
       window.jQuery = window.$ = require('./jquery-3.1.0.js')
 
+      const log =console.log
       const BrowserWindow = require('electron').remote.BrowserWindow // windowオブジェクト
       const path = require('path')
 

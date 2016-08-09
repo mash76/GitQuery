@@ -52,6 +52,7 @@ showBranchList = function() {
 toggleRepoList = function (){
 
   if ($('#local_repo_pane').css('display') == 'block' ){
+      console.log("toggle repo list")
       $('#local_repo_pane').slideUp(10)
   }else{
       $('#local_repo_pane').slideDown(10)
