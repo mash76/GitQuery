@@ -58,7 +58,10 @@ osRunCb = function(command , cb){
     if (error) console.log('error',error)
     if (stderr) console.log('stderr',stderr)
 
-    ret_ary = stdout.trim().split(/\n/)
+    ret_ary = []
+    if (stdout != "") ret_ary = stdout.trim().split(/\n/)
+
+
     if (typeof cb == "function") ret_ary = cb(ret_ary)
   });
 }

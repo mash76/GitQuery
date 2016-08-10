@@ -38,6 +38,8 @@ toggleDevTools = function(){  ipcRenderer.send('ipcDevTool', 'ping')   }
 toggleFullScreen = function(){  ipcRenderer.send('ipcFullScreen', 'ping')   }
 
 
+if (!fs.existsSync('userdata')) fs.mkdir('userdata')
+
 
 //enterなら候補1に確定、それ以外ならキー押すごとに検索
 $('#filter_l_repo').keyup(function(e){

@@ -31,26 +31,29 @@
 
       <div class="m5">
           <span onClick="toggleRepoList()" class="btn bold s120" >Repositories</span>
-          <span onClick="$('#gitinit_pane').slideToggle(10);" class="btn" >init</span>
-          <span onClick="$('#gitclone_pane').slideToggle(10);" class="btn" >clone</span>
+          <span onClick="showGitInit();" class="btn" >init</span>
+          <span onClick="showGitClone();" class="btn" >clone</span>
           <span id="his_repo"></span>
       </div>
     </div>
 
     <div id="gitinit_pane" class="detail hide">
         init<br/>
-        <input id="init_path" type="text" placeholder="init_path" />
+        <div id="init_recommend_path" ></div>
+        <input id="init_path" type="text" size="40" placeholder="init_path" />
         <input id="init_name" type="text" placeholder="project_name" />
-        <button onClick="osRunOut('git remote add  \'' + $('#remote_name').val() + '\' \'' + $('#remote_url').val() +'\'')" />add</button>
+        <button onClick="osRunOut('git init ' + $('#init_path').val(),'init_result')" />add</button>
+        <div id="init_result" type="text"  /></div>
     </div>
 
     <div id="gitclone_pane" class="detail hide">
         git crone from remote<br/>
-        <input id="gitclone_dir"  type="text" size=50 placeholder="clone_dir" />
-        <input id="gitclone_name" type="text" size=20 placeholder="clone_name" /><br/>
-        <input id="gitclone_url"  type="text" size=80 placeholder="clone_url" />
+        <div id="clone_recommend_path" ></div>
+        <input id="clone_dir"  type="text" size=50 placeholder="clone_dir" /><br/>
+        <input id="clone_url"  type="text" size=80 placeholder="clone_url" />
+        <div id="clone_result" type="text" /></div>
         <br/>
-                <button onClick="osRunOut('git clone add  \'' + $('#remote_name').val() + '\' \'' + $('#remote_url').val() +'\'')" />clone</button>
+                <button onClick="osRunOut('git -C ' + $('#clone_dir').val() + ' clone ' + $('#clone_url').val() ,'clone_result')" />clone</button>
         <br/>
     </div>
 
@@ -261,7 +264,7 @@
       current_repo_path = ""
       interval_log_filter = null // 入力完了からログ検索までの秒数
 
-      save_path = process.cwd()
+      save_path = process.cwd() + '/userdata'
       execOption = { encoding: 'utf8',
                         timeout: 0,
                         maxBuffer: 2000*1024,  //200*1024
@@ -270,7 +273,7 @@
                         env: null }
 
 
-      repo_btn_prev_push = "" //リポジトリ以下の母tなで直前push したもの
+      repo_btn_prev_push = "" //リポジトリ以下のBUTTONで直前push したもの
       top_filtered_repo = ""
 
     // You can also require other files to run in this process

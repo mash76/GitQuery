@@ -1,3 +1,52 @@
+
+//init 画面表示  レコメンドパスを指定 現在多くリポジトリのあるパスを優先
+showGitInit = function(){
+    if ($('#gitinit_pane').css('display') == 'block'){
+        $('#gitinit_pane').slideUp(10)
+    }else{
+        $('#gitinit_pane').slideDown(10)
+
+        var reco_paths = []
+        for (var ind in local_repos){
+            var path = path2dir(local_repos[ind]).replace(/(.*)(\/.*?)$/,'$1')
+            if (!reco_paths[path]) {
+              reco_paths[path] =1
+            }else{
+              reco_paths[path]++
+            }
+        }
+        $('#init_recommend_path').html('')
+        for (var ind in reco_paths){
+            $('#init_recommend_path').append('<a onClick="$(\'#init_path\').val($(this).text())" href="javascript:void(0);">' + ind + '</a> ' + reco_paths[ind] + '<br/>')
+        }
+    }
+}
+
+
+showGitClone = function(){
+    if ($('#gitclone_pane').css('display') == 'block'){
+        $('#gitclone_pane').slideUp(10)
+    }else{
+        $('#gitclone_pane').slideDown(10)
+
+        var reco_paths = []
+        for (var ind in local_repos){
+            var path = path2dir(local_repos[ind]).replace(/(.*)(\/.*?)$/,'$1')
+            if (!reco_paths[path]) {
+              reco_paths[path] = 1
+            }else{
+              reco_paths[path]++
+            }
+        }
+        $('#clone_recommend_path').html('')
+        for (var ind in reco_paths){
+            $('#clone_recommend_path').append('<a onClick="$(\'#clone_dir\').val($(this).text())" href="javascript:void(0);">' + ind + '</a> ' + reco_paths[ind] + '<br/>')
+        }
+    }
+}
+
+
+
 showGitmodules = function(){
   var git_command = 'cat ' + path2dir( current_repo_path ) + '/.gitmodules'
   osRunCb(git_command,
@@ -8,6 +57,37 @@ showGitmodules = function(){
       togglePaneCurrentRepoDesc('gitmodule')
   })
 }
+
+showRemoteBranches = function(){
+
+    //osRunOut('git branch -r','repo_out');
+    osRunCb('git branch -r',
+        function(ret_ary){
+
+          var dirs = []
+          for ( var ind in ret_ary){
+              if (ret_ary[ind].match(/\//)){
+                var path = ret_ary[ind].replace(/(.*?)(\/.*)/,'$1')
+                console.log(path)
+              }
+          }
+
+          $('#repo_out').html(sRed(git_command) + " " + sGray(ret_ary.length) + '<br/>')
+
+
+          $('#repo_out').append(ret_ary.join('<br/>'))
+
+
+
+        }
+
+
+
+    );
+
+}
+
+
 
 showStashList = function(){
   var com = 'git stash list'
@@ -211,5 +291,4 @@ setRepoPath = function(full_path) {
     //   }
     // )
     $('#repo_info').show() // 初回のrepo選択時は隠しているので
-
 }
