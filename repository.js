@@ -22,6 +22,14 @@ showGitInit = function(){
     }
 }
 
+gitInit = function(){
+  osRunOut('git init ' + $('#init_path').val(),'init_result')
+  console.log('inited')
+  findLocalRepos(true)
+}
+
+
+
 
 showGitClone = function(){
     if ($('#gitclone_pane').css('display') == 'block'){
@@ -45,8 +53,6 @@ showGitClone = function(){
     }
 }
 
-
-
 showGitmodules = function(){
   var git_command = 'cat ' + path2dir( current_repo_path ) + '/.gitmodules'
   osRunCb(git_command,
@@ -59,7 +65,6 @@ showGitmodules = function(){
 }
 
 showRemoteBranches = function(){
-
     //osRunOut('git branch -r','repo_out');
     osRunCb('git branch -r',
         function(ret_ary){
@@ -74,20 +79,10 @@ showRemoteBranches = function(){
 
           $('#repo_out').html(sRed(git_command) + " " + sGray(ret_ary.length) + '<br/>')
 
-
           $('#repo_out').append(ret_ary.join('<br/>'))
-
-
-
         }
-
-
-
     );
-
 }
-
-
 
 showStashList = function(){
   var com = 'git stash list'
@@ -129,9 +124,9 @@ showBranchList = function() {
     })
 }
 
-toggleRepoList = function (){
+toggleRepoList = function (action){  //action == up down
 
-  if ($('#local_repo_pane').css('display') == 'block' ){
+  if (action == "up" || $('#local_repo_pane').css('display') == 'block' ){
       console.log("toggle repo list")
       $('#local_repo_pane').slideUp(10)
   }else{
@@ -174,18 +169,20 @@ checkOut = function ( branch_name ){
     osRunOut(com,'repo_out' )
 }
 
-findLocalRepos = function(){
+// is_refresh 強制再読み込みフラグ
+findLocalRepos = function(is_refresh){ // search
   //保存ファイルがなければ取得
-
   file_fullpath = save_path　+ '/local_repos.txt'
-  if (fs.existsSync(file_fullpath) ){
-
+  console.log('is_refresh',is_refresh)
+  if (fs.existsSync(file_fullpath) && is_refresh != true ){
+    console.log('local_repos.txt')
     var text = fs.readFileSync(file_fullpath, 'utf-8');
     local_repos = JSON.parse(text)
-    toggleRepoList()
+    toggleRepoList("down")
     filterLocalRepos('')
 
   }else{
+    console.log('find')
     osRunCb("find ~ -type d -maxdepth 5 | egrep '/\.git$' ",
       function( ret_ary ){
           local_repos = ret_ary
@@ -196,13 +193,30 @@ findLocalRepos = function(){
                   return;
                }
             });
-          toggleRepoList()
+          toggleRepoList("down")
           filterLocalRepos('')
       }
     )
   }
 }
 
+
+
+delGit = function(path){
+    var com = 'rm -rf ' + path
+    //console.log(com);
+    osRunOut( com ,'repo_out')
+    findLocalRepos(true)
+
+}
+delDir = function(path){
+    var com = 'rm -rf ' + path2dir(path)
+    //console.log(com);
+    osRunOut( com ,'repo_out')
+    findLocalRepos(true)
+}
+
+//ローカルリポジトリ一覧を表示
 filterLocalRepos = function (filter){
 
   $('#local_repo_list').html("<table>");
@@ -220,7 +234,11 @@ filterLocalRepos = function (filter){
           fname_disp = fname_disp.replace(re,sRed('$1'))
       }
       $('#local_repo_list').prepend('<tr><td> <a href="javascript:void(0)" onClick="setRepoPath(\'' + full_path + '\')" class="btn s150">' +
-                                fname_disp + '</span> </td><td> &nbsp; ' + sGray(full_path.replace(fname,sGray2(fname)) ) + '</td></tr>')
+                                fname_disp + '</span> </td><td> ' +
+                                ' &nbsp; ' + sGray(full_path.replace(fname,sGray2(fname)) ) + '</td><td>' +
+                                '<span onClick="delGit(local_repos[' + ind + '])" class="btn">delGit</span> </td><td>' +
+                                '<span onClick="delDir(local_repos[' + ind + '])" class="btn">delDir</span> </td><td>' +
+                                '</td></tr>')
   }
   $('#local_repo_list').append("</table>");
 
