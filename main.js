@@ -13,14 +13,25 @@ let mainWindow
 function createWindow () {
   // Create the browser window.
   mainWindow = new BrowserWindow({width: 1200, height: 800})
-
   // and load the index.html of the app.
   mainWindow.loadURL(`file://${__dirname}/index.html`)
-
   // Open the DevTools.
   mainWindow.webContents.openDevTools()
-
   // Emitted when the window is closed.
+
+const {Menu} = require('electron')
+  var menu = Menu.buildFromTemplate([
+    {
+      label: 'GitQuery',
+      submenu: [
+        {label: 'Exit' ,click:app.quit}
+      ]
+    },
+  ]);
+  Menu.setApplicationMenu(menu);
+
+
+
   mainWindow.on('closed', function () {
     // Dereference the window object, usually you would store windows
     // in an array if your app supports multi windows, this is the time
@@ -28,6 +39,11 @@ function createWindow () {
     mainWindow = null
   })
 }
+
+
+
+
+
 
 const {ipcMain} = require('electron')
 // devtools トグル非同期

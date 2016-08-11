@@ -1,26 +1,25 @@
 
 //init 画面表示  レコメンドパスを指定 現在多くリポジトリのあるパスを優先
 showGitInit = function(){
-    if ($('#gitinit_pane').css('display') == 'block'){
-        $('#gitinit_pane').slideUp(10)
-    }else{
-        $('#gitinit_pane').slideDown(10)
+    toggleRepoList('gitinit_pane',"toggle")
 
-        var reco_paths = []
-        for (var ind in local_repos){
-            var path = path2dir(local_repos[ind]).replace(/(.*)(\/.*?)$/,'$1')
-            if (!reco_paths[path]) {
-              reco_paths[path] =1
-            }else{
-              reco_paths[path]++
-            }
-        }
-        $('#init_recommend_path').html('')
-        for (var ind in reco_paths){
-            $('#init_recommend_path').append('<a onClick="$(\'#init_path\').val($(this).text())" href="javascript:void(0);">' + ind + '</a> ' + reco_paths[ind] + '<br/>')
+    var reco_paths = []
+    for (var ind in local_repos){
+        var path = path2dir(local_repos[ind]).replace(/(.*)(\/.*?)$/,'$1')
+        if (!reco_paths[path]) {
+          reco_paths[path] =1
+        }else{
+          reco_paths[path]++
         }
     }
+    $('#init_recommend_path').html('')
+    for (var ind in reco_paths){
+        $('#init_recommend_path').append(
+          '<a onClick="$(\'#init_path\').val($(this).text())" href="javascript:void(0);">' +
+          ind + '</a> ' + reco_paths[ind] + '<br/>')
+    }
 }
+
 
 gitInit = function(){
   osRunOut('git init ' + $('#init_path').val(),'init_result')
@@ -28,30 +27,24 @@ gitInit = function(){
   findLocalRepos(true)
 }
 
-
-
-
 showGitClone = function(){
-    if ($('#gitclone_pane').css('display') == 'block'){
-        $('#gitclone_pane').slideUp(10)
-    }else{
-        $('#gitclone_pane').slideDown(10)
+    toggleRepoList('gitclone_pane',"toggle")
 
-        var reco_paths = []
-        for (var ind in local_repos){
-            var path = path2dir(local_repos[ind]).replace(/(.*)(\/.*?)$/,'$1')
-            if (!reco_paths[path]) {
-              reco_paths[path] = 1
-            }else{
-              reco_paths[path]++
-            }
-        }
-        $('#clone_recommend_path').html('')
-        for (var ind in reco_paths){
-            $('#clone_recommend_path').append('<a onClick="$(\'#clone_dir\').val($(this).text())" href="javascript:void(0);">' + ind + '</a> ' + reco_paths[ind] + '<br/>')
+    var reco_paths = []
+    for (var ind in local_repos){
+        var path = path2dir(local_repos[ind]).replace(/(.*)(\/.*?)$/,'$1')
+        if (!reco_paths[path]) {
+          reco_paths[path] = 1
+        }else{
+          reco_paths[path]++
         }
     }
+    $('#clone_recommend_path').html('')
+    for (var ind in reco_paths){
+        $('#clone_recommend_path').append('<a onClick="$(\'#clone_dir\').val($(this).text())" href="javascript:void(0);">' + ind + '</a> ' + reco_paths[ind] + '<br/>')
+    }
 }
+
 
 showGitmodules = function(){
   var git_command = 'cat ' + path2dir( current_repo_path ) + '/.gitmodules'
@@ -60,7 +53,7 @@ showGitmodules = function(){
       $('#repo_out').html(sRed(git_command) + " " + sGray(ret_ary.length) + '<br/>')
       $('#repo_out').append(ret_ary.join('<br/>'))
 
-      togglePaneCurrentRepoDesc('gitmodule')
+      togglePaneCurrentRepoDesc('gitmodule','down')
   })
 }
 
@@ -76,12 +69,10 @@ showRemoteBranches = function(){
                 console.log(path)
               }
           }
-
           $('#repo_out').html(sRed(git_command) + " " + sGray(ret_ary.length) + '<br/>')
-
           $('#repo_out').append(ret_ary.join('<br/>'))
         }
-    );
+    )
 }
 
 showStashList = function(){
@@ -91,46 +82,60 @@ showStashList = function(){
       $('#repo_out').html( sRed(com) + " " + sGray(ret_ary.length) + '<br/>' )
       $('#repo_out').append( replaceTabSpc(ret_ary.join('<br/>')) + '<br/>' )
       $('#stash_count').html(ret_ary.length)
-  });
+  })
 }
 
 showIgnore = function(){
-  $('#repo_out').html('')
+  $('#pane_ignore').html('')
 
   var git_command = 'cat .gitignore'
   osRunCb(git_command,
       function(ret_ary){
-          $('#repo_out').append(s150(sBold('ignore setting<br/>')) + sRed(git_command) + " " + sGray(ret_ary.length) + '<br/>' +
+          $('#pane_ignore').append(s150(sBold('ignore setting<br/>')) + sRed(git_command) + " " + sGray(ret_ary.length) + '<br/>' +
                                ret_ary.join('<br/>') + '<br/><br/>')
   })
   var com2 = "git status --ignored -s | grep '!!'"
   osRunCb(com2,
       function(ret_ary){
-          $('#repo_out').append(s150(sBold('ignored files<br/>')) + sRed(com2) + " " + sGray(ret_ary.length) + '<br/>' +
+          $('#pane_ignore').append(s150(sBold('ignored files<br/>')) + sRed(com2) + " " + sGray(ret_ary.length) + '<br/>' +
                                ret_ary.join('<br/>'))
-          togglePaneCurrentRepoDesc('ignore')
+          togglePaneCurrentRepoDesc('pane_ignore','down')
   })
 }
 
 showBranchList = function() {
     var git_command = 'git branch'
     osRunCb(git_command,function(ret_ary){
-          $('#repo_out').html(sRed(git_command) + " " + sGray(ret_ary.length) + '<br/>' )
+          $('#local_branch_details').html(sRed(git_command) + " " + sGray(ret_ary.length) + '<br/>' )
           for (var ind in ret_ary ){
               var v1 = ret_ary[ind].trim()
-              $('#repo_out').append('<span onclick="checkOut(\'' + v1 + '\')" class="btn">' + v1 +'</span><br/>')
+              $('#local_branch_details').append(
+                '<span onclick="checkOut(\'' + v1 + '\')" class="btn">' +
+                v1 +'</span><br/>')
           }
-          togglePaneCurrentRepoDesc('branch')
+          togglePaneCurrentRepoDesc('local_branch','down')
+
     })
 }
 
-toggleRepoList = function (action){  //action == up down
+toggleRepoList = function (key,action){  //action == up down toggle
 
-  if (action == "up" || $('#local_repo_pane').css('display') == 'block' ){
-      console.log("toggle repo list")
-      $('#local_repo_pane').slideUp(10)
+  if (!action.match(/up|down|toggle/)) alert('toggleRepoList action invalid' + action)
+
+  if (action == "toggle" ){
+    if ($('#' + key).css('display') == 'block' ){
+      action = "up"
+    }else{
+      action = "down"
+    }
+  }
+
+  $('div[pane=top]').slideUp(10)
+
+  if (action == "up" ){
+      $('#' + key).slideUp(10)
   }else{
-      $('#local_repo_pane').slideDown(10)
+      $('#' + key).slideDown(10)
       $('#filter_l_repo').val('')
       filterLocalRepos('')
       $('#filter_l_repo').focus()
@@ -138,19 +143,26 @@ toggleRepoList = function (action){  //action == up down
 }
 
 //個別のペーンを出す方式に
-togglePaneCurrentRepoDesc = function (key){
-  //初回なら閉じる
-  if (key == "") {
-      $('#repo_out').slideUp(10)
-      return
+togglePaneCurrentRepoDesc = function (key,action){
+
+  if (!action.match(/up|down|toggle/)) alert('togglePaneCurrentRepoDesc action invalid' + action)
+
+  if (action == "toggle" ){
+    if ($('#' + key).css('display') == 'block' ){
+      action = "up"
+    }else{
+      action = "down"
+    }
   }
+  $('div[pane=repo]').slideUp(10)
+
   //開いてる項目を押したら閉じる
-  if (repo_btn_prev_push == key && $('#repo_out').css('display') == 'block' ){
-      $('#repo_out').slideUp(10)
+  if (action == "up" ){
+      $('#' + key).slideUp(10)
   }else{
-      $('#repo_out').slideDown(10)
+      $('#' + key).slideDown(10)
   }
-  repo_btn_prev_push=key
+  repo_prev_push=key
 }
 
 setCurrentBranchName = function(){
@@ -178,7 +190,7 @@ findLocalRepos = function(is_refresh){ // search
     console.log('local_repos.txt')
     var text = fs.readFileSync(file_fullpath, 'utf-8');
     local_repos = JSON.parse(text)
-    toggleRepoList("down")
+    toggleRepoList('local_repo_pane',"down")
     filterLocalRepos('')
 
   }else{
@@ -193,7 +205,7 @@ findLocalRepos = function(is_refresh){ // search
                   return;
                }
             });
-          toggleRepoList("down")
+          toggleRepoList('local_repo_pane',"down")
           filterLocalRepos('')
       }
     )
@@ -269,7 +281,7 @@ setRepoPath = function(full_path) {
     showStashList();
 
     setCurrentBranchName()
-    togglePaneCurrentRepoDesc("") // close
+    togglePaneCurrentRepoDesc("local_branch",'up') // close
 
     //repository basic info
     osRunOneLine('git submodule status | wc -l', 'submodule_count')
