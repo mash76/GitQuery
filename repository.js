@@ -47,17 +47,27 @@ showGitClone = function(){
 
 
 showGitmodules = function(){
+
+  $('#submodule_details').html('')
+
   var git_command = 'cat ' + path2dir( current_repo_path ) + '/.gitmodules'
   osRunCb(git_command,
     function(ret_ary){
-      $('#repo_out').html(sRed(git_command) + " " + sGray(ret_ary.length) + '<br/>')
-      $('#repo_out').append(ret_ary.join('<br/>'))
-
-      togglePaneCurrentRepoDesc('gitmodule','down')
+      $('#submodule_details').append(sRed(git_command) + " " + sGray(ret_ary.length) + '<br/>')
+      $('#submodule_details').append(replaceTabSpc(ret_ary.join('<br/>')) +'<br/><br/>')
   })
+
+  var git_com2 = 'git submodule status'
+  osRunCb(git_com2,
+    function(ret_ary){
+      $('#submodule_details').append(sRed(git_com2) + " " + sGray(ret_ary.length) + '<br/>')
+      $('#submodule_details').append(replaceTabSpc(ret_ary.join('<br/>')) + '<br/><br/>')
+  })
+  togglePaneCurrentRepoDesc('pane_submodule','toggle')
 }
 
 showRemoteBranches = function(){
+
     //osRunOut('git branch -r','repo_out');
     osRunCb('git branch -r',
         function(ret_ary){
@@ -69,8 +79,8 @@ showRemoteBranches = function(){
                 console.log(path)
               }
           }
-          $('#repo_out').html(sRed(git_command) + " " + sGray(ret_ary.length) + '<br/>')
-          $('#repo_out').append(ret_ary.join('<br/>'))
+          $('#pane_re_branch').html(sRed(git_command) + " " + sGray(ret_ary.length) + '<br/>')
+          $('#pane_re_branch').append(ret_ary.join('<br/>'))
         }
     )
 }
@@ -79,8 +89,8 @@ showStashList = function(){
   var com = 'git stash list'
   osRunCb(com,function(ret_ary){
 
-      $('#repo_out').html( sRed(com) + " " + sGray(ret_ary.length) + '<br/>' )
-      $('#repo_out').append( replaceTabSpc(ret_ary.join('<br/>')) + '<br/>' )
+      $('#pane_stash').html( sRed(com) + " " + sGray(ret_ary.length) + '<br/>' )
+      $('#pane_stash').append( replaceTabSpc(ret_ary.join('<br/>')) + '<br/>' )
       $('#stash_count').html(ret_ary.length)
   })
 }
@@ -99,7 +109,7 @@ showIgnore = function(){
       function(ret_ary){
           $('#pane_ignore').append(s150(sBold('ignored files<br/>')) + sRed(com2) + " " + sGray(ret_ary.length) + '<br/>' +
                                ret_ary.join('<br/>'))
-          togglePaneCurrentRepoDesc('pane_ignore','down')
+          togglePaneCurrentRepoDesc('pane_ignore','toggle')
   })
 }
 
@@ -113,7 +123,7 @@ showBranchList = function() {
                 '<span onclick="checkOut(\'' + v1 + '\')" class="btn">' +
                 v1 +'</span><br/>')
           }
-          togglePaneCurrentRepoDesc('local_branch','down')
+          togglePaneCurrentRepoDesc('local_branch','toggle')
 
     })
 }

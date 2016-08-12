@@ -19,16 +19,16 @@ function createWindow () {
   mainWindow.webContents.openDevTools()
   // Emitted when the window is closed.
 
-const {Menu} = require('electron')
-  var menu = Menu.buildFromTemplate([
-    {
-      label: 'GitQuery',
-      submenu: [
-        {label: 'Exit' ,click:app.quit}
-      ]
-    },
-  ]);
-  Menu.setApplicationMenu(menu);
+// const {Menu} = require('electron')
+//   var menu = Menu.buildFromTemplate([
+//     {
+//       label: 'GitQuery',
+//       submenu: [
+//         {label: 'Exit' ,click:app.quit}
+//       ]
+//     },
+//   ]);
+//   Menu.setApplicationMenu(menu);
 
 
 

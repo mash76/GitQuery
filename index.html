@@ -83,21 +83,22 @@
         </span>
 
         <span onClick="showIgnore()" class="btn">ignore</span>
-        <span onClick="osRunOut('ls ' + current_repo_path + '/hooks','repo_out'); togglePaneCurrentRepoDesc('hooks','toggle')" class="btn">hooks</span>
-        <span onClick="osRunOut('git submodule status','repo_out'); togglePaneCurrentRepoDesc('hooks','toggle')" class="btn">submodule</span><span id="submodule_count" class="btn s120 bold">**submodule_count**</span>
+        <span onClick="osRunOut('ls ' + current_repo_path + '/hooks','pane_hooks'); togglePaneCurrentRepoDesc('pane_hooks','toggle')" class="btn">hooks</span>
 
-        <span onClick="showGitmodules()" class="btn">.gitmodules</span>
+        <span onClick="showGitmodules()" class="btn">submodule</span><span id="submodule_count" class="btn s120 bold">**submodule_count**</span>
 
-        <span onClick="showStashList(); togglePaneCurrentRepoDesc('stash','toggle')" class="btn">stash</span><span id="stash_count" class="btn s120 bold"></span>
-        <span onClick="osRunOut('cat ' + current_repo_path + '/config','repo_out'); togglePaneCurrentRepoDesc('config','toggle')" class="btn">config</span>
+        <span onClick="showStashList(); togglePaneCurrentRepoDesc('pane_stash','toggle')" class="btn">stash</span><span id="stash_count" class="btn s120 bold"></span>
+        <span onClick="osRunOut('cat ' + current_repo_path + '/config','pane_config'); togglePaneCurrentRepoDesc('pane_config','toggle')" class="btn">config</span>
 
         Remote
-        <span onClick="osRunOut('git remote -v','repo_out'); togglePaneCurrentRepoDesc('remote','toggle')" class="btn">repo</span>
+        <span onClick="osRunOut('git remote -v','pane_remote'); togglePaneCurrentRepoDesc('pane_remote','toggle')" class="btn">repo</span>
 
-        <span onClick="osRunOut('git branch -r','repo_out'); togglePaneCurrentRepoDesc('remotebranch','toggle')" >
+        <span onClick="osRunOut('git branch -r','pane_re_branch'); togglePaneCurrentRepoDesc('pane_re_branch','toggle')" >
           <span class="btn">branch</span><span id="remote_branch_ct" class="btn s120 bold">**remote_branch_ct**</span>
         </span>
         <br/>
+
+        <!-- pane repo -->
 
         <div id="local_branch" pane="repo" class="code hide detail" >
             new branch <span class="silver s80">git branch branchname01   </span><br/>
@@ -105,11 +106,30 @@
             <button onClick="osRunOut('git branch \'' + $('#branch_name').val() + '\'','local_branch_details'); showBranchList();" placeholder="git command" />add</button>
             <div id="local_branch_details" ></div>
         </div>
+        <div id="pane_stash" pane="repo" class="code hide detail" >
+        </div>
+        <div id="pane_hooks" pane="repo" class="code hide detail" >
+        </div>
+        <div id="pane_submodule" pane="repo" class="code hide detail" >
+          new submodule <span class="silver s80">git submodule url://.../.git name01 </span><br/>
+          <input id="submodule_url" type="text" placeholder="submodule_url" size="80"  />
+          <input id="submodule_name" type="text" placeholder="submodule_name" />
+          <button onClick="osRunOut('git submodule add \'' + $('#submodule_url').val() + '\' \'' + $('#submodule_name').val() + '\'','submodule_details'); " placeholder="git command" />add</button>
+          <div id="submodule_details" ></div>
+
+        </div>
+        <div id="pane_config" pane="repo" class="code hide detail" >
+        </div>
         <div id="pane_ignore" pane="repo" class="code hide detail" >
+        </div>
+        <div id="pane_remote" pane="repo" class="code hide detail" >
+        </div>
+        <div id="pane_re_branch" pane="repo" class="code hide detail" >
+        </div>
+        <div id="pane_reposize" pane="repo" class="detail code">
         </div>
 
 
-        <div id="repo_out" class="code hide detail" >repo_out</div>
 
 
         <!-- current branch -->
@@ -133,7 +153,7 @@
         <span onClick="makePaneStatus()"  class="btn">status</span>
         <span onClick="openPaneCenter('pane_gitcommand'); $('#git_usercommand').focus() "  class="btn ">git_command</span>
 
-        <!--  -->
+        <!-- pane center -->
 
         <div id="pane_gitcommand" pane="center" class="detail code">
             <input id="git_usercommand" type="text" size="70" placeholder="git command" />
@@ -142,31 +162,28 @@
             <div id="pane_gitcommand_detail"></div>
         </div>
 
-        <div id="pane_reposize" pane="center" class="detail code">
-          pane_reposize
-        </div>
 
-        <div id="pane_remote" pane="center" class="detail code">
-          pane_remote
-        </div>
 
         <div id="pane_status" pane="center" class="detail code">
           <span onClick="makePaneStatus(); openPaneCenter('pane_status'); " class="btn s150">status</span>
           <span onClick="osRunOut('git add .','pane_status_detail'); openPaneCenter('pane_status'); "  class="btn s150">add</span>
           <span onClick="osRunOut('git reset','pane_status_detail'); openPaneCenter('pane_status'); "  class="btn s150">reset</span>
           <span onClick="$('#pane_status_commit').slideToggle(10); "  class="btn s150">commit</span>
-          <span onClick="$('#pane_status_commit').slideToggle(10); "  class="btn s150">stash</span>
+          <span onClick="$('#pane_status_stash').slideToggle(10); "  class="btn s150">stash</span>
 
-          <div id="pane_status_commit" class="hide">
-              stash <span class="silver s80">git stash comment01 </span><br/>
-              <input id="stash_comment" type="text" placeholder="remote_name" />
-              <button onClick="osRunOut('git stash name \'' + $('#stash_comment').val() + '\'','pane_status') " placeholder="stash message" />stash</button>
-              <br/>
-              commit<br/>
-              <input id="commit_msg" type="text" placeholder="commit_msg name" />
-              <button onClick="osRunOut('git commit -m \'' + $('#commit_msg').val() + '\'','pane_status')" placeholder="commit message" />commit</button>
-              <br/>
-          </div>
+                    <div id="pane_status_commit" class="hide">
+
+                        commit<br/>
+                        <input id="commit_msg" type="text" placeholder="commit_msg name" />
+                        <button onClick="osRunOut('git commit -m \'' + $('#commit_msg').val() + '\'','pane_status')" placeholder="commit message" />commit</button>
+                        <br/>
+                    </div>
+                    <div id="pane_status_stash" class="hide">
+                        stash <span class="silver s80">git stash comment01 </span><br/>
+                        <input id="stash_comment" type="text" placeholder="remote_name" />
+                        <button onClick="osRunOut('git stash name \'' + $('#stash_comment').val() + '\'','pane_status') " placeholder="stash message" />stash</button>
+
+                    </div>
 
           <div id="pane_status_detail"></div>
         </div>
@@ -239,19 +256,12 @@
         <div id="real_files"></div>
         <div id="os_out" style="font-size:60%;font-color:silver;"></div>
 
-
-
         new remote <span class="silver s80">git remote add branchname01 https://..../.git   </span><br/>
         <input id="remote_name" type="text" placeholder="remote_name" />
         <input id="remote_url" type="text" placeholder="remote_url" />
         <button onClick="osRunOut('git remote add  \'' + $('#remote_name').val() + '\' \'' + $('#remote_url').val() +'\'')" placeholder="git command" />add</button>
         <br/>
-
-
-
-
     </div>
-
   </body>
 
   <script>

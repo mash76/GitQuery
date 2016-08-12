@@ -160,7 +160,7 @@
           var ntype = "File"
           if (stat.isDirectory()) ntype = "Dir "
 
-          $('#pane_file_filename').html( s150(sBold( sBlue(ntype) + " " + filepath)))
+          $('#pane_file_filename').html( s150( sBold( sBlue(ntype) + " " + filepath)))
           htmlstr = sRed(escapeHTML(git_command)) + " " + sGray(ret_ary.length) + '<br/>'
           $('#pane_file_detail_1').append( htmlstr + ret_ary.join('<br/>') + '<br/><br/>')
       })
