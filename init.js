@@ -15,22 +15,27 @@ osRunCb( git_command2, function(ret_ary){
 osRunCb('npm -g list', 'nodejs_info')
 
 //上の右
-var com2 = 'git config --global --list'
-osRunCb( com2 ,
-  function(ret_ary){
-    for (var ind in ret_ary ){
-        if (ret_ary[ind].match(/(name|email)/)) $('#g_user').append(ret_ary[ind].replace(/.*=/,'') + ' &nbsp; ')
-    }
-    $('#gitconf').append( sRed(com2) + '<br/>' + replaceTabSpc(ret_ary.join('<br/>')) + '<br/>' )
-  })
-
 var com3 = 'cat ~/.gitignore_global'
 osRunCb(com3,
   function(ret_ary){
       $('#gitconf').append( sRed(com3) + '<br/>' + replaceTabSpc(ret_ary.join('<br/>')) + '<br/>' )
   })
 
-findLocalRepos()
+var com2 = 'git config --global --list'
+osRunCb( com2 ,
+  function(ret_ary){
+    for (var ind in ret_ary ){
+        //userとemail表示
+        if (ret_ary[ind].match(/(name|email)/)) $('#g_user').append(ret_ary[ind].replace(/.*=/,'') + ' &nbsp; ')
+        //色をつける
+        ret_ary[ind] = ret_ary[ind].replace(/(.*)(=)(.*)/, sGrayBlue('$1') + '$2' + sGrayRed('$3'))
+    }
+    $('#gitconf').append( sRed(com2) + '<br/>' + ret_ary.join('<br/>') + '<br/>' )
+  })
+
+
+
+findLocalRepos('cache')
 
 // ipc関連初期化
 const {ipcRenderer} = require('electron')
@@ -38,8 +43,12 @@ toggleDevTools = function(){  ipcRenderer.send('ipcDevTool', 'ping')   }
 toggleFullScreen = function(){  ipcRenderer.send('ipcFullScreen', 'ping')   }
 
 
+//保存ファイル読み込み
 if (!fs.existsSync('userdata')) fs.mkdir('userdata')
 
+_G.his_repo = loadJson(_G.save_path　+ '/his_select_repo.txt')
+if (!_G.his_repo) _G.his_repo = {}
+showHisRepo()
 
 //enterなら候補1に確定、それ以外ならキー押すごとに検索
 $('#filter_l_repo').keyup(function(e){

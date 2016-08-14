@@ -10,6 +10,8 @@ s120= function(str){ return '<span style="font-size:120%;">'+str+'</span>'}
 s150= function(str){ return '<span style="font-size:150%;">'+str+'</span>'}
 s200= function(str){ return '<span style="font-size:200%;">'+str+'</span>'}
 
+sGrayRed=   function(str){ return '<span style="color:#bb4444;">'+str+'</span>'}
+sGrayBlue=  function(str){ return '<span style="color:#4444bb;">'+str+'</span>'}
 sRed=   function(str){ return '<span style="color:red;">'+str+'</span>'}
 sBlue=  function(str){ return '<span style="color:blue;">'+str+'</span>'}
 sPink=  function(str){ return '<span style="color:DeepPink;">'+str+'</span>'}
@@ -22,6 +24,7 @@ sBold= function(str){ return '<span style="font-weight:bold;">'+str+'</span>'}
 
 path2pjname =function(full_path){ return full_path.replace(/\/.git/,'').replace(/.*\//,'') } // 後ろの.gitと 直前のスラッシュまでを除去
 path2dir =function(full_path){ return full_path.replace(/\/.git/,'') }
+
 url2link = function(line ){ return line.replace(/(http.*?) /, '<span onClick="osrun(\'open $1\')" class="btn">$1</span> ')}
 
 escapeHTML = function(html) { return $('<div>').text(html).html() }
@@ -29,6 +32,29 @@ escapeRegExp = function(string) {  return string.replace(/([.*+?^=!:${}()|[\]\/\
 replaceTabSpc = function(str) { return str.replace(/ /ig,'&nbsp;').replace(/\t/ig,'&nbsp;&nbsp;&nbsp;&nbsp;')}
 matchRed = function(str,filter) { return str.replace(new RegExp('(' + filter.trim() + ')','ig'),sRed('$1') ) }
 
+saveJson = function(path,jsondata){
+
+
+  console.log("save " + path)
+  fs.writeFile(path, JSON.stringify(jsondata),
+    function (error) {
+       if (error != null) {
+          alert('error : ' + error)
+          return;
+       }
+       console.log('saved ' + path , JSON.stringify(jsondata))
+    })
+}
+
+loadJson = function(path){
+
+  console.log("load try " + path)
+  if (!fs.existsSync(path)) return false;
+  var text = fs.readFileSync(path, 'utf-8');
+  console.log('load ok' , text)
+  ret_ary = JSON.parse(text)
+  return ret_ary
+}
 
 //osコマンド非同期実行 結果出力不要のとき
 osrun = function(command , out_html_id){
@@ -62,12 +88,17 @@ osRunCb = function(command , cb){
     if (stdout != "") ret_ary = stdout.trim().split(/\n/)
 
 
-    if (typeof cb == "function") ret_ary = cb(ret_ary)
+    if (typeof cb == "function") ret_ary = cb(ret_ary,stderr)
   });
 }
 
-// 特定idのhtmlタグに出力したいとき
-osRunOut = function(command , out_html_id ){
+
+// 特定idのhtmlタグに出力したいとき   action = append replace
+osRunOut = function(command , out_html_id , action , cb){
+
+  if (!action.match(/(append|replace)/)) alert('osRunOut action:' + action)
+  if (action == 'replace') $('#' + out_html_id ).html('')
+
   console.log(command)
   exec(command,execOption, (error, stdout, stderr) => {
 
@@ -75,11 +106,11 @@ osRunOut = function(command , out_html_id ){
     if (stderr) console.log('stderr',stderr)
 
     var ret_ary = escapeHTML(stdout).split(/\n/)
-    $('#' + out_html_id).html(sRed(escapeHTML(command)) + " " + sGray(ret_ary.length) + '<br/>')
-    $('#' + out_html_id).append(replaceTabSpc(ret_ary.join('<br/>')))
-
+    $('#' + out_html_id).append(sRed(escapeHTML(command)) + " " + sGray(ret_ary.length) + '<br/>')
+    $('#' + out_html_id).append( replaceTabSpc(ret_ary.join('<br/>')))
     $('#' + out_html_id).append( sRed(stderr.replace(/\n/g,'<br/>')))
 
+    if (typeof cb == "function") cb()
   });
 }
 
