@@ -32,45 +32,44 @@ escapeRegExp = function(string) {  return string.replace(/([.*+?^=!:${}()|[\]\/\
 replaceTabSpc = function(str) { return str.replace(/ /ig,'&nbsp;').replace(/\t/ig,'&nbsp;&nbsp;&nbsp;&nbsp;')}
 matchRed = function(str,filter) { return str.replace(new RegExp('(' + filter.trim() + ')','ig'),sRed('$1') ) }
 
+// json をテキスト保存  [] でなく {} で初期化すること
 saveJson = function(path,jsondata){
-
-
-  console.log("save " + path)
+  clog("save " + path)
   fs.writeFile(path, JSON.stringify(jsondata),
     function (error) {
        if (error != null) {
           alert('error : ' + error)
           return;
        }
-       console.log('saved ' + path , JSON.stringify(jsondata))
+       clog('saved ' + path , JSON.stringify(jsondata))
     })
 }
 
 loadJson = function(path){
 
-  console.log("load try " + path)
+  clog("load try " + path)
   if (!fs.existsSync(path)) return false;
   var text = fs.readFileSync(path, 'utf-8');
-  console.log('load ok' , text)
+  clog('load ok' , text)
   ret_ary = JSON.parse(text)
   return ret_ary
 }
 
 //osコマンド非同期実行 結果出力不要のとき
 osrun = function(command , out_html_id){
-  console.log(command)
+  clog(command)
   exec(command,execOption, (error, stdout, stderr) => {
-    if (error) console.log('error',error)
-    if (stderr) console.log('stderr',stderr)
+    if (error) clog('error',error)
+    if (stderr) clog('stderr',stderr)
   });
 }
 //一行だけ返す sqlを返さない。一行だけ、項目だけ出したい時に
 osRunOneLine = function(command , out_html_id){
-  console.log(command)
+  clog(command)
   exec(command,execOption, (error, stdout, stderr) => {
 
-    if (error) console.log('error',error)
-    if (stderr) console.log('stderr',stderr)
+    if (error) clog('error',error)
+    if (stderr) clog('stderr',stderr)
 
     $('#' + out_html_id).html(stdout.trim())
   });
@@ -78,11 +77,11 @@ osRunOneLine = function(command , out_html_id){
 
 //独自のコールバックで処理したいとき
 osRunCb = function(command , cb){
-  console.log(command)
+  clog(command)
   exec(command,execOption, (error, stdout, stderr) => {
 
-    if (error) console.log('error',error)
-    if (stderr) console.log('stderr',stderr)
+    if (error) clog('error',error)
+    if (stderr) clog('stderr',stderr)
 
     ret_ary = []
     if (stdout != "") ret_ary = stdout.trim().split(/\n/)
@@ -99,11 +98,11 @@ osRunOut = function(command , out_html_id , action , cb){
   if (!action.match(/(append|replace)/)) alert('osRunOut action:' + action)
   if (action == 'replace') $('#' + out_html_id ).html('')
 
-  console.log(command)
+  clog(command)
   exec(command,execOption, (error, stdout, stderr) => {
 
-    if (error) console.log('error',error)
-    if (stderr) console.log('stderr',stderr)
+    if (error) clog('error',error)
+    if (stderr) clog('stderr',stderr)
 
     var ret_ary = escapeHTML(stdout).split(/\n/)
     $('#' + out_html_id).append(sRed(escapeHTML(command)) + " " + sGray(ret_ary.length) + '<br/>')
@@ -130,4 +129,20 @@ diffColor = function (ary){
        if (line[0]=='+') ary[ind] = sGreen(line)
     }
     return ary
+}
+
+//textファイルを5個作る
+debugAddText = function (){
+    var utime = new Date().getTime()
+    for (var ind in [1,2,3,4,5]){
+      osRunOut("echo 'abcde' > " + utime + "_" + ind + ".txt",'pane_debug_detail','replace')
+    }
+}
+// txtファイルを　1/2の確率で 中身書き足し
+debugEditText = function (){
+  osRunOut("ls *.txt | perl -lne 'print if rand(10) > 5;' | while read LINE; do echo 'aaaa'>>${LINE}; done ",'pane_debug_detail','replace'  )
+}
+// txtファイルを3割の確率で削除
+debugDelText = function (){
+  osRunOut("ls *.txt | perl -lne 'print if rand(10) > 7;' | xargs rm ",'pane_debug_detail','replace'  )
 }

@@ -72,7 +72,7 @@
         <span id="current_repo_size" onClick="osRunOut('du -d1 -h ','pane_reposize','replace'); togglePaneCurrentRepoDesc('pane_reposize','toggle')" class="bold s150 btn">**current_repo_size**</span>
 
         <span id="current_repo_path" class="gray">**current_repo_path**</span>
-        <span onClick="osrun('open ' + path2dir(current_repo_path) )"  class="btn s80">finder</span>
+        <span onClick="osrun('open ' + path2dir(_G.current_repo_path) )"  class="btn s80">finder</span>
 
         <br/>
 
@@ -83,10 +83,13 @@
         <span onClick="showIgnore()" class="btn">ignore</span>
         <span onClick="osRunOut('ls ' + _G.current_repo_path + '/hooks','pane_hooks','replace'); togglePaneCurrentRepoDesc('pane_hooks','toggle')" class="btn">hooks</span>
 
-        <span onClick="showGitmodules('replace')" class="btn">submodule</span><span id="submodule_count" class="btn s120 bold">**submodule_count**</span>
+        <span onClick="showGitmodules('replace'); togglePaneCurrentRepoDesc('pane_submodule','toggle')" class="btn">submodule</span><span id="submodule_count" class="btn s120 bold">**submodule_count**</span>
 
         <span onClick="showStashList(); togglePaneCurrentRepoDesc('pane_stash','toggle')" class="btn">stash</span><span id="stash_count" class="btn s120 bold"></span>
         <span onClick="showConfig(); togglePaneCurrentRepoDesc('pane_config','toggle')" class="btn">config</span>
+        <span onClick="showDotGit(); togglePaneCurrentRepoDesc('pane_dotgitfiles','toggle')" class="btn">.git-files</span>
+
+
 
         <!-- remote -->
 
@@ -125,6 +128,12 @@
         </div>
         <div id="pane_config" pane="repo" class="code hide detail" >
         </div>
+
+        <div id="pane_dotgitfiles" pane="repo" class="code hide detail" >
+          <span onClick="$('div[name=file_detail]').toggle();" class="btn">toggle中身</span>
+          <div id="dotgitfiles_detail" class="underline"> </div>
+        </div>
+
         <div id="pane_ignore" pane="repo" class="code hide detail" >
         </div>
         <div id="pane_remote" pane="repo" class="code hide detail" >
@@ -141,29 +150,24 @@
         <div id="pane_reposize" pane="repo" class="detail code">
         </div>
 
-
-
-
         <!-- current branch -->
 
         <span id="c_branch" class="s170 bold">**c_branch**</span>
         <span id="latest_commit" class="s80 gray">97f809b  4 minutes ago </span>
 
           <a href="javascript:void(0)" onClick="makePaneFilelist(''); openPaneCenter('pane_filelist');" >
-            files<span id="br_files_ct" class="bold s150">**br_files_ct**</span>
+              files<span id="br_files_ct" class="bold s150">**br_files_ct**</span>
           </a>
           <a href="javascript:void(0)" onClick="makePaneLog('') " >
-            commit<span id="br_commit_ct" class="bold s150">**br_commit_ct**</span>
+              commit<span id="br_commit_ct" class="bold s150">**br_commit_ct**</span>
           </a>
-
-
-
-           <a href="javascript:void(0)" onClick="makePaneUser(''); openPaneCenter('pane_user');" >
-             comitter<span id="br_member_ct" class="bold s150">**br_member_ct**</span>
-           </a>
+          <a href="javascript:void(0)" onClick="makePaneUser(''); openPaneCenter('pane_user');" >
+              comitter<span id="br_member_ct" class="bold s150">**br_member_ct**</span>
+          </a>
 
         <span onClick="makePaneStatus('replace')"  class="btn">status</span>
         <span onClick="openPaneCenter('pane_gitcommand'); $('#git_usercommand').focus() "  class="btn ">git_command</span>
+        <span onClick="openPaneCenter('pane_debug'); "  class="btn ">debug</span>
 
         <!-- pane center -->
 
@@ -178,21 +182,21 @@
           <span onClick="makePaneStatus('replace'); openPaneCenter('pane_status'); " class="btn s150">status</span>
           <span onClick="gitAdd(); openPaneCenter('pane_status'); "  class="btn s150">add</span>
           <span onClick="gitReset(); openPaneCenter('pane_status'); "  class="btn s150">reset</span>
-          <span onClick="$('#pane_status_commit').slideToggle(10); "  class="btn s150">commit</span>
+          <span onClick="$('#pane_status_commit').slideToggle(10);"  class="btn s150">commit</span>
           <span onClick="$('#pane_status_stash').slideToggle(10); "  class="btn s150">stash</span>
 
-                    <div id="pane_status_commit" class="hide">
-                        commit<br/>
-                        <input id="commit_msg" type="text" placeholder="commit_msg name" />
-                        <button onClick="osRunOut('git commit -m \'' + $('#commit_msg').val() + '\'','pane_status_detail','replace')" placeholder="commit message" />commit</button>
-                        <br/>
-                    </div>
-                    <div id="pane_status_stash" class="hide">
-                        stash <span class="silver s80">git stash comment01 </span><br/>
-                        <input id="stash_comment" type="text" placeholder="remote_name" />
-                        <button onClick="osRunOut('git stash name \'' + $('#stash_comment').val() + '\'','pane_status_detail','replace') " placeholder="stash message" />stash</button>
+          <div id="pane_status_commit" class="hide">
+              commit<br/>
+              <input id="commit_msg" type="text" placeholder="commit_msg name" />
+              <button onClick="osRunOut('git commit -m \'' + $('#commit_msg').val() + '\'','pane_status_detail','replace'); makePaneStatus('append');" placeholder="commit message" />commit</button>
+              <br/>
+          </div>
+          <div id="pane_status_stash" class="hide">
+              stash <span class="silver s80">git stash comment01 </span><br/>
+              <input id="stash_comment" type="text" placeholder="remote_name" />
+              <button onClick="osRunOut('git stash save \'' + $('#stash_comment').val() + '\'','pane_status_detail','replace',function(){ makePaneStatus('append') }); " />stash</button>
 
-                    </div>
+          </div>
 
           <div id="pane_status_detail"></div>
         </div>
@@ -249,19 +253,12 @@
         <div id="pane_commit" pane="center" class="detail code">
 
         </div>
-
-        <div class="m10">
-            current repo info
-            <span onClick="findLocalRepos('cache')" class="btn s80">files</span>
-            <div id="c_repo_info" class="underline s80"> </div>
-
-            <span onClick="$('div[name=file_detail]').toggle();" class="btn">toggle</span>
-            btn
-            <br/>
-            <span id="c_repo_pane" >c_repo_pane</span>
+        <div id="pane_debug" pane="center" class="detail code">
+            <span onClick="debugAddText()" class="btn" >addTxtFile</span>
+            <span onClick="debugEditText()" class="btn" >editTxtFile</span>
+            <span onClick="debugDelText()" class="btn" >delTxtFile</span>
+            <div id="pane_debug_detail"></div>
         </div>
-
-
 
         <div id="real_files"></div>
         <div id="debug_out" style="detail"></div>
@@ -276,7 +273,7 @@
 
       window.jQuery = window.$ = require('./jquery-3.1.0.js')
 
-      const log =console.log
+      const clog =console.log
       const BrowserWindow = require('electron').remote.BrowserWindow // windowオブジェクト
       const path = require('path')
 
@@ -295,10 +292,8 @@
                         cwd: '',
                         env: null }
 
-
       repo_btn_prev_push = "" //リポジトリ以下のBUTTONで直前push したもの
       repo_prev_push = ""
-
       top_filtered_repo = ""
 
     // You can also require other files to run in this process

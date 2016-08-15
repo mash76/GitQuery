@@ -3,6 +3,7 @@
 showGitInit = function(){
     toggleRepoList('gitinit_pane',"toggle")
 
+    // 複数リポジトリのあるフォルダは その人の作業フォルダであろう
     var reco_paths = []
     for (var ind in _G.local_repos){
         var path = path2dir(_G.local_repos[ind]).replace(/(.*)(\/.*?)$/,'$1')
@@ -21,20 +22,22 @@ showGitInit = function(){
 }
 
 showConfig = function(){
-    osRunCb('cat ' + _G.current_repo_path + '/config',
+    var command = 'cat ' + _G.current_repo_path + '/config'
+    osRunCb(command,
       function(ret_ary){
 
           for (var ind in ret_ary){
               ret_ary[ind] = ret_ary[ind].replace(/(.*)(=)(.*)/, sGrayBlue('$1') + '$2' + sGrayRed('$3'))
           }
-          $('#pane_config').html('<pre class="code m0">' + ret_ary.join('<br/>') + '</pre>')
+          $('#pane_config').html(sRed(escapeHTML(command)) + " " + sGray(ret_ary.length) + '<br/>')
+          $('#pane_config').append('<pre class="code m0">' + ret_ary.join('<br/>') + '</pre>')
       }
     )
 }
 
 gitInit = function(){
   osRunOut('git init ' + $('#init_path').val(),'init_result')
-  console.log('inited')
+  clog('inited')
   findLocalRepos('refresh')
 }
 
@@ -93,7 +96,7 @@ showGitmodules = function(action){ // append replace
       $('#submodule_details').append(sRed(git_com2) + " " + sGray(ret_ary.length) + '<br/>')
       $('#submodule_details').append(replaceTabSpc(ret_ary.join('<br/>')) + '<br/><br/>')
   })
-  togglePaneCurrentRepoDesc('pane_submodule','down')
+  //togglePaneCurrentRepoDesc('pane_submodule','down')
 }
 
 showRemoteBranches = function(){
@@ -106,7 +109,7 @@ showRemoteBranches = function(){
           for ( var ind in ret_ary){
               if (ret_ary[ind].match(/\//)){
                 var path = ret_ary[ind].replace(/(.*?)(\/.*)/,'$1')
-                console.log(path)
+                clog(path)
               }
           }
           $('#pane_re_branch').html(sRed(git_command) + " " + sGray(ret_ary.length) + '<br/>')
@@ -225,7 +228,11 @@ setCurrentBranchName = function(){
 checkOut = function ( branch_name ){
     $('#repo_out').html('')
     var com = "git checkout '" + branch_name + "'"
-    osRunOut(com,'repo_out' )
+    osRunOut(com,'repo_out','append',
+      function(){
+          setRepoPath(_G.current_repo_path)
+      }
+   )
 }
 
 // is_refresh 強制再読み込みフラグ
@@ -235,16 +242,16 @@ findLocalRepos = function(is_refresh){ // search
 
   //保存ファイルがなければ取得
   var file_fullpath = _G.save_path　+ '/local_repos.txt'
-  console.log('is_refresh',is_refresh)
+  clog('is_refresh',is_refresh)
   _G.local_repos = loadJson(file_fullpath)
 
   if (_G.local_repos && is_refresh == 'cache' ){
-    console.log('get from file local repos ',file_fullpath,_G.local_repos)
+    clog('get from file local repos ',file_fullpath,_G.local_repos)
     $('#repo_count').html(_G.local_repos.length)
     toggleRepoList('local_repo_pane',"down")
     filterLocalRepos('')
   }else{
-    console.log('find')
+    clog('find')
     osRunCb("find ~ -type d -maxdepth 5 | egrep '/\.git$' ",
       function( ret_ary ){
           _G.local_repos = ret_ary
@@ -311,7 +318,7 @@ showHisRepo = function(){
 }
 
 gitRemoteRm = function (repo_name){
-  console.log('gitRemoteRm ' + repo_name)
+  clog('gitRemoteRm ' + repo_name)
   command = "git remote rm '" + repo_name + "'"
   osRunCb(command,
   function(ret_ary){
@@ -336,7 +343,7 @@ showRemoteRepos = function(action){ // append replace
     if (!action.match(/(append|replace)/)) alert('showRemoteRepos action:' + action)
     if (action == 'replace') $('#pane_remote_detail' ).html('')
 
-    console.log("showRemoteRepos")
+    clog("showRemoteRepos")
     command = 'git remote -v'
     osRunCb(command,
         function(ret_ary){
@@ -353,9 +360,34 @@ showRemoteRepos = function(action){ // append replace
     )
 }
 
+showDotGit = function(){
+
+  //ファイル一覧
+  var command = 'ls ' + _G.current_repo_path
+  osRunCb( command,
+    function(ret_ary){
+        $('#dotgitfiles_detail').html("")
+        $('#dotgitfiles_detail').append(sRed(escapeHTML(command)) + " " + sGray(ret_ary.length) + '<br/>')
+
+        for (var ind in ret_ary){
+            file_disp = ret_ary[ind]
+            var stat = fs.statSync(_G.current_repo_path + '/' + file_disp )
+            if (stat.isDirectory()) file_disp = sBlue(file_disp)
+            $('#dotgitfiles_detail').append(file_disp + '<br/>')
+
+            if (stat.isFile()) {
+                var ret = fs.readFileSync (_G.current_repo_path + '/' + file_disp)
+                ret = ret.toString().substring(0,500).replace(/\n/g,'<br/>')
+                $('#dotgitfiles_detail').append('<div name="file_detail" class="m10 hide">' + s60(sSilver(ret)) + '</div>')
+            }
+        }
+    }
+  )
+}
+
 // set local repository
 setRepoPath = function(full_path) {
-    console.log(full_path)
+    clog(full_path)
 
     _G.current_repo_path = full_path
     execOption.cwd = path2dir(_G.current_repo_path)
@@ -369,6 +401,8 @@ setRepoPath = function(full_path) {
     showHisRepo()
 
     showStashList()
+
+    //ブランチ
 
     setCurrentBranchName()
     togglePaneCurrentRepoDesc("local_branch",'up') // close
@@ -402,23 +436,6 @@ setRepoPath = function(full_path) {
 
     makePaneLog('')
 
-    //ファイル一覧
-    // osRunCb('ls ' + full_path ,
-    //   function(ret_ary){
-    //       $('#c_repo_pane').html("")
-    //       for (var ind in ret_ary){
-    //           file_disp = ret_ary[ind]
-    //           var stat = fs.statSync(full_path + '/' + file_disp )
-    //           if (stat.isDirectory()) file_disp = sBlue(file_disp)
-    //           $('#c_repo_pane').append(file_disp + '<br/>')
-    //
-    //           if (stat.isFile()) {
-    //               var ret = fs.readFileSync (full_path + '/' + file_disp)
-    //               ret = ret.toString().substring(0,500).replace(/\n/g,'<br/>')
-    //               $('#c_repo_pane').append('<div name="file_detail" class="m10 hide">' + s60(sSilver(ret)) + '</div>')
-    //           }
-    //       }
-    //   }
-    // )
+    showDotGit()
     $('#repo_info').show() // 初回のrepo選択時は隠しているので
 }
