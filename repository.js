@@ -36,7 +36,8 @@ showConfig = function(){
 }
 
 gitInit = function(){
-  osRunOut('git init ' + $('#init_path').val(),'init_result')
+
+  osRunOut('git init ' + $('#init_path').val(),'init_result','replace')
   console.log('inited')
   findLocalRepos('refresh')
 }
@@ -145,25 +146,29 @@ showIgnore = function(){
   })
 }
 
-showBranchList = function(action) {
+showBranchList = function(action,treeOrList) {
 
   if (!action.match(/(append|replace)/)) alert('showBranchList action:' + action)
   if (action == 'replace') $('#local_branch_details' ).html('')
 
+  if (!treeOrList.match(/(tree|list)/)) alert('showBranchList treeOrList:' + treeOrList)
+
     var git_command = 'git branch'
+    if (treeOrList == 'tree') git_command = 'git show-branch'
+
     osRunCb(git_command,function(ret_ary){
           $('#local_branch_details').append(sRed(git_command) + " " + sGray(ret_ary.length) + '<br/>' )
-          for (var ind in ret_ary ){
-              var v1 = ret_ary[ind].trim()
-              $('#local_branch_details').append(
-                '<span onclick="checkOut(\'' + v1 + '\')" class="btn">' +
-                v1 +'</span><br/>')
+
+          if (treeOrList == 'list') {
+              for (var ind in ret_ary ){
+                  var v1 = ret_ary[ind].trim()
+                  $('#local_branch_details').append(
+                    '<span onclick="checkOut(\'' + v1 + '\')" class="btn">' +
+                    v1 +'</span><br/>')
+              }
+          }else{
+              $('#local_branch_details').append('<pre class="code">' + ret_ary.join("\n") + '</pre>')
           }
-          var act = 'toggle'
-          if (action == 'append') act = 'down'
-
-          togglePaneCurrentRepoDesc('local_branch',act)
-
     })
 }
 
@@ -421,6 +426,7 @@ setRepoPath = function(full_path) {
     osRunOneLine("du -d0 -h | perl -pne 's/(\\t.*)//' " , 'current_repo_size') //タブ以降の . を削除
     osRunOneLine('git ls-files | wc -l', 'br_files_ct')
     osRunOneLine('git log --oneline | wc -l', 'br_commit_ct')
+
     //osRunOneLine('git log --date=relative --pretty=format:"%ad  : %h  : %an : %s" | head -1', 'latest_commit')
     osRunOneLine('git log --date=relative --pretty=format:"%ad" | head -1', 'latest_commit')
     osRunOneLine('git log --pretty=format:"%an" | sort | uniq | wc -l', 'br_member_ct')
