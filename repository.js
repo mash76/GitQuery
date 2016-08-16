@@ -36,7 +36,7 @@ showConfig = function(){
 }
 
 gitInit = function(){
-  osRunOut('git init ' + $('#init_path').val(),'init_result')
+  osRunOut('git init ' + $('#init_path').val(),'init_result','replace')
   clog('inited')
   findLocalRepos('refresh')
 }
@@ -266,12 +266,12 @@ findLocalRepos = function(is_refresh){ // search
 
 delGit = function(path){
     var com = 'rm -rf ' + path
-    osRunOut( com ,'repo_out')
+    osRunOut( com ,'repo_out','replace')
     findLocalRepos('refresh')
 }
 delDir = function(path){
     var com = 'rm -rf ' + path2dir(path)
-    osRunOut( com ,'repo_out')
+    osRunOut( com ,'repo_out','replace')
     findLocalRepos('refresh')
 }
 

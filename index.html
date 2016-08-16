@@ -112,6 +112,8 @@
             new branch <span class="silver s80">git branch branchname01   </span><br/>
             <input id="branch_name" type="text" placeholder="branch_name" />
             <button onClick="osRunOut('git branch \'' + $('#branch_name').val() + '\'','local_branch_details','replace',function(){ showBranchList('append') }); ;" />add</button>
+            <span id="lbranch_" onClick="showBranchList('append')" class="btn">list</span>
+            <span id="lbranch_" onClick="showBranchList('append')" class="btn">tree</span>            
             <div id="local_branch_details" ></div>
         </div>
         <div id="pane_stash" pane="repo" class="code hide detail" >
@@ -195,14 +197,16 @@
               stash <span class="silver s80">git stash comment01 </span><br/>
               <input id="stash_comment" type="text" placeholder="remote_name" />
               <button onClick="osRunOut('git stash save \'' + $('#stash_comment').val() + '\'','pane_status_detail','replace',function(){ makePaneStatus('append') }); " />stash</button>
-
           </div>
 
           <div id="pane_status_detail"></div>
         </div>
 
         <div id="pane_file" pane="center" class="detail code">
-            <input type="text" id="filter_file" value="" size=20 >
+            File or Dir history<br/>
+            <input type="text" id="filter_file" value="" size=60 placeholder="set path" >
+            <button onClick="makePaneFileStat($('#filter_file').val()) " />stash</button>
+
             <div id="pane_file_filename" >  </div>
             <div id="pane_file_desc" >  </div>
             <div id="pane_file_detail_1" >  </div>
@@ -254,9 +258,7 @@
 
         </div>
         <div id="pane_debug" pane="center" class="detail code">
-            <span onClick="debugAddText()" class="btn" >addTxtFile</span>
-            <span onClick="debugEditText()" class="btn" >editTxtFile</span>
-            <span onClick="debugDelText()" class="btn" >delTxtFile</span>
+            <span onClick="debugEditAndCommit()" class="btn" >edit&Commit</span>
             <div id="pane_debug_detail"></div>
         </div>
 
