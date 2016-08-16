@@ -37,7 +37,7 @@ showConfig = function(){
 
 gitInit = function(){
   osRunOut('git init ' + $('#init_path').val(),'init_result')
-  clog('inited')
+  console.log('inited')
   findLocalRepos('refresh')
 }
 
@@ -101,7 +101,6 @@ showGitmodules = function(action){ // append replace
 
 showRemoteBranches = function(){
 
-    //osRunOut('git branch -r','repo_out');
     osRunCb('git branch -r',
         function(ret_ary){
 
@@ -109,7 +108,7 @@ showRemoteBranches = function(){
           for ( var ind in ret_ary){
               if (ret_ary[ind].match(/\//)){
                 var path = ret_ary[ind].replace(/(.*?)(\/.*)/,'$1')
-                clog(path)
+                console.log(path)
               }
           }
           $('#pane_re_branch').html(sRed(git_command) + " " + sGray(ret_ary.length) + '<br/>')
@@ -226,9 +225,9 @@ setCurrentBranchName = function(){
 }
 
 checkOut = function ( branch_name ){
-    $('#repo_out').html('')
+    $('#debug_out').html('')
     var com = "git checkout '" + branch_name + "'"
-    osRunOut(com,'repo_out','append',
+    osRunOut(com,'debug_out','append',
       function(){
           setRepoPath(_G.current_repo_path)
       }
@@ -242,16 +241,16 @@ findLocalRepos = function(is_refresh){ // search
 
   //保存ファイルがなければ取得
   var file_fullpath = _G.save_path　+ '/local_repos.txt'
-  clog('is_refresh',is_refresh)
+  console.log('is_refresh',is_refresh)
   _G.local_repos = loadJson(file_fullpath)
 
   if (_G.local_repos && is_refresh == 'cache' ){
-    clog('get from file local repos ',file_fullpath,_G.local_repos)
+    console.log('get from file local repos ',file_fullpath,_G.local_repos)
     $('#repo_count').html(_G.local_repos.length)
     toggleRepoList('local_repo_pane',"down")
     filterLocalRepos('')
   }else{
-    clog('find')
+    console.log('find')
     osRunCb("find ~ -type d -maxdepth 5 | egrep '/\.git$' ",
       function( ret_ary ){
           _G.local_repos = ret_ary
@@ -266,12 +265,12 @@ findLocalRepos = function(is_refresh){ // search
 
 delGit = function(path){
     var com = 'rm -rf ' + path
-    osRunOut( com ,'repo_out')
+    osRunOut( com ,'debug_out','replace')
     findLocalRepos('refresh')
 }
 delDir = function(path){
     var com = 'rm -rf ' + path2dir(path)
-    osRunOut( com ,'repo_out')
+    osRunOut( com ,'debug_out','replace')
     findLocalRepos('refresh')
 }
 
@@ -318,7 +317,7 @@ showHisRepo = function(){
 }
 
 gitRemoteRm = function (repo_name){
-  clog('gitRemoteRm ' + repo_name)
+  console.log('gitRemoteRm ' + repo_name)
   command = "git remote rm '" + repo_name + "'"
   osRunCb(command,
   function(ret_ary){
@@ -343,7 +342,7 @@ showRemoteRepos = function(action){ // append replace
     if (!action.match(/(append|replace)/)) alert('showRemoteRepos action:' + action)
     if (action == 'replace') $('#pane_remote_detail' ).html('')
 
-    clog("showRemoteRepos")
+    console.log("showRemoteRepos")
     command = 'git remote -v'
     osRunCb(command,
         function(ret_ary){
@@ -387,7 +386,7 @@ showDotGit = function(){
 
 // set local repository
 setRepoPath = function(full_path) {
-    clog(full_path)
+    console.log(full_path)
 
     _G.current_repo_path = full_path
     execOption.cwd = path2dir(_G.current_repo_path)
@@ -427,12 +426,8 @@ setRepoPath = function(full_path) {
     osRunOneLine('git log --pretty=format:"%an" | sort | uniq | wc -l', 'br_member_ct')
 
     // local branch & remote branch
-    osRunCb('git branch',function( ret_ary ){
-        $('#local_branch_ct').html(ret_ary.length)
-    })
-    osRunCb('git branch -r',function( ret_ary ){
-        $('#remote_branch_ct').html(ret_ary.length)
-    })
+    osRunOneLine('git branch | wc -l', 'local_branch_ct'  )
+    osRunOneLine('git branch -r | wc -l',      'remote_branch_ct' )
 
     makePaneLog('')
 

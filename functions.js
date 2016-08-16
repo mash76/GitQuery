@@ -4,6 +4,36 @@ fs = require('fs')
 
 window.jQuery = window.$ = require('./jquery-3.1.0.js')
 
+// clog = function(a,b,c){
+//   if (!b) console.log(a)
+//   else if (!c) console.log(a,b)
+//   else console.log(a,b,c)
+// }
+//console.log = console.log
+
+const BrowserWindow = require('electron').remote.BrowserWindow // windowオブジェクト
+const path = require('path')
+
+_G = []
+_G.local_repos =[]
+local_files =[]
+his_repo =[] // リポジトリ選択履歴
+_G.current_repo_path = ""
+interval_log_filter = null // 入力完了からログ検索までの秒数
+
+_G.save_path = process.cwd() + '/userdata'
+execOption = { encoding: 'utf8',
+                  timeout: 0,
+                  maxBuffer: 2000*1024,  //200*1024
+                  killSignal: 'SIGTERM',
+                  cwd: '',
+                  env: null }
+
+repo_btn_prev_push = "" //リポジトリ以下のBUTTONで直前push したもの
+repo_prev_push = ""
+top_filtered_repo = ""
+
+
 s60= function(str){ return '<span style="font-size:60%;">'+str+'</span>'}
 s80= function(str){ return '<span style="font-size:80%;">'+str+'</span>'}
 s120= function(str){ return '<span style="font-size:120%;">'+str+'</span>'}
@@ -34,42 +64,42 @@ matchRed = function(str,filter) { return str.replace(new RegExp('(' + filter.tri
 
 // json をテキスト保存  [] でなく {} で初期化すること
 saveJson = function(path,jsondata){
-  clog("save " + path)
+  console.log("save " + path)
   fs.writeFile(path, JSON.stringify(jsondata),
     function (error) {
        if (error != null) {
           alert('error : ' + error)
           return;
        }
-       clog('saved ' + path , JSON.stringify(jsondata))
+       console.log('saved ' + path , JSON.stringify(jsondata))
     })
 }
 
 loadJson = function(path){
 
-  clog("load try " + path)
+  console.log("load try " + path)
   if (!fs.existsSync(path)) return false;
   var text = fs.readFileSync(path, 'utf-8');
-  clog('load ok' , text)
+  console.log('load ok' , text)
   ret_ary = JSON.parse(text)
   return ret_ary
 }
 
 //osコマンド非同期実行 結果出力不要のとき
 osrun = function(command , out_html_id){
-  clog(command)
+  console.log(command)
   exec(command,execOption, (error, stdout, stderr) => {
-    if (error) clog('error',error)
-    if (stderr) clog('stderr',stderr)
+    if (error) console.log('error',error)
+    if (stderr) console.log('stderr',stderr)
   });
 }
 //一行だけ返す sqlを返さない。一行だけ、項目だけ出したい時に
 osRunOneLine = function(command , out_html_id){
-  clog(command)
+  console.log(command)
   exec(command,execOption, (error, stdout, stderr) => {
 
-    if (error) clog('error',error)
-    if (stderr) clog('stderr',stderr)
+    if (error) console.log('error',error)
+    if (stderr) console.log('stderr',stderr)
 
     $('#' + out_html_id).html(stdout.trim())
   });
@@ -77,11 +107,11 @@ osRunOneLine = function(command , out_html_id){
 
 //独自のコールバックで処理したいとき
 osRunCb = function(command , cb){
-  clog(command)
+  console.log(command)
   exec(command,execOption, (error, stdout, stderr) => {
 
-    if (error) clog('error',error)
-    if (stderr) clog('stderr',stderr)
+    if (error) console.log('error',error)
+    if (stderr) console.log('stderr',stderr)
 
     ret_ary = []
     if (stdout != "") ret_ary = stdout.trim().split(/\n/)
@@ -98,11 +128,11 @@ osRunOut = function(command , out_html_id , action , cb){
   if (!action.match(/(append|replace)/)) alert('osRunOut action:' + action)
   if (action == 'replace') $('#' + out_html_id ).html('')
 
-  clog(command)
+  console.log(command)
   exec(command,execOption, (error, stdout, stderr) => {
 
-    if (error) clog('error',error)
-    if (stderr) clog('stderr',stderr)
+    if (error) console.log('error',error)
+    if (stderr) console.log('stderr',stderr)
 
     var ret_ary = escapeHTML(stdout).split(/\n/)
     $('#' + out_html_id).append(sRed(escapeHTML(command)) + " " + sGray(ret_ary.length) + '<br/>')

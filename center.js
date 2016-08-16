@@ -40,7 +40,7 @@ makePaneFilelist = function(filter,base_command){
 
     //ファイル検索
     var git_command = 'git ls-files '
-    clog('base_command**',base_command)
+    console.log('base_command**',base_command)
     if (base_command != undefined && base_command) git_command = base_command
 
     filter_ary = filter.trim().split(/\s+/)
@@ -70,10 +70,10 @@ makePaneFilelist = function(filter,base_command){
     //拡張子でまとめ
     var comExt = "git ls-files | egrep -i '\\.' | perl -ple 's/(.*)(\\..*)/$2/' | sort | uniq -c | sort -r | head -20"
     //com1 = "git ls-files | egrep -i '\/' | sort | uniq -c | head -10"
-    clog('extension ' , comExt)
+    console.log('extension ' , comExt)
     osRunCb(comExt,
       function( ret_ary){
-          clog('str_out1',ret_ary)
+          console.log('str_out1',ret_ary)
           var str_out_ext =""
           for (var ind in ret_ary){
               var ary = ret_ary[ind].trim().split(/\s+/)
@@ -89,7 +89,7 @@ makePaneFilelist = function(filter,base_command){
     //dir 1階層でまとめ
     var com1 = "git ls-files | egrep -i '\/' | perl -ple 's/(.*?\\/)(.*)/$1/' | sort | uniq -c | head -100"
     //com1 = "git ls-files | egrep -i '\/' | sort | uniq -c | head -10"
-    clog(com1)
+    console.log(com1)
     var str_out1 = ""
     var str_out2 = ""
     var writeLeftPane = function(){
@@ -98,7 +98,7 @@ makePaneFilelist = function(filter,base_command){
 
     osRunCb(com1,
       function( ret_ary){
-          clog('str_out1',ret_ary)
+          console.log('str_out1',ret_ary)
           str_out1 ="<table>"
           for (var ind in ret_ary){
               var ary = ret_ary[ind].trim().split(/\s+/)
