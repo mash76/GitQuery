@@ -24,6 +24,9 @@ a:hover {color: SteelBlue;text-decoration: none; opacity:0.7; } /* underline„Å™„
 .s200 { font-size:200%;}
 
 .bold { font-weight:bold;}
+
+.blue { color:blue;}
+.red { color:red;}
 .gray { color:gray;}
 .pink { color:DeepPink;}
 .silver { color:silver;}

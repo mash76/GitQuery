@@ -289,14 +289,30 @@ findLocalRepos = function(is_refresh){ // search
   }
 }
 
-delGit = function(path){
+delGit = function(path,checkword){
+
+    console.log('delGit',path2pjname(path),checkword)
+
+    if (path2pjname(path) != checkword) {
+        $('#pane_delete_detail').html(sRed('invalid reponame'))
+        return
+    }
+
     var com = 'rm -rf ' + path
-    osRunOut( com ,'debug_out','replace')
+    osRunOut( com ,'pane_delete_detail','replace')
     findLocalRepos('refresh')
 }
-delDir = function(path){
+delDir = function(path,checkword){
+
+    console.log('delDir',path2pjname(path),checkword)
+
+    if (path2pjname(path) != checkword) {
+        $('#pane_delete_detail').html(sRed('invalid reponame'))
+        return
+    }
+
     var com = 'rm -rf ' + path2dir(path)
-    osRunOut( com ,'debug_out','replace')
+    osRunOut( com ,'pane_delete_detail','replace')
     findLocalRepos('refresh')
 }
 
@@ -323,8 +339,6 @@ filterLocalRepos = function (filter){
       $('#local_repo_list').prepend('<tr><td> <a href="javascript:void(0)" onClick="setRepoPath(\'' + full_path + '\')" class="btn s150">' +
                                 fname_disp + '</span> </td><td> ' +
                                 ' &nbsp; ' + fullpath_disp + '</td><td>' +
-                                '<span onClick="delGit(_G.local_repos[' + ind + '])" class="btn">delGit</span> </td><td>' +
-                                '<span onClick="delDir(_G.local_repos[' + ind + '])" class="btn">delDir</span> </td><td>' +
                                 '</td></tr>')
   }
   $('#local_repo_list').append("</table>");

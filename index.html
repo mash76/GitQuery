@@ -88,6 +88,7 @@
         <span onClick="showStashList(); togglePaneCurrentRepoDesc('pane_stash','toggle')" class="btn">stash</span><span id="stash_count" class="btn s120 bold"></span>
         <span onClick="showConfig(); togglePaneCurrentRepoDesc('pane_config','toggle')" class="btn">config</span>
         <span onClick="showDotGit(); togglePaneCurrentRepoDesc('pane_dotgitfiles','toggle')" class="btn">.git-files</span>
+        <span onClick="togglePaneCurrentRepoDesc('pane_delete','toggle')" class="btn ">Delete</span>
 
 
 
@@ -146,6 +147,23 @@
           <div id="dotgitfiles_detail" class="underline"> </div>
         </div>
 
+        <div id="pane_delete" pane="repo" class="code hide detail" >
+            <span class="red s150 bold">Danger</span><br/>
+            <div class="red">Once you delete a repository, there is no going back. Please be certain.</div>
+            <br/>
+
+            delete .git directry<br/>
+            <input id="delete_name_git" type="text" placeholder="repository_name" />
+            <button onClick="delGit(_G.current_repo_path, $('#delete_name_git').val())"  />delete</button>
+            <br/>
+            delete repo Directory<br/>
+            <input id="delete_name_dir" type="text" placeholder="repository_name" />
+            <button onClick="delDir(_G.current_repo_path, $('#delete_name_dir').val())"  />delete</button>
+            <br/>
+            <div id="pane_delete_detail" ></div>
+        </div>
+
+
         <div id="pane_ignore" pane="repo" class="code hide detail" >
         </div>
         <div id="pane_remote" pane="repo" class="code hide detail" >
@@ -180,6 +198,7 @@
         <span onClick="makePaneStatus('replace')"  class="btn">status</span>
         <span onClick="openPaneCenter('pane_gitcommand'); $('#git_usercommand').focus() "  class="btn ">git_command</span>
         <span onClick="openPaneCenter('pane_debug'); "  class="btn ">debug</span>
+
 
         <!-- pane center -->
 
