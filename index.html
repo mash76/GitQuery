@@ -69,7 +69,7 @@
 
     <div id="repo_info" class="m10 hide">
         <span id="current_repo_name" class="bold s170">**current_repo**</span>
-        <span id="current_repo_size" onClick="osRunOut('du -d1 -h ','pane_reposize','replace'); togglePaneCurrentRepoDesc('pane_reposize','toggle')" class="bold s150 btn">**current_repo_size**</span>
+        <span id="current_repo_size" onClick="repoDiskSize(); togglePaneCurrentRepoDesc('pane_reposize','toggle')" class="bold s150 btn">**current_repo_size**</span>
 
         <span id="current_repo_path" class="gray">**current_repo_path**</span>
         <span onClick="osrun('open ' + path2dir(_G.current_repo_path) )"  class="btn s80">finder</span>
@@ -112,12 +112,21 @@
             new branch <span class="silver s80">git branch branchname01   </span><br/>
             <input id="branch_name" type="text" placeholder="branch_name" />
             <button onClick="osRunOut('git branch \'' + $('#branch_name').val() + '\'','local_branch_details','replace',function(){ showBranchList('append','list'); togglePaneCurrentRepoDesc('local_branch','down') });" />add</button>
-            <br/>
-            <span id="lbranch_" onClick="showBranchList('replace','list'); togglePaneCurrentRepoDesc('local_branch','down') " class="btn">list</span>
-            <span id="lbranch_" onClick="showBranchList('replace','tree'); togglePaneCurrentRepoDesc('local_branch','down') " class="btn">tree</span>
+
+            <div class="vm10 fMenu underline">
+              <span id="lbranch_" onClick="showBranchList('replace','list'); togglePaneCurrentRepoDesc('local_branch','down') " class="btn s120">list</span>
+              <span id="lbranch_" onClick="showBranchList('replace','tree'); togglePaneCurrentRepoDesc('local_branch','down') " class="btn s120">tree</span>
+              &nbsdp;&nbsp;
+              currentBranch
+              allBranch
+
+            </div>
             <div id="local_branch_details" ></div>
         </div>
         <div id="pane_stash" pane="repo" class="code hide detail" >
+            <div id="pane_stash_list" ></div>
+            <div id="pane_stash_detail" ></div>
+
         </div>
         <div id="pane_hooks" pane="repo" class="code hide detail" >
         </div>
@@ -182,12 +191,14 @@
         </div>
 
         <div id="pane_status" pane="center" class="detail code">
-          <span onClick="makePaneStatus('replace'); openPaneCenter('pane_status'); " class="btn s150">status</span>
-          <span onClick="gitAdd(); openPaneCenter('pane_status'); "  class="btn s150">add</span>
-          <span onClick="gitReset(); openPaneCenter('pane_status'); "  class="btn s150">reset</span>
-          <span onClick="$('#pane_status_commit').slideToggle(10);"  class="btn s150">commit</span>
-          <span onClick="$('#pane_status_stash').slideToggle(10); "  class="btn s150">stash</span>
 
+          <div class="vm10 fMenu">
+              <a href="javascript:void(0);" onClick="makePaneStatus('replace'); openPaneCenter('pane_status'); " class="btn s150">status</a>
+              <a href="javascript:void(0);" onClick="gitAdd(); openPaneCenter('pane_status'); "  class="btn s150">add</a>
+              <a href="javascript:void(0);" onClick="gitReset(); openPaneCenter('pane_status'); "  class="btn s150">reset</a>
+              <a href="javascript:void(0);" onClick="$('#pane_status_commit').slideToggle(10);"  class="btn s150">commit</a>
+              <a href="javascript:void(0);" onClick="$('#pane_status_stash').slideToggle(10); "  class="btn s150">stash</a>
+          </div>
           <div id="pane_status_commit" class="hide">
               commit<br/>
               <input id="commit_msg" type="text" placeholder="commit_msg name" />
@@ -240,12 +251,13 @@
           <div id="pane_diff_detail"></div>
         </div>
 
-        <div id="pane_log" pane="center" class="detail code">
-            <span onClick="makePaneLog($('#filter_log').html())" class="btn s150">log</span>
-            <span onClick="osRunOut('git log --graph --oneline ','pane_log_detail','replace')" class="btn s150">tree</span>
-            <br/>
+        <div id="pane_log" pane="center" class="detail code ">
+            <div class="vm10 fMenu underline">
+                <a href="javascript:void(0);" onClick="makePaneLog($('#filter_log').html())" class="btn s150">log</a>
+                <a href="javascript:void(0);" onClick="osRunOut('git log --graph --oneline ','pane_log_detail','replace')" class="btn s150">tree</a>
+            </div>
 
-            <input type="text" id="filter_log" value="" size=20 >
+            <input type="text" id="filter_log" value="" size=20 placeholder="filter" >
             <div id="pane_log_detail"></div>
 
         </div>

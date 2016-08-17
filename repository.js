@@ -85,6 +85,7 @@ showGitmodules = function(action){ // append replace
     function(ret_ary,stderr){
       for (var ind in ret_ary){
           ret_ary[ind] = ret_ary[ind].replace(/(.*)(=)(.*)/, sGrayBlue('$1') + '$2' + sGrayRed('$3'))
+
       }
 
       $('#submodule_details').append(sRed(git_command) + " " + sGray(ret_ary.length))
@@ -122,9 +123,22 @@ showStashList = function(){
   var com = 'git stash list'
   osRunCb(com,function(ret_ary){
 
-      $('#pane_stash').html( sRed(com) + " " + sGray(ret_ary.length) + '<br/>' )
-      $('#pane_stash').append( replaceTabSpc(ret_ary.join('<br/>')) + '<br/>' )
+      $('#pane_stash_list').html( sRed(com) + " " + sGray(ret_ary.length) )
+      for (var ind in ret_ary){
+        ret_ary[ind] = ret_ary[ind].replace(/(.*?)(\:)/,'<a href="javascript:void(0);" onClick="showStashDetail(\'$1\')">$1</a>$2')
+      }
+
+      $('#pane_stash_list').append( '<pre class="code">' + ret_ary.join('\n') + '</pre>' )
       $('#stash_count').html(ret_ary.length)
+  })
+}
+showStashDetail = function(hash){
+  var com = 'git diff HEAD...' + hash
+  osRunCb(com,function(ret_ary){
+
+      $('#pane_stash_detail').html( sRed(com) + " " + sGray(ret_ary.length) )
+      ret_ary = diffColor(ret_ary)
+      $('#pane_stash_detail').append( '<pre class="code">' + ret_ary.join('\n') + '</pre>' )
   })
 }
 
@@ -144,6 +158,13 @@ showIgnore = function(){
                                ret_ary.join('<br/>'))
           togglePaneCurrentRepoDesc('pane_ignore','toggle')
   })
+}
+
+repoDiskSize = function(){
+    osRunOut('du -d1 -h ','pane_reposize','replace',
+        function(){
+            osRunOut('du -d1 -h .git/modules  # submodule repository size','pane_reposize','append')
+        });
 }
 
 showBranchList = function(action,treeOrList) {
@@ -296,15 +317,17 @@ filterLocalRepos = function (filter){
           if (!top_filtered_repo) top_filtered_repo = full_path
           fname_disp = fname_disp.replace(re,sRed('$1'))
       }
+
+      var fullpath_disp = sGray(full_path.replace(fname,sGray2(fname)).replace('.Trash',sCrimson('.Trash')))
+
       $('#local_repo_list').prepend('<tr><td> <a href="javascript:void(0)" onClick="setRepoPath(\'' + full_path + '\')" class="btn s150">' +
                                 fname_disp + '</span> </td><td> ' +
-                                ' &nbsp; ' + sGray(full_path.replace(fname,sGray2(fname)) ) + '</td><td>' +
+                                ' &nbsp; ' + fullpath_disp + '</td><td>' +
                                 '<span onClick="delGit(_G.local_repos[' + ind + '])" class="btn">delGit</span> </td><td>' +
                                 '<span onClick="delDir(_G.local_repos[' + ind + '])" class="btn">delDir</span> </td><td>' +
                                 '</td></tr>')
   }
   $('#local_repo_list').append("</table>");
-
 }
 
 openPaneCenter = function( pane_name ){
@@ -403,11 +426,9 @@ setRepoPath = function(full_path) {
     _G.his_repo[_G.current_repo_path] = "";
     saveJson(_G.save_path　+ '/his_select_repo.txt' , _G.his_repo)
     showHisRepo()
-
     showStashList()
 
     //ブランチ
-
     setCurrentBranchName()
     togglePaneCurrentRepoDesc("local_branch",'up') // close
 

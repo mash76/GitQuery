@@ -46,6 +46,9 @@ sRed=   function(str){ return '<span style="color:red;">'+str+'</span>'}
 sBlue=  function(str){ return '<span style="color:blue;">'+str+'</span>'}
 sPink=  function(str){ return '<span style="color:DeepPink;">'+str+'</span>'}
 sGreen= function(str){ return '<span style="color:green;">'+str+'</span>'}
+
+sCrimson = function(str){ return '<span style="color:crimson;">'+str+'</span>'}
+
 sGray=  function(str){ return '<span style="color:gray;">'+str+'</span>'}
 sGray2 = function(str){ return '<span style="color:darkGray;">'+str+'</span>'}
 sSilver= function(str){ return '<span style="color:silver;">'+str+'</span>'}
