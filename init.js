@@ -50,6 +50,22 @@ _G.his_repo = loadJson(_G.save_path　+ '/his_select_repo.txt')
 if (!_G.his_repo) _G.his_repo = {}
 showHisRepo()
 
+
+document.onkeydown = function(e){
+  console.log('metakyu kyu : ',e.metaKey,e.key)
+
+  if (e.metaKey && e.key == "1") {
+    filterLocalRepos('')
+    toggleTopPanes('local_repo_pane',"toggle")
+  }
+  if (e.metaKey && e.key == "2") {
+    toggleFullScreen();
+  }
+  if (e.metaKey && e.key == "d") {
+    toggleDevTools();
+  }
+}
+
 //enterなら候補1に確定、それ以外ならキー押すごとに検索
 $('#filter_l_repo').keyup(function(e){
     if (e.which == 13 && top_filtered_repo) {

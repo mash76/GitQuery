@@ -29,9 +29,6 @@ function createWindow () {
 //     },
 //   ]);
 //   Menu.setApplicationMenu(menu);
-
-
-
   mainWindow.on('closed', function () {
     // Dereference the window object, usually you would store windows
     // in an array if your app supports multi windows, this is the time
@@ -39,8 +36,6 @@ function createWindow () {
     mainWindow = null
   })
 }
-
-
 
 
 

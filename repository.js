@@ -1,7 +1,7 @@
 
 //init 画面表示  レコメンドパスを指定 現在多くリポジトリのあるパスを優先
 showGitInit = function(){
-    toggleRepoList('gitinit_pane',"toggle")
+    toggleTopPanes('gitinit_pane',"toggle")
 
     // 複数リポジトリのあるフォルダは その人の作業フォルダであろう
     var reco_paths = []
@@ -43,7 +43,7 @@ gitInit = function(){
 }
 
 showGitClone = function(){
-    toggleRepoList('gitclone_pane',"toggle")
+    toggleTopPanes('gitclone_pane',"toggle")
 
     var reco_paths = []
     for (var ind in _G.local_repos){
@@ -71,7 +71,6 @@ gitSubmoduleAdd = function(){
       $('#submodule_details').append(replaceTabSpc(stderr.replace(/\n/,'<br/>')) +'<br/>')
       showGitmodules('append')
   })
-
 }
 
 showGitmodules = function(action){ // append replace
@@ -83,9 +82,9 @@ showGitmodules = function(action){ // append replace
   var git_command = 'cat ' + path2dir( _G.current_repo_path ) + '/.gitmodules'
   osRunCb(git_command,
     function(ret_ary,stderr){
+
       for (var ind in ret_ary){
           ret_ary[ind] = ret_ary[ind].replace(/(.*)(=)(.*)/, sGrayBlue('$1') + '$2' + sGrayRed('$3'))
-
       }
 
       $('#submodule_details').append(sRed(git_command) + " " + sGray(ret_ary.length))
@@ -95,28 +94,17 @@ showGitmodules = function(action){ // append replace
   var git_com2 = 'git submodule status'
   osRunCb(git_com2,
     function(ret_ary,stderr){
+
+      if (ret_ary.length == 0){
+        $('#submodule_btncolor').attr('class','silver')
+      }else{
+        $('#submodule_btncolor').attr('class','btn')
+      }
+
+      $('#submodule_count').html(ret_ary.length)
       $('#submodule_details').append(sRed(git_com2) + " " + sGray(ret_ary.length) + '<br/>')
       $('#submodule_details').append(replaceTabSpc(ret_ary.join('<br/>')) + '<br/><br/>')
   })
-  //togglePaneCurrentRepoDesc('pane_submodule','down')
-}
-
-showRemoteBranches = function(){
-
-    osRunCb('git branch -r',
-        function(ret_ary){
-
-          var dirs = []
-          for ( var ind in ret_ary){
-              if (ret_ary[ind].match(/\//)){
-                var path = ret_ary[ind].replace(/(.*?)(\/.*)/,'$1')
-                console.log(path)
-              }
-          }
-          $('#pane_re_branch').html(sRed(git_command) + " " + sGray(ret_ary.length) + '<br/>')
-          $('#pane_re_branch').append(ret_ary.join('<br/>'))
-        }
-    )
 }
 
 showStashList = function(){
@@ -128,10 +116,42 @@ showStashList = function(){
         ret_ary[ind] = ret_ary[ind].replace(/(.*?)(\:)/,'<a href="javascript:void(0);" onClick="showStashDetail(\'$1\')">$1</a>$2')
       }
 
+      if (ret_ary.length == 0){
+        $('#stash_btncolor').attr('class','silver')
+      }else{
+        $('#stash_btncolor').attr('class','btn')
+      }
+
       $('#pane_stash_list').append( '<pre class="code">' + ret_ary.join('\n') + '</pre>' )
       $('#stash_count').html(ret_ary.length)
+
+
   })
 }
+
+showRemoteBranches = function(){
+
+    var git_command = 'git branch -r'
+    osRunCb(git_command,
+        function(ret_ary){
+
+          var dirs = []
+          for ( var ind in ret_ary){
+              if (ret_ary[ind].match(/\//)){
+                var path = ret_ary[ind].replace(/(.*?)(\/.*)/,'$1')
+                console.log(path)
+              }
+          }
+
+          $('#pane_re_branch').html(sRed(git_command) + " " + sGray(ret_ary.length) + '<br/>')
+          $('#pane_re_branch').append(ret_ary.join('<br/>'))
+          $('#remote_branch_ct').html(ret_ary.length)
+
+        }
+    )
+}
+
+
 showStashDetail = function(hash){
   var com = 'git diff HEAD...' + hash
   osRunCb(com,function(ret_ary){
@@ -156,7 +176,7 @@ showIgnore = function(){
       function(ret_ary){
           $('#pane_ignore').append(s150(sBold('ignored files<br/>')) + sRed(com2) + " " + sGray(ret_ary.length) + '<br/>' +
                                ret_ary.join('<br/>'))
-          togglePaneCurrentRepoDesc('pane_ignore','toggle')
+          toggleRepoDescPanes('pane_ignore','toggle')
   })
 }
 
@@ -191,20 +211,20 @@ showBranchList = function(action,treeOrList) {
               $('#local_branch_details').append('<pre class="code">' + ret_ary.join("\n") + '</pre>')
           }
     })
+
+    osRunOneLine('git branch | wc -l','local_branch_ct')
+
 }
 
-toggleRepoList = function (key,action){  //action == up down toggle
+// fuc名直す top pane郡のトグル
+toggleTopPanes = function (key,action){  //action == up down toggle
 
-  if (!action.match(/up|down|toggle/)) alert('toggleRepoList action invalid' + action)
+  if (!action.match(/up|down|toggle/)) alert('toggleTopPanes action invalid' + action)
 
   if (action == "toggle" ){
-    if ($('#' + key).css('display') == 'block' ){
-      action = "up"
-    }else{
-      action = "down"
-    }
+    action = "down"
+    if ($('#' + key).css('display') == 'block' ) action = "up"
   }
-
   $('div[pane=top]').slideUp(10)
 
   if (action == "up" ){
@@ -218,27 +238,45 @@ toggleRepoList = function (key,action){  //action == up down toggle
 }
 
 //個別のペーンを出す方式に
-togglePaneCurrentRepoDesc = function (key,action){
+toggleRepoDescPanes = function (key,action){
 
-  if (!action.match(/up|down|toggle/)) alert('togglePaneCurrentRepoDesc action invalid' + action)
+  if (!action.match(/up|down|toggle/)) alert('toggleRepoDescPanes action invalid' + action)
 
   if (action == "toggle" ){
-    if ($('#' + key).css('display') == 'block' ){
-      action = "up"
-    }else{
-      action = "down"
-    }
+    action = "down"
+    if ($('#' + key).css('display') == 'block' ) action = "up"
   }
   $('div[pane=repo]').slideUp(10)
 
   //開いてる項目を押したら閉じる
-  if (action == "up" ){
-      $('#' + key).slideUp(10)
-  }else{
-      $('#' + key).slideDown(10)
-  }
+  if (action == "up" ) $('#' + key).slideUp(10)
+  else                 $('#' + key).slideDown(10)
+
   repo_prev_push=key
 }
+
+togglePaneStatus = function(key,action){
+
+  if (!action.match(/up|down|toggle/)) alert('togglePaneStatus action invalid' + action)
+
+  if (action == "toggle" ){
+    action = "down"
+    if ($('#' + key).css('display') == 'block' ) action = "up"
+  }
+  $('div[pane=status]').slideUp(10)
+
+  //開いてる項目を押したら閉じる
+  if (action == "up" ) $('#' + key).slideUp(10)
+  else                 $('#' + key).slideDown(10)
+
+}
+
+
+openPaneCenter = function( pane_name ){
+  $('div[pane=center]').hide()
+  $('#' + pane_name).slideDown(10)
+}
+
 
 setCurrentBranchName = function(){
     osRunCb('git branch',function(ret_ary){
@@ -273,7 +311,7 @@ findLocalRepos = function(is_refresh){ // search
   if (_G.local_repos && is_refresh == 'cache' ){
     console.log('get from file local repos ',file_fullpath,_G.local_repos)
     $('#repo_count').html(_G.local_repos.length)
-    toggleRepoList('local_repo_pane',"down")
+    toggleTopPanes('local_repo_pane',"down")
     filterLocalRepos('')
   }else{
     console.log('find')
@@ -282,7 +320,7 @@ findLocalRepos = function(is_refresh){ // search
           _G.local_repos = ret_ary
           $('#repo_count').html(_G.local_repos.length)
           saveJson(file_fullpath,_G.local_repos)
-          toggleRepoList('local_repo_pane',"down")
+          toggleTopPanes('local_repo_pane',"down")
           filterLocalRepos('')
       }
     )
@@ -344,10 +382,6 @@ filterLocalRepos = function (filter){
   $('#local_repo_list').append("</table>");
 }
 
-openPaneCenter = function( pane_name ){
-  $('div[pane=center]').hide()
-  $('#' + pane_name).slideDown(10)
-}
 
 showHisRepo = function(){
 
@@ -397,6 +431,13 @@ showRemoteRepos = function(action){ // append replace
           }
           $('#pane_remote_detail' ).append( sRed(escapeHTML(command)) + " " + sGray(ret_ary.length) )
           $('#pane_remote_detail' ).append( '<pre class="code m0" >' + ret_ary.join('\n') + '</pre>' )
+
+          if (ret_ary.length == 0){
+            $('#remote_btncolor').attr('class','silver')
+          }else{
+            $('#remote_btncolor').attr('class','btn')
+          }
+
         }
     )
 }
@@ -430,6 +471,7 @@ showDotGit = function(){
 setRepoPath = function(full_path) {
     console.log(full_path)
 
+    //現在dirセット
     _G.current_repo_path = full_path
     execOption.cwd = path2dir(_G.current_repo_path)
 
@@ -437,39 +479,34 @@ setRepoPath = function(full_path) {
     $('#current_repo_path').html( full_path )
     $('#local_repo_pane').slideUp(10)
 
+    //履歴
     _G.his_repo[_G.current_repo_path] = "";
     saveJson(_G.save_path　+ '/his_select_repo.txt' , _G.his_repo)
     showHisRepo()
+
     showStashList()
 
     //ブランチ
     setCurrentBranchName()
-    togglePaneCurrentRepoDesc("local_branch",'up') // close
+    toggleRepoDescPanes("local_branch",'up') // close
 
-    //remoteなければグレーに
-    osRunCb('git remote -v',function(ret_ary){
+    showRemoteRepos('replace')
+    showRemoteBranches()
 
-        if (ret_ary.length　== 0) {
-          $('#remote_menu').css('background-color','gray')
-        }else{
-          $('#remote_menu').css('background-color','white')
-        }
-    })
 
     //repository basic info
-    osRunOneLine('git submodule status | wc -l', 'submodule_count')
-    osRunOneLine("du -d0 -h | perl -pne 's/(\\t.*)//' " , 'current_repo_size') //タブ以降の . を削除
-    osRunOneLine('git ls-files | wc -l', 'br_files_ct')
+    //osRunOneLine('git submodule status | wc -l', 'submodule_count')
+    showGitmodules('replace') //submodule表示を初期化
+
+    osRunOneLine("du -d0 -h | perl -pne 's/(\\t.*)//' " , 'current_repo_size') //ディスク使用量 タブ以降の . を削除
+    osRunOneLine('git ls-files | wc -l', 'br_files_ct') //ファイル数
     osRunOneLine('git log --oneline | wc -l', 'br_commit_ct')
 
-    //osRunOneLine('git log --date=relative --pretty=format:"%ad  : %h  : %an : %s" | head -1', 'latest_commit')
     osRunOneLine('git log --date=relative --pretty=format:"%ad" | head -1', 'latest_commit')
     osRunOneLine('git log --pretty=format:"%an" | sort | uniq | wc -l', 'br_member_ct')
 
     // local branch & remote branch
-    osRunOneLine('git branch | wc -l', 'local_branch_ct'  )
-    osRunOneLine('git branch -r | wc -l',      'remote_branch_ct' )
-
+    showBranchList('replace','list')
     makePaneLog('')
 
     showDotGit()
