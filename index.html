@@ -126,8 +126,8 @@
             <button onClick="osRunOut('git branch \'' + $('#branch_name').val() + '\'','local_branch_details','replace',function(){ showBranchList('append','list'); toggleRepoDescPanes('local_branch','down') });" />add</button>
 
             <div class="vm10 fMenu underline">
-              <span id="lbranch_" onClick="showBranchList('replace','list'); toggleRepoDescPanes('local_branch','down') " class="btn s120">list</span>
-              <span id="lbranch_" onClick="showBranchList('replace','tree'); toggleRepoDescPanes('local_branch','down') " class="btn s120">tree</span>
+              <span onClick="showBranchList('replace','list'); toggleRepoDescPanes('local_branch','down') " class="btn s120">list</span>
+              <span onClick="showBranchList('replace','tree'); toggleRepoDescPanes('local_branch','down') " class="btn s120">tree</span>
               &nbsp;&nbsp;
               currentBranch
               allBranch
@@ -172,6 +172,12 @@
             <button onClick="delDir(_G.current_repo_path, $('#delete_name_dir').val())"  />delete</button>
             <br/>
             <div id="pane_delete_detail" ></div>
+            Re-Init repo Directory<br/>
+            <input id="reinit_name_dir" type="text" placeholder="repository_name" />
+            <button onClick="reInitDir(_G.current_repo_path, $('#reinit_name_dir').val())"  />delete</button>
+            <br/>
+            <div id="pane_delete_detail" ></div>
+
         </div>
 
 
@@ -196,6 +202,8 @@
         <span id="c_branch" class="s170 bold">**c_branch**</span>
         <span id="latest_commit" class="s80 gray">97f809b  4 minutes ago </span>
 
+          <a href="javascript:void(0)" onClick="makePaneStatus('replace')" class="btn">status</a>
+
           <a href="javascript:void(0)" onClick="makePaneFilelist(''); openPaneCenter('pane_filelist');" >
               files<span id="br_files_ct" class="bold s150">**br_files_ct**</span>
           </a>
@@ -206,7 +214,7 @@
               comitter<span id="br_member_ct" class="bold s150">**br_member_ct**</span>
           </a>
 
-        <span onClick="makePaneStatus('replace')"  class="btn">status</span>
+
         <span onClick="openPaneCenter('pane_gitcommand'); $('#git_usercommand').focus() "  class="btn ">git_command</span>
         <span onClick="openPaneCenter('pane_debug'); "  class="btn ">debug</span>
 
@@ -285,6 +293,9 @@
             <div class="vm10 fMenu underline">
                 <a href="javascript:void(0);" onClick="makePaneLog($('#filter_log').html())" class="btn s150">log</a>
                 <a href="javascript:void(0);" onClick="osRunOut('git log --graph --oneline ','pane_log_detail','replace')" class="btn s150">tree</a>
+
+                  currentBranch
+                  all
             </div>
 
             <input type="text" id="filter_log" value="" size=20 placeholder="filter" >
@@ -300,10 +311,10 @@
         <div id="pane_commit" pane="center" class="detail code">
 
         </div>
-        <div id="pane_debug" pane="center" class="detail code s150">
-            <span onClick="debugEditAndCommit()" class="btn" >edit>add>Commit</span><br/>
-            <span onClick="debugEditAndStash()" class="btn" >edit>add>Stash</span><br/>
-            <span onClick="debugEditAndNone()" class="btn" >edit>add</span>
+        <div id="pane_debug" pane="center" class="detail code">
+            <span onClick="debugEditAndCommit()" class="btn s150" >edit>add>Commit</span><br/>
+            <span onClick="debugEditAndStash()" class="btn s150" >edit>add>Stash</span><br/>
+            <span onClick="debugEditAndNone()" class="btn s150" >edit>add</span>
 
 
             <div id="pane_debug_detail"></div>
@@ -319,10 +330,7 @@
 
     require('./renderer.js')
     require('./functions.js')
-
-
-
-
+    require('./debug.js')
 
     // You can also require other files to run in this process
      require('./repository.js')

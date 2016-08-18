@@ -55,15 +55,37 @@ document.onkeydown = function(e){
   console.log('metakyu kyu : ',e.metaKey,e.key)
 
   if (e.metaKey && e.key == "1") {
-    filterLocalRepos('')
-    toggleTopPanes('local_repo_pane',"toggle")
+      filterLocalRepos('')
+      toggleTopPanes('local_repo_pane',"toggle")
   }
-  if (e.metaKey && e.key == "2") {
-    toggleFullScreen();
+  if (e.metaKey && e.key == "2") {  // branches
+    showBranchList('replace','list')
+    toggleRepoDescPanes('local_branch','toggle')
   }
-  if (e.metaKey && e.key == "d") {
-    toggleDevTools();
+  if (e.metaKey && e.key == "3") {  // status
+      makePaneStatus('replace')
   }
+
+  if (e.metaKey && e.key == "4") {  // files
+      makePaneFilelist('');
+      openPaneCenter('pane_filelist');
+  }
+  if (e.metaKey && e.key == "5") {  // commits
+      makePaneLog('')
+  }
+  if (e.metaKey && e.key == "6") {  // users
+      makePaneUser('')
+      openPaneCenter('pane_user')
+  }
+  if (e.metaKey && e.key == "7") {  // command
+      openPaneCenter('pane_gitcommand')
+      $('#git_usercommand').focus() 
+  }
+
+  if (e.metaKey && e.key == "9") toggleFullScreen();
+
+  if (e.metaKey && e.key == "d") toggleDevTools();
+
 }
 
 //enterなら候補1に確定、それ以外ならキー押すごとに検索

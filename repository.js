@@ -329,7 +329,7 @@ findLocalRepos = function(is_refresh){ // search
 
 delGit = function(path,checkword){
 
-    console.log('delGit',path2pjname(path),checkword)
+    console.log('del .Git',path2pjname(path),checkword)
 
     if (path2pjname(path) != checkword) {
         $('#pane_delete_detail').html(sRed('invalid reponame'))
@@ -353,6 +353,25 @@ delDir = function(path,checkword){
     osRunOut( com ,'pane_delete_detail','replace')
     findLocalRepos('refresh')
 }
+reInitDir = function(path,checkword){
+
+    console.log('del .Git',path2pjname(path),checkword)
+
+    if (path2pjname(path) != checkword) {
+        $('#pane_delete_detail').html(sRed('invalid reponame'))
+        return
+    }
+
+    var com = 'rm -rf ' + path
+    osRunOut( com ,'pane_delete_detail','replace',
+      function(){
+          var com2 = 'git init ' + path2dir(path)
+          osRunOut( com2 ,'pane_delete_detail','append')
+      }
+    )
+    findLocalRepos('refresh')
+}
+
 
 //ローカルリポジトリ一覧を表示
 filterLocalRepos = function (filter){
@@ -370,11 +389,13 @@ filterLocalRepos = function (filter){
 
           if (!top_filtered_repo) top_filtered_repo = full_path
           fname_disp = fname_disp.replace(re,sRed('$1'))
+
+          console.log('enterでセット' ,top_filtered_repo)
       }
 
       var fullpath_disp = sGray(full_path.replace(fname,sGray2(fname)).replace('.Trash',sCrimson('.Trash')))
 
-      $('#local_repo_list').prepend('<tr><td> <a href="javascript:void(0)" onClick="setRepoPath(\'' + full_path + '\')" class="btn s150">' +
+      $('#local_repo_list').append('<tr><td> <a href="javascript:void(0)" onClick="setRepoPath(\'' + full_path + '\')" class="btn s150">' +
                                 fname_disp + '</span> </td><td> ' +
                                 ' &nbsp; ' + fullpath_disp + '</td><td>' +
                                 '</td></tr>')
