@@ -180,6 +180,41 @@ debugDelText = function (cb){
   osRunOut("ls *.txt | perl -lne 'print if rand(10) > 7;' | xargs rm ",'pane_debug_detail','replace' ,cb )
 
 }
+
+debugEditAndNone = function(){
+
+  var ct = 0
+  var ctAdd = function(){
+    ct++
+    if (ct == 3) {
+          osRunOut("git add . ",'pane_debug_detail','append' )
+    }
+  }
+  debugAddText(ctAdd)
+  debugEditText(ctAdd)
+  debugDelText(ctAdd)
+}
+
+debugEditAndStash = function(){
+
+  var ct = 0
+  var ctAdd = function(){
+    ct++
+    if (ct == 3) {
+          osRunOut("git add . ",'pane_debug_detail','append' ,function(){
+              var dt = new Date()
+              osRunOut("git stash save 'debug自動stash" +
+                  dt.getFullYear() +　'_' + (dt.getMonth()+1) + '_' + dt.getDate() + '-' +
+                  dt.getHours() + '_' + dt.getMinutes() + '_' + dt.getSeconds() + "'",
+                  'pane_debug_detail','append' )
+          })
+    }
+  }
+  debugAddText(ctAdd)
+  debugEditText(ctAdd)
+  debugDelText(ctAdd)
+}
+
 debugEditAndCommit = function(){
 
   var ct = 0
@@ -187,9 +222,7 @@ debugEditAndCommit = function(){
     ct++
     if (ct == 3) {
           osRunOut("git add . ",'pane_debug_detail','append' ,function(){
-
               var dt = new Date()
-
               osRunOut("git commit -m 'debug自動コミット" +
                   dt.getFullYear() +　'_' + (dt.getMonth()+1) + '_' + dt.getDate() + '-' +
                   dt.getHours() + '_' + dt.getMinutes() + '_' + dt.getSeconds() + "'",
@@ -197,7 +230,6 @@ debugEditAndCommit = function(){
           })
     }
   }
-
   debugAddText(ctAdd)
   debugEditText(ctAdd)
   debugDelText(ctAdd)
