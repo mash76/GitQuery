@@ -454,9 +454,9 @@ showRemoteRepos = function(action){ // append replace
           $('#pane_remote_detail' ).append( '<pre class="code m0" >' + ret_ary.join('\n') + '</pre>' )
 
           if (ret_ary.length == 0){
-            $('#remote_btncolor').attr('class','silver')
+            $('div[id^=remote_btncolor]').attr('class','silver')
           }else{
-            $('#remote_btncolor').attr('class','btn')
+            $('div[id^=remote_btncolor]').attr('class','btn')
           }
 
         }

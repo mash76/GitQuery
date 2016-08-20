@@ -237,13 +237,26 @@ makePaneLog = function( filter ){
    if (!action.match(/(append|replace)/)) alert('makePaneStatus action:' + action)
    if (action == 'replace') $('#pane_status_detail').html('')
 
-   osRunOut('git status -s -b','pane_status_detail','append',
-     function(){
-       var com2 = 'git diff --cached #最後のcommitと現在変更してstageしたものの違い'
+   var com1 = 'git status -s -b'
+   osRunCb(com1,
+     function(ret_ary){
+       $('#pane_status_detail').append('<br/>' + sRed(escapeHTML(com1)) + " " + sGray(ret_ary.length) + '<br/>' )
+       for (var ind in ret_ary){
+          //fileへのリンク
+          if (!ret_ary[ind].match(/##/)){
+              ret_ary[ind] = ret_ary[ind].replace(/( *\S+ *)(\S+)/,'$1' + '<a onClick="makePaneFileStat(\'$2\')" href="javascript:void(0);" >$2</a>')
+          }
+       }
+
+       $('#pane_status_detail').append('<pre class="code">' + ret_ary.join('\n') + '</pre>')
+
+
+
+       var com2 = 'git diff --cached #最後のcommitと現在変更してstageしたもの(index)の違い'
        osRunCb(com2,
          function(ret_ary){
            for (var ind in ret_ary){
-             ret_ary[ind] = replaceTabSpc(escapeHTML(ret_ary[ind]))
+              ret_ary[ind] = replaceTabSpc(escapeHTML(ret_ary[ind]))
            }
            ret_ary = diffColor(ret_ary)
            var ret_out_str = ret_ary.join('<br/>')

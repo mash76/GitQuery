@@ -79,13 +79,21 @@ document.onkeydown = function(e){
   }
   if (e.metaKey && e.key == "7") {  // command
       openPaneCenter('pane_gitcommand')
-      $('#git_usercommand').focus() 
+      $('#git_usercommand').focus()
   }
 
   if (e.metaKey && e.key == "9") toggleFullScreen();
-
   if (e.metaKey && e.key == "d") toggleDevTools();
 
+  //open edit
+  if (e.metaKey && e.key == "e") {
+      $('#repo_edit_pane').slideToggle(10)
+      $('#btn_open_sublime3').focus()
+  }
+  if (e.metaKey && e.key == "o") {
+      $('#repo_edit_pane').slideToggle(10);
+      $('#btn_open_sublime3').focus()
+  }
 }
 
 //enterなら候補1に確定、それ以外ならキー押すごとに検索
