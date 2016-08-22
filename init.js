@@ -51,6 +51,9 @@ if (!_G.his_repo) _G.his_repo = {}
 showHisRepo()
 
 
+
+osRunOut('git help -a','pane_gitcommand_info','replace')
+
 document.onkeydown = function(e){
   console.log('metakyu kyu : ',e.metaKey,e.key)
 

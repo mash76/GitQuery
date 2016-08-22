@@ -113,8 +113,15 @@ showStashList = function(){
 
       $('#pane_stash_list').html( sRed(com) + " " + sGray(ret_ary.length) )
       for (var ind in ret_ary){
-        ret_ary[ind] = ret_ary[ind].replace(/(.*?)(\:)/,'<a href="javascript:void(0);" onClick="showStashDetail(\'$1\')">$1</a>$2')
+        var hash = ret_ary[ind].match(/.*?}/)[0]
+        ret_ary[ind] = ret_ary[ind].replace(hash,
+                  '<a href="javascript:void(0);" onClick="showStashDetail(\'' + hash + '\')">' + hash + '</a> ' ) + 
+                  '<a href="javascript:void(0);" onClick="gitStashDrop(\'' + hash + '\'); showStashList()">drop</a> ' + 
+                  '<a href="javascript:void(0);" onClick="gitStashApply(\'' + hash + '\'); showStashList()">apply</a> '     
+
       }
+
+
 
       if (ret_ary.length == 0){
         $('#stash_btncolor').attr('class','silver')
@@ -124,9 +131,33 @@ showStashList = function(){
 
       $('#pane_stash_list').append( '<pre class="code">' + ret_ary.join('\n') + '</pre>' )
       $('#stash_count').html(ret_ary.length)
-
-
   })
+}
+showStashDetail = function(hash){
+
+  $('#pane_stash_detail').html('')
+
+  var com = 'git diff --name-only HEAD...' + hash
+  osRunCb(com,function(ret_ary){
+
+      $('#pane_stash_detail').append( sRed(com) + " " + sGray(ret_ary.length) )
+      ret_ary = diffColor(ret_ary)
+      $('#pane_stash_detail').append( '<pre class="code">' + ret_ary.join('\n') + '</pre>' )
+
+      var com2 = 'git diff HEAD...' + hash
+      osRunCb(com2,function(ret_ary){
+
+          $('#pane_stash_detail').append( sRed(com2) + " " + sGray(ret_ary.length) )
+          ret_ary = diffColor(ret_ary)
+          $('#pane_stash_detail').append( '<pre class="code">' + ret_ary.join('\n') + '</pre>' )
+      })
+  })
+}
+gitStashDrop = function(hash){
+    osRunOut("git stash drop " + hash , 'pane_stash_detail' , 'replace' )
+}
+gitStashApply = function(hash){
+    osRunOut("git stash apply " + hash , 'pane_stash_detail' , 'replace' )
 }
 
 showRemoteBranches = function(){
@@ -152,15 +183,7 @@ showRemoteBranches = function(){
 }
 
 
-showStashDetail = function(hash){
-  var com = 'git diff HEAD...' + hash
-  osRunCb(com,function(ret_ary){
 
-      $('#pane_stash_detail').html( sRed(com) + " " + sGray(ret_ary.length) )
-      ret_ary = diffColor(ret_ary)
-      $('#pane_stash_detail').append( '<pre class="code">' + ret_ary.join('\n') + '</pre>' )
-  })
-}
 
 showIgnore = function(){
   $('#pane_ignore').html('')
@@ -214,6 +237,23 @@ showBranchList = function(action,treeOrList) {
 
     osRunOneLine('git branch | wc -l','local_branch_ct')
 
+}
+
+toggleStatusChild = function(key,action){
+
+  if (!action.match(/up|down|toggle/)) alert('toggleTopPanes action invalid' + action)
+
+  if (action == "toggle" ){
+    action = "down"
+    if ($('#' + key).css('display') == 'block' ) action = "up"
+  }
+  $('div[pane=status]').slideUp(10)
+
+  if (action == "up" ){
+      $('#' + key).slideUp(10)
+  }else{
+      $('#' + key).slideDown(10)
+  }
 }
 
 // fuc名直す top pane郡のトグル

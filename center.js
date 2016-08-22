@@ -231,6 +231,12 @@ makePaneLog = function( filter ){
  gitReset = function(){
      osRunOut('git reset','pane_status_detail', 'replace',function(){ makePaneStatus('append')  })
  }
+prepareGitClean = function(){
+     osRunOut('git clean -n','pane_status_detail', 'replace')
+}
+runGitClean = function(){
+     osRunOut('git clean -f','pane_status_detail', 'replace', function(){ makePaneStatus('append')  })
+}
 
  makePaneStatus = function(action){ // append replace
 
@@ -242,6 +248,7 @@ makePaneLog = function( filter ){
      function(ret_ary){
        $('#pane_status_detail').append('<br/>' + sRed(escapeHTML(com1)) + " " + sGray(ret_ary.length) + '<br/>' )
        for (var ind in ret_ary){
+          //ステータスをカウント
           //fileへのリンク
           if (!ret_ary[ind].match(/##/)){
               ret_ary[ind] = ret_ary[ind].replace(/( *\S+ *)(\S+)/,'$1' + '<a onClick="makePaneFileStat(\'$2\')" href="javascript:void(0);" >$2</a>')

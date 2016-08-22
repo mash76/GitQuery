@@ -79,6 +79,7 @@
 
     <div id="local_repo_pane" pane="top" class="detail hide" >
       <input type="text" id="filter_l_repo" size=20 placeholder ="repository name"/>
+      <span onclick="findLocalRepos('refresh')" class="btn">reload</span>
       <div id="local_repo_list"></div>
     </div>
 
@@ -93,14 +94,14 @@
             <span onClick="toggleRepoDescPanes('pane_delete','toggle')" class="btn red">delete</span>
             <br/>
 
-            <a id="current_repo_path" href="javascript:boid(0);" onClick="$('#repo_edit_pane').slideToggle(10);" class="gray">**current_repo_path**</a>
+            <a id="current_repo_path" href="javascript:void(0);" onClick="$('#repo_edit_pane').slideToggle(10);" class="gray">**current_repo_path**</a>
             <br/>
             <div class="detail hide" id="repo_edit_pane">
                 Open with
-                <a id="btn_open_finder"href="javascript:boid(0);" onClick="osrun('open ' + path2dir(_G.current_repo_path) ); $('#repo_edit_pane').slideUp(10);"  class="btn ">finder</a>
-                <a id="btn_open_atom" href="javascript:boid(0);" onClick="osrun('/Applications/Atom.app/Contents/Resources/app/atom.sh ' + path2dir(_G.current_repo_path) ); $('#repo_edit_pane').slideUp(10);"  class="btn ">atom</a>
-                <a id="btn_open_sublime2" href="javascript:boid(0);" onClick="osrun('/Applications/Sublime\\ Text\\ 2.app/Contents/SharedSupport/bin/subl ' + path2dir(_G.current_repo_path) ); $('#repo_edit_pane').slideUp(10);"  class="btn ">sublime2</a>
-                <a id="btn_open_sublime3" href="javascript:boid(0);" onClick="osrun('/Applications/Sublime\\ Text.app/Contents/SharedSupport/bin/subl ' + path2dir(_G.current_repo_path) ); $('#repo_edit_pane').slideUp(10);"  class="btn ">sublime3</a>
+                <a id="btn_open_finder"href="javascript:void(0);" onClick="osrun('open ' + path2dir(_G.current_repo_path) ); $('#repo_edit_pane').slideUp(10);"  class="btn ">finder</a>
+                <a id="btn_open_atom" href="javascript:void(0);" onClick="osrun('/Applications/Atom.app/Contents/Resources/app/atom.sh ' + path2dir(_G.current_repo_path) ); $('#repo_edit_pane').slideUp(10);"  class="btn ">atom</a>
+                <a id="btn_open_sublime2" href="javascript:void(0);" onClick="osrun('/Applications/Sublime\\ Text\\ 2.app/Contents/SharedSupport/bin/subl ' + path2dir(_G.current_repo_path) ); $('#repo_edit_pane').slideUp(10);"  class="btn ">sublime2</a>
+                <a id="btn_open_sublime3" href="javascript:void(0);" onClick="osrun('/Applications/Sublime\\ Text.app/Contents/SharedSupport/bin/subl ' + path2dir(_G.current_repo_path) ); $('#repo_edit_pane').slideUp(10);"  class="btn ">sublime3</a>
             </div>
             <span onClick="showBranchList('replace','list'); toggleRepoDescPanes('local_branch','toggle') " >
               <span class="btn">branch</span><span id="local_branch_ct" class="btn s120 bold">**local_branch_ct**</span>
@@ -257,28 +258,36 @@
             <input id="git_usercommand" type="text" size="70" placeholder="git command" />
             <button onClick="osRunOut($('#git_usercommand').val(),'pane_gitcommand_detail','replace')" placeholder="git command" />run</button>
             <br/>
+            
+            <div id="pane_gitcommand_info"></div>            
             <div id="pane_gitcommand_detail"></div>
         </div>
 
         <div id="pane_status" pane="center" class="detail code">
 
           <div class="vm10 fMenu">
-              <a href="javascript:void(0);" onClick="makePaneStatus('replace'); openPaneCenter('pane_status'); " class="btn s150">status</a>
-              <a href="javascript:void(0);" onClick="gitAdd(); openPaneCenter('pane_status'); "  class="btn s150">add</a>
-              <a href="javascript:void(0);" onClick="gitReset(); openPaneCenter('pane_status'); "  class="btn s150">reset</a>
-              <a href="javascript:void(0);" onClick="togglePaneStatus('pane_status_commit','toggle')"  class="btn s150">commit</a>
-              <a href="javascript:void(0);" onClick="togglePaneStatus('pane_status_stash','toggle')"  class="btn s150">stash</a>
+              <a href="javascript:void(0);" onClick="toggleStatusChild('',up'); makePaneStatus('replace'); openPaneCenter('pane_status'); " class="btn s150">status</a>
+              <a href="javascript:void(0);" onClick="toggleStatusChild('',up'); gitAdd();   openPaneCenter('pane_status'); "  class="btn s150">add</a>
+              <a href="javascript:void(0);" onClick="toggleStatusChild('','up'); gitReset(); openPaneCenter('pane_status'); "  class="btn s150">reset</a>
+              <a href="javascript:void(0);" onClick="toggleStatusChild('','up'); togglePaneStatus('pane_status_commit','toggle')"  class="btn s150">commit</a>
+              <a href="javascript:void(0);" onClick="toggleStatusChild('','up'); togglePaneStatus('pane_status_stash','toggle')"  class="btn s150">stash</a>
+              <a href="javascript:void(0);" onClick="toggleStatusChild('','up'); prepareGitClean(); togglePaneStatus('pane_status_clean','toggle')"  class="btn s150">clean</a>
+
           </div>
           <div id="pane_status_commit" pane="status" class="hide">
               commit<br/>
               <input id="commit_msg" type="text" placeholder="commit_msg name" />
-              <button onClick="osRunOut('git commit -m \'' + $('#commit_msg').val() + '\'','pane_status_detail','replace'); makePaneStatus('append');" placeholder="commit message" />commit</button>
+              <button onClick="osRunOut('git commit -m \'' + $('#commit_msg').val() + '\'','pane_status_detail','replace'); makePaneStatus('append'); " placeholder="commit message" />commit</button>
               <br/>
           </div>
           <div id="pane_status_stash" pane="status" class="hide">
               stash <span class="silver s80">git stash comment01 </span><br/>
-              <input id="stash_comment" type="text" placeholder="remote_name" />
+              <input id="stash_comment" type="text" placeholder="stash comment" />
               <button onClick="osRunOut('git stash save \'' + $('#stash_comment').val() + '\'','pane_status_detail','replace',function(){ makePaneStatus('append') }); " />stash</button>
+          </div>
+          <div id="pane_status_clean" pane="status" class="hide">
+              clean
+              <button onClick="runGitClean()" >clean</button>
           </div>
 
           <div id="pane_status_detail"></div>
