@@ -247,13 +247,21 @@ runGitClean = function(){
    osRunCb(com1,
      function(ret_ary){
        $('#pane_status_detail').append('<br/>' + sRed(escapeHTML(com1)) + " " + sGray(ret_ary.length) + '<br/>' )
+
+       var st = []
        for (var ind in ret_ary){
           //ステータスをカウント
+          var stt = ret_ary[ind].substr(0,2)
+          if (stt != "##"){
+            if (!st[stt]) st[stt] = 0
+            st[stt]++
+          }
           //fileへのリンク
           if (!ret_ary[ind].match(/##/)){
               ret_ary[ind] = ret_ary[ind].replace(/( *\S+ *)(\S+)/,'$1' + '<a onClick="makePaneFileStat(\'$2\')" href="javascript:void(0);" >$2</a>')
           }
        }
+       console.log(st)
 
        $('#pane_status_detail').append('<pre class="code">' + ret_ary.join('\n') + '</pre>')
 

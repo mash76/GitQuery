@@ -40,20 +40,20 @@ s120= function(str){ return '<span style="font-size:120%;">'+str+'</span>'}
 s150= function(str){ return '<span style="font-size:150%;">'+str+'</span>'}
 s200= function(str){ return '<span style="font-size:200%;">'+str+'</span>'}
 
-sGrayRed=   function(str){ return '<span style="color:#bb4444;">'+str+'</span>'}
-sGrayBlue=  function(str){ return '<span style="color:#4444bb;">'+str+'</span>'}
-sRed=   function(str){ return '<span style="color:red;">'+str+'</span>'}
-sBlue=  function(str){ return '<span style="color:blue;">'+str+'</span>'}
-sPink=  function(str){ return '<span style="color:DeepPink;">'+str+'</span>'}
-sGreen= function(str){ return '<span style="color:green;">'+str+'</span>'}
+sGrayRed=  function(str){ return '<span style="color:#bb4444;">' + str + '</span>'}
+sGrayBlue= function(str){ return '<span style="color:#4444bb;">' + str + '</span>'}
+sRed=   function(str){ return '<span style="color:red;">' + str + '</span>'}
+sBlue=  function(str){ return '<span style="color:blue;">' + str + '</span>'}
+sPink=  function(str){ return '<span style="color:DeepPink;">' + str + '</span>'}
+sGreen= function(str){ return '<span style="color:green;">' + str + '</span>'}
 
-sCrimson = function(str){ return '<span style="color:crimson;">'+str+'</span>'}
+sCrimson = function(str){ return '<span style="color:crimson;">' + str + '</span>'}
 
-sGray=  function(str){ return '<span style="color:gray;">'+str+'</span>'}
-sGray2 = function(str){ return '<span style="color:darkGray;">'+str+'</span>'}
-sSilver= function(str){ return '<span style="color:silver;">'+str+'</span>'}
+sGray=  function(str){ return '<span style="color:gray;">' + str + '</span>'}
+sGray2 = function(str){ return '<span style="color:darkGray;">' + str + '</span>'}
+sSilver= function(str){ return '<span style="color:silver;">' + str + '</span>'}
 
-sBold= function(str){ return '<span style="font-weight:bold;">'+str+'</span>'}
+sBold= function(str){ return '<span style="font-weight:bold;">' + str + '</span>'}
 
 path2pjname =function(full_path){ return full_path.replace(/\/.git/,'').replace(/.*\//,'') } // 後ろの.gitと 直前のスラッシュまでを除去
 path2dir =function(full_path){ return full_path.replace(/\/.git/,'') }
@@ -77,6 +77,23 @@ saveJson = function(path,jsondata){
        console.log('saved ' + path , JSON.stringify(jsondata))
     })
 }
+
+loadText = function (path){
+  if (!fs.existsSync(path)) return false;
+  var text = fs.readFileSync(path, 'utf-8');
+  return text  
+}
+saveText = function (path,text){
+  fs.writeFile(path, text,
+    function (error) {
+       if (error != null) {
+          alert('error : ' + error)
+          return;
+       }
+       console.log('saved ' + text)
+    })
+}
+
 
 loadJson = function(path){
 

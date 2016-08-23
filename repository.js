@@ -186,21 +186,26 @@ showRemoteBranches = function(){
 
 
 showIgnore = function(){
-  $('#pane_ignore').html('')
+  $('#pane_ignore_detail').html('')
 
   var git_command = 'cat .gitignore'
   osRunCb(git_command,
       function(ret_ary){
-          $('#pane_ignore').append(s150(sBold('ignore setting<br/>')) + sRed(git_command) + " " + sGray(ret_ary.length) + '<br/>' +
+          $('#pane_ignore_detail').append(s150(sBold('ignore setting<br/>')) + sRed(git_command) + " " + sGray(ret_ary.length) + '<br/>' +
                                ret_ary.join('<br/>') + '<br/><br/>')
   })
   var com2 = "git status --ignored -s | grep '!!'"
   osRunCb(com2,
       function(ret_ary){
-          $('#pane_ignore').append(s150(sBold('ignored files<br/>')) + sRed(com2) + " " + sGray(ret_ary.length) + '<br/>' +
+          $('#pane_ignore_detail').append(s150(sBold('ignored files<br/>')) + sRed(com2) + " " + sGray(ret_ary.length) + '<br/>' +
                                ret_ary.join('<br/>'))
           toggleRepoDescPanes('pane_ignore','toggle')
   })
+}
+
+updateIgnore = function(text){
+  saveText( path2dir(_G.current_repo_path) + '/.gitignore' , text)
+  showIgnore()
 }
 
 repoDiskSize = function(){
@@ -217,43 +222,24 @@ showBranchList = function(action,treeOrList) {
 
   if (!treeOrList.match(/(tree|list)/)) alert('showBranchList treeOrList:' + treeOrList)
 
-    var git_command = 'git branch'
-    if (treeOrList == 'tree') git_command = 'git show-branch'
+  var git_command = 'git branch'
+  if (treeOrList == 'tree') git_command = 'git show-branch'
 
-    osRunCb(git_command,function(ret_ary){
-          $('#local_branch_details').append(sRed(git_command) + " " + sGray(ret_ary.length) + '<br/>' )
+  osRunCb(git_command,function(ret_ary){
+        $('#local_branch_details').append(sRed(git_command) + " " + sGray(ret_ary.length) + '<br/>' )
 
-          if (treeOrList == 'list') {
-              for (var ind in ret_ary ){
-                  var v1 = ret_ary[ind].trim()
-                  $('#local_branch_details').append(
-                    '<span onclick="checkOut(\'' + v1 + '\')" class="btn">' +
-                    v1 +'</span><br/>')
-              }
-          }else{
-              $('#local_branch_details').append('<pre class="code">' + ret_ary.join("\n") + '</pre>')
-          }
-    })
-
-    osRunOneLine('git branch | wc -l','local_branch_ct')
-
-}
-
-toggleStatusChild = function(key,action){
-
-  if (!action.match(/up|down|toggle/)) alert('toggleTopPanes action invalid' + action)
-
-  if (action == "toggle" ){
-    action = "down"
-    if ($('#' + key).css('display') == 'block' ) action = "up"
-  }
-  $('div[pane=status]').slideUp(10)
-
-  if (action == "up" ){
-      $('#' + key).slideUp(10)
-  }else{
-      $('#' + key).slideDown(10)
-  }
+        if (treeOrList == 'list') {
+            for (var ind in ret_ary ){
+                var v1 = ret_ary[ind].trim()
+                $('#local_branch_details').append(
+                  '<span onclick="checkOut(\'' + v1 + '\')" class="btn">' +
+                  v1 +'</span><br/>')
+            }
+        }else{
+            $('#local_branch_details').append('<pre class="code">' + ret_ary.join("\n") + '</pre>')
+        }
+  })
+  osRunOneLine('git branch | wc -l','local_branch_ct')
 }
 
 // fuc名直す top pane郡のトグル
@@ -528,6 +514,8 @@ showDotGit = function(){
   )
 }
 
+
+
 // set local repository
 setRepoPath = function(full_path) {
     console.log(full_path)
@@ -553,6 +541,13 @@ setRepoPath = function(full_path) {
 
     showRemoteRepos('replace')
     showRemoteBranches()
+
+
+    //gitignore edit
+    console.log('ignorepath' , path2dir(full_path) + '/.gitignore' )
+    var ignore_text = loadText( path2dir(full_path) + '/.gitignore' )
+    $('#ignore_edit').val(ignore_text)
+    console.log('ignoretext', ignore_text)
 
 
     //repository basic info

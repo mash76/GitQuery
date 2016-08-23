@@ -193,6 +193,7 @@
           <div id="dotgitfiles_detail" class="underline"> </div>
         </div>
 
+
         <div id="pane_delete" pane="repo" class="code hide detail" >
             <span class="red s150 bold">Danger.</span>
             <span class="red">No going back. Please be certain.</span>
@@ -200,23 +201,27 @@
 
             delete .git directry<br/>
             <input id="delete_name_git" type="text" placeholder="repository_name" />
-            <button onClick="delGit(_G.current_repo_path, $('#delete_name_git').val())"  />delete</button>
+            <button onClick="delGit(_G.current_repo_path, $('#delete_name_git').val())" />delete</button>
             <br/>
             delete repo Directory<br/>
             <input id="delete_name_dir" type="text" placeholder="repository_name" />
-            <button onClick="delDir(_G.current_repo_path, $('#delete_name_dir').val())"  />delete</button>
+            <button onClick="delDir(_G.current_repo_path, $('#delete_name_dir').val())" />delete</button>
             <br/>
             <div id="pane_delete_detail" ></div>
             Re-Init repo Directory<br/>
             <input id="reinit_name_dir" type="text" placeholder="repository_name" />
-            <button onClick="reInitDir(_G.current_repo_path, $('#reinit_name_dir').val())"  />delete</button>
+            <button onClick="reInitDir(_G.current_repo_path, $('#reinit_name_dir').val())" />delete</button>
             <br/>
             <div id="pane_delete_detail" ></div>
-
         </div>
 
 
         <div id="pane_ignore" pane="repo" class="code hide detail" >
+            <textarea id="ignore_edit" cols="40" rows="20" ></textarea>
+            <button onClick="updateIgnore($('#ignore_edit').val())"  />update</button>
+
+
+            <div id="pane_ignore_detail"  ></div>
         </div>
         <div id="pane_remote" pane="repo" class="code hide detail" >
             new remote <span class="silver s80">git remote add branchname01 https://..../.git   </span><br/>
@@ -266,12 +271,12 @@
         <div id="pane_status" pane="center" class="detail code">
 
           <div class="vm10 fMenu">
-              <a href="javascript:void(0);" onClick="toggleStatusChild('',up'); makePaneStatus('replace'); openPaneCenter('pane_status'); " class="btn s150">status</a>
-              <a href="javascript:void(0);" onClick="toggleStatusChild('',up'); gitAdd();   openPaneCenter('pane_status'); "  class="btn s150">add</a>
-              <a href="javascript:void(0);" onClick="toggleStatusChild('','up'); gitReset(); openPaneCenter('pane_status'); "  class="btn s150">reset</a>
-              <a href="javascript:void(0);" onClick="toggleStatusChild('','up'); togglePaneStatus('pane_status_commit','toggle')"  class="btn s150">commit</a>
-              <a href="javascript:void(0);" onClick="toggleStatusChild('','up'); togglePaneStatus('pane_status_stash','toggle')"  class="btn s150">stash</a>
-              <a href="javascript:void(0);" onClick="toggleStatusChild('','up'); prepareGitClean(); togglePaneStatus('pane_status_clean','toggle')"  class="btn s150">clean</a>
+              <a href="javascript:void(0);" onClick=" makePaneStatus('replace'); openPaneCenter('pane_status'); " class="btn s150">status</a>
+              <a href="javascript:void(0);" onClick=" gitAdd(); openPaneCenter('pane_status'); " class="btn s150">add</a>
+              <a href="javascript:void(0);" onClick=" gitReset(); openPaneCenter('pane_status'); " class="btn s150">reset</a>
+              <a href="javascript:void(0);" onClick=" togglePaneStatus('pane_status_commit','toggle')" class="btn s150">commit</a>
+              <a href="javascript:void(0);" onClick=" togglePaneStatus('pane_status_stash','toggle')" class="btn s150">stash</a>
+              <a href="javascript:void(0);" onClick=" prepareGitClean(); togglePaneStatus('pane_status_clean','toggle')" class="btn s150">clean</a>
 
           </div>
           <div id="pane_status_commit" pane="status" class="hide">

@@ -33,8 +33,6 @@ osRunCb( com2 ,
     $('#gitconf').append( sRed(com2) + '<br/>' + ret_ary.join('<br/>') + '<br/>' )
   })
 
-
-
 findLocalRepos('cache')
 
 // ipc関連初期化
@@ -98,6 +96,8 @@ document.onkeydown = function(e){
       $('#btn_open_sublime3').focus()
   }
 }
+
+
 
 //enterなら候補1に確定、それ以外ならキー押すごとに検索
 $('#filter_l_repo').keyup(function(e){
