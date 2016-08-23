@@ -18,6 +18,7 @@
             <span onClick="toggleFullScreen()" class="btn" >full</span>
             <span onClick="$('#shortcut').slideToggle(10)" class="btn" >shortcut</span>
             <span onClick="osRunOut('rm ' + _G.save_path + '/*', 'debug_out','replace')" class="btn" >delCache</span>
+            <span onClick="osRunOut('git help -a', 'command_list','replace'); $('#command_list').slideToggle(10)" class="btn" >commandList</span>
 
           </td>
           <td width="50%" align="right" >
@@ -27,6 +28,7 @@
         </tr>
       </table>
 
+      <div id="command_list" class="detail hide"></div>
       <div id="shortcut" class="detail hide">
           Com 1  - Repository List  <br/>
           <br/>
@@ -260,6 +262,15 @@
         <!-- pane center -->
 
         <div id="pane_gitcommand" pane="center" class="detail code">
+
+            <span class="gray">
+                <span onClick="$('#git_usercommand').val('GIT_TRACE_SETUP=true '); $('#git_usercommand').focus() " class="btn" >GIT_TRACE_SETUP=true</span> git status   #gitが見つけた基準dirを全部表示<br/>
+                <span onClick="$('#git_usercommand').val('GIT_TRACE_PERFORMANCE=true '); $('#git_usercommand').focus() " class="btn" >GIT_TRACE_PERFORMANCE=true</span> git status   #各Commandの処理時間を表示<br/>
+                <span onClick="$('#git_usercommand').val('GIT_TRACE_PACKET=true '); $('#git_usercommand').focus() " class="btn" >GIT_TRACE_PACKET=true</span> git ls-remote origin   # 中身のcurlをパケット単位で追跡<br/>
+                <span onClick="$('#git_usercommand').val('GIT_TRACE_PACK_ACCESS=true '); $('#git_usercommand').focus() " class="btn" >GIT_TRACE_PACK_ACCESS=true</span> git status   # packファイル gitの内部のアクセスを表示<br/>
+                <span onClick="$('#git_usercommand').val('GIT_TRACE=true '); $('#git_usercommand').focus() " class="btn" >GIT_TRACE=true</span> git stash list  # 内部Commandへの、内部エイリアスの変換の順路を表示<br/><br/>
+            </span>
+
             <input id="git_usercommand" type="text" size="70" placeholder="git command" />
             <button onClick="osRunOut($('#git_usercommand').val(),'pane_gitcommand_detail','replace')" placeholder="git command" />run</button>
             <br/>

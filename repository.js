@@ -215,6 +215,13 @@ repoDiskSize = function(){
         });
 }
 
+delLocalBranch = function(branchname){
+  osRunOut('git branch -d ' + branchname , 'local_branch_details' , 'replace')
+  showBranchList('append','list')
+
+
+}
+
 showBranchList = function(action,treeOrList) {
 
   if (!action.match(/(append|replace)/)) alert('showBranchList action:' + action)
@@ -233,7 +240,7 @@ showBranchList = function(action,treeOrList) {
                 var v1 = ret_ary[ind].trim()
                 $('#local_branch_details').append(
                   '<span onclick="checkOut(\'' + v1 + '\')" class="btn">' +
-                  v1 +'</span><br/>')
+                  v1 +'</span> <span onClick="delLocalBranch(\'' + v1 + '\')" class="btn" >del</span><br/>')
             }
         }else{
             $('#local_branch_details').append('<pre class="code">' + ret_ary.join("\n") + '</pre>')
