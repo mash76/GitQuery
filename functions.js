@@ -67,6 +67,7 @@ matchRed = function(str,filter) { return str.replace(new RegExp('(' + filter.tri
 
 
 loadText = function (path){
+  console.log(path)
   if (!fs.existsSync(path)) return false;
   var text = fs.readFileSync(path, 'utf-8');
   return text  

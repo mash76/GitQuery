@@ -26,14 +26,23 @@ showHooks = function(){
     osRunCb(cmd,
       function(ret_ary){
           for (var ind in ret_ary){
-              ret_ary[ind] = ret_ary[ind].replace(/(.*)(=)(.*)/, sGrayBlue('$1') + '$2' + sGrayRed('$3'))
+              ret_ary[ind] = '<span class="btn" onClick=" showHooksDetail(\'' + _G.current_repo_path + '/hooks/' + ret_ary[ind] + '\') " >' + ret_ary[ind] + '</span>'
           }
           $('#hooks_list').html(sRed(escapeHTML(command)) + " " + sGray(ret_ary.length) + '<br/>')
           $('#hooks_list').append('<pre class="code m0">' + ret_ary.join('<br/>') + '</pre>')
       });
 }
 showHooksDetail = function(path){
-   $('#hooks_detail').append('<pre class="code m0">' + ret_ary.join('<br/>') + '</pre>')
+    var command = 'cat ' + path
+    osRunCb(command,
+      function(ret_ary2){
+          $('#hooks_detail').html(sRed(escapeHTML(command)) + " " + sGray(ret_ary2.length) + '<br/>')
+          $('#hooks_detail').append('<pre class="code m0">' + ret_ary2.join('\n') + '</pre>')
+      });
+
+
+
+
 
 }
 
