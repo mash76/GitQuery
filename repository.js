@@ -193,19 +193,23 @@ showIgnore = function(){
       function(ret_ary){
           $('#pane_ignore_detail').append(s150(sBold('ignore setting<br/>')) + sRed(git_command) + " " + sGray(ret_ary.length) + '<br/>' +
                                ret_ary.join('<br/>') + '<br/><br/>')
+
+
+            var com2 = "git status --ignored -s | grep '!!'"
+            osRunCb(com2,
+                function(ret_ary2){
+                    $('#pane_ignore_detail').append(s150(sBold('ignored files<br/>')) + sRed(com2) + " " + sGray(ret_ary2.length) + '<br/>' +
+                                         ret_ary2.join('<br/>'))
+                    
+            })
   })
-  var com2 = "git status --ignored -s | grep '!!'"
-  osRunCb(com2,
-      function(ret_ary){
-          $('#pane_ignore_detail').append(s150(sBold('ignored files<br/>')) + sRed(com2) + " " + sGray(ret_ary.length) + '<br/>' +
-                               ret_ary.join('<br/>'))
-          toggleRepoDescPanes('pane_ignore','toggle')
-  })
+
 }
 
 updateIgnore = function(text){
   saveText( path2dir(_G.current_repo_path) + '/.gitignore' , text)
   showIgnore()
+  toggleRepoDescPanes('pane_ignore','down')
 }
 
 repoDiskSize = function(){

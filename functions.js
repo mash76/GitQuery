@@ -65,18 +65,6 @@ escapeRegExp = function(string) {  return string.replace(/([.*+?^=!:${}()|[\]\/\
 replaceTabSpc = function(str) { return str.replace(/ /ig,'&nbsp;').replace(/\t/ig,'&nbsp;&nbsp;&nbsp;&nbsp;')}
 matchRed = function(str,filter) { return str.replace(new RegExp('(' + filter.trim() + ')','ig'),sRed('$1') ) }
 
-// json をテキスト保存  [] でなく {} で初期化すること
-saveJson = function(path,jsondata){
-  console.log("save " + path)
-  fs.writeFile(path, JSON.stringify(jsondata),
-    function (error) {
-       if (error != null) {
-          alert('error : ' + error)
-          return;
-       }
-       console.log('saved ' + path , JSON.stringify(jsondata))
-    })
-}
 
 loadText = function (path){
   if (!fs.existsSync(path)) return false;
@@ -84,14 +72,13 @@ loadText = function (path){
   return text  
 }
 saveText = function (path,text){
-  fs.writeFile(path, text,
-    function (error) {
-       if (error != null) {
-          alert('error : ' + error)
-          return;
-       }
-       console.log('saved ' + text)
-    })
+  fs.writeFileSync(path, text)
+}
+
+// json をテキスト保存  [] でなく {} で初期化すること
+saveJson = function(path,jsondata){
+  console.log("save " + path)
+  fs.writeFileSync(path, JSON.stringify(jsondata))
 }
 
 
