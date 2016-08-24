@@ -21,6 +21,22 @@ showGitInit = function(){
     }
 }
 
+showHooks = function(){
+    var cmd = 'ls ' + _G.current_repo_path + '/hooks'
+    osRunCb(cmd,
+      function(ret_ary){
+          for (var ind in ret_ary){
+              ret_ary[ind] = ret_ary[ind].replace(/(.*)(=)(.*)/, sGrayBlue('$1') + '$2' + sGrayRed('$3'))
+          }
+          $('#hooks_list').html(sRed(escapeHTML(command)) + " " + sGray(ret_ary.length) + '<br/>')
+          $('#hooks_list').append('<pre class="code m0">' + ret_ary.join('<br/>') + '</pre>')
+      });
+}
+showHooksDetail = function(path){
+   $('#hooks_detail').append('<pre class="code m0">' + ret_ary.join('<br/>') + '</pre>')
+
+}
+
 showConfig = function(){
     var command = 'cat ' + _G.current_repo_path + '/config'
     osRunCb(command,
