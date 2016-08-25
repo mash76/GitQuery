@@ -21,35 +21,7 @@ showGitInit = function(){
     }
 }
 
-//    ignore_btncolor   hook_btncolor
 
-showHooks = function(){
-    var cmd = 'ls ' + _G.current_repo_path + '/hooks'
-    osRunCb(cmd,
-      function(ret_ary){
-          for (var ind in ret_ary){
-              ret_ary[ind] = '<span class="btn" onClick=" showHooksDetail(\'' + _G.current_repo_path + '/hooks/' + ret_ary[ind] + '\') " >' + ret_ary[ind] + '</span>'
-          }
-          $('#hooks_list').html(sRed(escapeHTML(command)) + " " + sGray(ret_ary.length) + '<br/>')
-          $('#hooks_list').append('<pre class="code m0">' + ret_ary.join('<br/>') + '</pre>')
-
-          //if (ret_ary.length == 0 )
-
-      });
-}
-showHooksDetail = function(path){
-    var command = 'cat ' + path
-    osRunCb(command,
-      function(ret_ary2){
-          $('#hooks_detail').html(sRed(escapeHTML(command)) + " " + sGray(ret_ary2.length) + '<br/>')
-          $('#hooks_detail').append('<pre class="code m0">' + ret_ary2.join('\n') + '</pre>')
-      });
-
-
-
-
-
-}
 
 showConfig = function(){
     var command = 'cat ' + _G.current_repo_path + '/config'
@@ -212,7 +184,40 @@ showRemoteBranches = function(){
     )
 }
 
+//    ignore_btncolor   hook_btncolor
 
+showHooks = function(){
+    var cmd = 'ls ' + _G.current_repo_path + '/hooks'
+    osRunCb(cmd,
+      function(ret_ary){
+          var hook_ct = 0
+          for (var ind in ret_ary){
+              ret_ary[ind] = '<span class="btn" onClick=" showHooksDetail(\'' + _G.current_repo_path + '/hooks/' + ret_ary[ind] + '\') " >' + ret_ary[ind] + '</span>'
+
+              //sample以外をカウント
+              if (!ret_ary[ind].trim().match(/\.sample/)) hook_ct++
+          }
+
+          console.log('hook',hook_ct);
+          if (hook_ct == 0 ) $('#hook_btncolor').attr('class','silver')
+          else  $('#hook_btncolor').attr('class','btn')
+
+
+          $('#hooks_list').html(sRed(escapeHTML(cmd)) + " " + sGray(ret_ary.length) + '<br/>')
+          $('#hooks_list').append('<pre class="code m0">' + ret_ary.join('<br/>') + '</pre>')
+
+          //if (ret_ary.length == 0 )
+
+      });
+}
+showHooksDetail = function(path){
+    var command = 'cat ' + path
+    osRunCb(command,
+      function(ret_ary2){
+          $('#hooks_detail').html(sRed(escapeHTML(command)) + " " + sGray(ret_ary2.length) + '<br/>')
+          $('#hooks_detail').append('<pre class="code m0">' + ret_ary2.join('\n') + '</pre>')
+      });
+}
 
 
 showIgnore = function(){
@@ -221,6 +226,11 @@ showIgnore = function(){
   var git_command = 'cat .gitignore'
   osRunCb(git_command,
       function(ret_ary){
+
+          console.log(ret_ary)
+          if (ret_ary.length == 0 ) $('#ignore_btncolor').attr('class','silver')
+          else  $('#ignore_btncolor').attr('class','btn')
+
           $('#pane_ignore_detail').append(s150(sBold('ignore setting<br/>')) + sRed(git_command) + " " + sGray(ret_ary.length) + '<br/>' +
                                ret_ary.join('<br/>') + '<br/><br/>')
 
@@ -574,9 +584,12 @@ setRepoPath = function(full_path) {
     saveJson(_G.save_path　+ '/his_select_repo.txt' , _G.his_repo)
     showHisRepo()
 
+    //repository
     showStashList()
-
-    //ブランチ
+    showIgnore()
+    showHooks()
+    
+    //branch
     setCurrentBranchName()
     toggleRepoDescPanes("local_branch",'up') // close
 
