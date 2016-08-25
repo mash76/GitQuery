@@ -109,8 +109,13 @@
               <span class="btn">branch</span><span id="local_branch_ct" class="btn s120 bold">**local_branch_ct**</span>
             </span>
 
-            <span onClick="showIgnore(); toggleRepoDescPanes('pane_ignore','toggle')" class="btn">ignore</span>
-            <span onClick="showHooks(); toggleRepoDescPanes('pane_hooks','toggle')" class="btn">hooks</span>
+            <span id="ignore_btncolor" class="silver">
+                <span onClick="showIgnore(); toggleRepoDescPanes('pane_ignore','toggle')" class="btn">ignore</span>
+            </span>
+
+            <span id="hook_btncolor" class="silver">
+                <span onClick="showHooks(); toggleRepoDescPanes('pane_hooks','toggle')" class="btn">hooks</span>
+            </span>
 
             <span id="submodule_btncolor" class="silver">
               <span onClick="showGitmodules('replace'); toggleRepoDescPanes('pane_submodule','toggle')" >submodule</span><span id="submodule_count" class="s120 bold">**submodule_count**</span>

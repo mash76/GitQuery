@@ -21,6 +21,8 @@ showGitInit = function(){
     }
 }
 
+//    ignore_btncolor   hook_btncolor
+
 showHooks = function(){
     var cmd = 'ls ' + _G.current_repo_path + '/hooks'
     osRunCb(cmd,
@@ -30,6 +32,9 @@ showHooks = function(){
           }
           $('#hooks_list').html(sRed(escapeHTML(command)) + " " + sGray(ret_ary.length) + '<br/>')
           $('#hooks_list').append('<pre class="code m0">' + ret_ary.join('<br/>') + '</pre>')
+
+          //if (ret_ary.length == 0 )
+
       });
 }
 showHooksDetail = function(path){
