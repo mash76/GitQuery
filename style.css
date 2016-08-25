@@ -7,6 +7,8 @@ a:visited {color: SteelBlue;text-decoration: none; opacity:1; }
 a:hover {color: SteelBlue;text-decoration: none; opacity:0.7; } /* underlineなしにする */
 
 .btn { color: SteelBlue; cursor:pointer;}
+.btn_silver { color: silver; cursor:pointer;}
+
 .history { color: DeepPink; cursor:pointer;}
 .detail{ background-color:#f0f0f0;
         padding:7px;

@@ -98,7 +98,7 @@ showGitmodules = function(action){ // append replace
     function(ret_ary,stderr){
 
       if (ret_ary.length == 0){
-        $('#submodule_btncolor').attr('class','silver')
+        $('#submodule_btncolor').attr('class','btn_silver')
       }else{
         $('#submodule_btncolor').attr('class','btn')
       }
@@ -126,7 +126,7 @@ showStashList = function(){
 
 
       if (ret_ary.length == 0){
-        $('#stash_btncolor').attr('class','silver')
+        $('#stash_btncolor').attr('class','btn_silver')
       }else{
         $('#stash_btncolor').attr('class','btn')
       }
@@ -199,7 +199,7 @@ showHooks = function(){
           }
 
           console.log('hook',hook_ct);
-          if (hook_ct == 0 ) $('#hook_btncolor').attr('class','silver')
+          if (hook_ct == 0 ) $('#hook_btncolor').attr('class','btn_silver')
           else  $('#hook_btncolor').attr('class','btn')
 
 
@@ -228,7 +228,7 @@ showIgnore = function(){
       function(ret_ary){
 
           console.log(ret_ary)
-          if (ret_ary.length == 0 ) $('#ignore_btncolor').attr('class','silver')
+          if (ret_ary.length == 0 ) $('#ignore_btncolor').attr('class','btn_silver')
           else  $('#ignore_btncolor').attr('class','btn')
 
           $('#pane_ignore_detail').append(s150(sBold('ignore setting<br/>')) + sRed(git_command) + " " + sGray(ret_ary.length) + '<br/>' +
@@ -531,7 +531,7 @@ showRemoteRepos = function(action){ // append replace
           $('#pane_remote_detail' ).append( '<pre class="code m0" >' + ret_ary.join('\n') + '</pre>' )
 
           if (ret_ary.length == 0){
-            $('div[id^=remote_btncolor]').attr('class','silver')
+            $('div[id^=remote_btncolor]').attr('class','btn_silver')
           }else{
             $('div[id^=remote_btncolor]').attr('class','btn')
           }

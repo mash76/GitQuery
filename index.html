@@ -109,20 +109,20 @@
               <span class="btn">branch</span><span id="local_branch_ct" class="btn s120 bold">**local_branch_ct**</span>
             </span>
 
-            <span id="ignore_btncolor" class="silver">
+            <span id="ignore_btncolor" class="btn_silver">
                 <span onClick="showIgnore(); toggleRepoDescPanes('pane_ignore','toggle')" >ignore</span>
             </span>
 
-            <span id="hook_btncolor" class="silver">
+            <span id="hook_btncolor" class="btn_silver">
                 <span onClick="showHooks(); toggleRepoDescPanes('pane_hooks','toggle')" >hooks</span>
             </span>
 
-            <span id="submodule_btncolor" class="silver">
+            <span id="submodule_btncolor" class="btn_silver">
               <span onClick="showGitmodules('replace'); toggleRepoDescPanes('pane_submodule','toggle')" >submodule</span><span id="submodule_count" class="s120 bold">**submodule_count**</span>
             </span>
 
 
-            <span id="stash_btncolor" class="silver">
+            <span id="stash_btncolor" class="btn_silver">
               <span onClick="showStashList(); toggleRepoDescPanes('pane_stash','toggle')" >stash</span><span id="stash_count" class="s120 bold"></span>
             </span>
             <span onClick="showConfig(); toggleRepoDescPanes('pane_config','toggle')" class="btn">config</span>
@@ -130,7 +130,7 @@
 
         </td><td valign=top >
 
-            <div id="remote_btncolor_1" class="silver" >
+            <div id="remote_btncolor_1" class="btn_silver" >
                 <span onClick="osRunOut('git fetch','pane_remote_detail','replace'); openPaneCenter('pane_remote')" class="s120">< fetch</span>
                 <br/>
                 <span onClick="osRunOut('git pull' ,'pane_remote_detail','replace'); openPaneCenter('pane_remote')" class="s120">< pull</span>
@@ -142,7 +142,7 @@
         </td><td valign=top>
 
             <!-- remote -->
-            <div id="remote_btncolor_2" class="silver" style="background:#ffffdd;">
+            <div id="remote_btncolor_2" class="btn_silver" style="background:#ffffdd;">
                 <span onClick="showRemoteRepos('replace'); toggleRepoDescPanes('pane_remote','toggle')" class="s120 bold">Remote</span>
                 <br/>
                 <span id="remote_menu">
