@@ -189,12 +189,12 @@ makePaneFileStat = function(filepath){
 
 makePaneDiff = function( diff_command ){
 
-    osRunOut( diff_command ,'pane_gitdiff')
+    osRunOut( 'git diff --stat ' + diff_command ,'pane_gitdiff_detail','replace',
+      function(){
+        osRunOut( 'git diff ' + diff_command ,'pane_gitdiff_detail','append')
 
+      })
 }
-
-
-
 
 makePaneLog = function( filter ){
 
@@ -213,7 +213,7 @@ makePaneLog = function( filter ){
          $('#pane_log_detail').append(sRed(escapeHTML(git_command)) + " " + sGray(ret_ary.length) + '<br/>')
          for (var ind in ret_ary){
              line_ary = ret_ary[ind].split(/\t/)
-             line_ary[1] = '<span onClick="makePaneDiff(\'' + 'git diff ' + line_ary[1] + '^..' + line_ary[1] + '\'); " class="btn">' + line_ary[1].trim() + '</span>'
+             line_ary[1] = '<span onClick="makePaneDiff(\'' + line_ary[1].trim() + '^..' + line_ary[1].trim() + '\'); openPaneCenter(\'pane_gitdiff\');" class="btn">' + line_ary[1].trim() + '</span>'
              ret_ary[ind] = '<tr><td nowrap>' + line_ary.join('</td><td nowrap >')　+ '</td></tr>'
          }
          var str_out = ret_ary.join('\n')
@@ -228,11 +228,6 @@ makePaneLog = function( filter ){
      })
  }
 
- makePaneDiff = function(){
-
-     openPaneCenter('pane_diff');
-
- }
 
  gitAdd = function(){
      osRunOut('git add .','pane_status_detail', 'replace', function(){ makePaneStatus('append')  })
