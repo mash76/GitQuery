@@ -187,6 +187,15 @@ makePaneFileStat = function(filepath){
   })
 }
 
+makePaneDiff = function( diff_command ){
+
+    osRunOut( diff_command ,'pane_gitdiff')
+
+}
+
+
+
+
 makePaneLog = function( filter ){
 
     var git_command = 'git log --date=relative --pretty=format:"%ad %x09 %h %x09 %an %x09 %s"'
@@ -204,7 +213,7 @@ makePaneLog = function( filter ){
          $('#pane_log_detail').append(sRed(escapeHTML(git_command)) + " " + sGray(ret_ary.length) + '<br/>')
          for (var ind in ret_ary){
              line_ary = ret_ary[ind].split(/\t/)
-             line_ary[1] = '<a href="aa">' + line_ary[1].trim() + '</a>'
+             line_ary[1] = '<span onClick="makePaneDiff(\'' + 'git diff ' + line_ary[1] + '^..' + line_ary[1] + '\'); " class="btn">' + line_ary[1].trim() + '</span>'
              ret_ary[ind] = '<tr><td nowrap>' + line_ary.join('</td><td nowrap >')　+ '</td></tr>'
          }
          var str_out = ret_ary.join('\n')
