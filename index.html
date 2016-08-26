@@ -235,12 +235,15 @@
             <div id="pane_ignore_detail"  ></div>
         </div>
         <div id="pane_remote" pane="repo" class="code hide detail" >
-            new remote <span class="silver s80">git remote add branchname01 https://..../.git   </span><br/>
+            new remote <span class="silver s80">git remote add branchname01 https://..../.git   </span>
+            <a onClick="osrun('open https://github.com')" class="btn">github</a> 
+            <a onClick="osrun('open https://bitbucket.org')" class="btn">bitbucket</a> 
+            <br/>
             <input id="remote_name" type="text" placeholder="remote_name" />
             <input id="remote_url" type="text" placeholder="remote_url" />
             <button onClick="gitRemoteAdd()"  />add</button>
             <br/>
-            <div id="pane_remote_detail"  ></div>
+            <div id="pane_remote_detail" ></div>
 
         </div>
         <div id="pane_re_branch" pane="repo" class="code hide detail" >

@@ -34,7 +34,7 @@ osRunCb( com2 ,
   })
 
 findLocalRepos('cache')
-showIgnore()
+
 
 // ipc関連初期化
 const {ipcRenderer} = require('electron')
