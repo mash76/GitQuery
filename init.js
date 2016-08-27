@@ -50,6 +50,18 @@ if (!_G.his_repo) _G.his_repo = {}
 showHisRepo()
 
 
+//格言読み込んで10病に1回表示
+_G.kakugenAry = loadText(process.cwd() + '/kakugen.txt').trim().split(/\n/)
+function updateKakugen(){
+  console.log('kakugen' + 1)
+  $('#kakugen').html(sRed('git格言') + ':' + _G.kakugenAry[ Math.floor(Math.random() * _G.kakugenAry.length)])
+  $('#kakugen').hide().fadeIn(300)
+
+}
+setInterval(updateKakugen,8000)
+updateKakugen()
+
+
 document.onkeydown = function(e){
   console.log('metakyu kyu : ',e.metaKey,e.key)
 
@@ -63,6 +75,7 @@ document.onkeydown = function(e){
   }
   if (e.metaKey && e.key == "3") {  // status
       makePaneStatus('replace')
+      openPaneCenter('pane_status');
   }
 
   if (e.metaKey && e.key == "4") {  // files
@@ -70,7 +83,7 @@ document.onkeydown = function(e){
       openPaneCenter('pane_filelist');
   }
   if (e.metaKey && e.key == "5") {  // commits
-      makePaneLog('')
+      makePaneLog('' , _G.log_lineOrTree)
   }
   if (e.metaKey && e.key == "6") {  // users
       makePaneUser('')
@@ -110,7 +123,7 @@ $('#filter_filelist').keyup(function(e){
     if (e.which == 13) makePaneFilelist( $('#filter_filelist').val() )
 })
 $('#filter_log').keyup(function(e){
-    if (e.which == 13) makePaneLog( $('#filter_log').val() )
+    if (e.which == 13) makePaneLog( $('#filter_log').val(), _G.log_lineOrTree )
 })
 $('#filter_user').keyup(function(e){
     if (e.which == 13) makePaneUser( $('#filter_user').val() )

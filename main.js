@@ -38,8 +38,6 @@ function createWindow () {
 }
 
 
-
-
 const {ipcMain} = require('electron')
 // devtools トグル非同期
 ipcMain.on('ipcDevTool', function(event, arg) {

@@ -21,8 +21,6 @@ showGitInit = function(){
     }
 }
 
-
-
 showConfig = function(){
     var command = 'cat ' + _G.current_repo_path + '/config'
     osRunCb(command,
@@ -109,21 +107,22 @@ showGitmodules = function(action){ // append replace
   })
 }
 
-showStashList = function(){
+showStashList = function(action){
+
+  if (!action.match(/(append|replace)/)) alert('showBranchList action:' + action)
+  if (action == 'replace') $('#pane_stash_list').html('')
+
   var com = 'git stash list'
   osRunCb(com,function(ret_ary){
 
-      $('#pane_stash_list').html( sRed(com) + " " + sGray(ret_ary.length) )
+      $('#pane_stash_list').append( sRed(com) + " " + sGray(ret_ary.length) )
       for (var ind in ret_ary){
-        var hash = ret_ary[ind].match(/.*?}/)[0]
-        ret_ary[ind] = ret_ary[ind].replace(hash,
+          var hash = ret_ary[ind].match(/.*?}/)[0]
+          ret_ary[ind] = ret_ary[ind].replace(hash,
                   '<a href="javascript:void(0);" onClick="showStashDetail(\'' + hash + '\')">' + hash + '</a> ' ) + 
-                  '<a href="javascript:void(0);" onClick="gitStashDrop(\'' + hash + '\'); showStashList()">drop</a> ' + 
-                  '<a href="javascript:void(0);" onClick="gitStashApply(\'' + hash + '\'); showStashList()">apply</a> '     
-
+                  '<a href="javascript:void(0);" onClick="gitStashDrop(\'' + hash + '\'); ">drop</a> ' + 
+                  '<a href="javascript:void(0);" onClick="gitStashApply(\'' + hash + '\'); ">apply</a> '
       }
-
-
 
       if (ret_ary.length == 0){
         $('#stash_btncolor').attr('class','btn_silver')
@@ -135,11 +134,12 @@ showStashList = function(){
       $('#stash_count').html(ret_ary.length)
   })
 }
+
 showStashDetail = function(hash){
 
   $('#pane_stash_detail').html('')
 
-  var com = 'git diff --name-only HEAD...' + hash
+  var com = 'git diff --stat HEAD...' + hash
   osRunCb(com,function(ret_ary){
 
       $('#pane_stash_detail').append( sRed(com) + " " + sGray(ret_ary.length) )
@@ -155,11 +155,15 @@ showStashDetail = function(hash){
       })
   })
 }
-gitStashDrop = function(hash){
-    osRunOut("git stash drop " + hash , 'pane_stash_detail' , 'replace' )
+gitStashDrop = function(hash ,cb){
+    osRunOut("git stash drop " + hash , 'pane_stash_list' , 'replace' ,
+      function(){ showStashList('append') }
+      )
 }
-gitStashApply = function(hash){
-    osRunOut("git stash apply " + hash , 'pane_stash_detail' , 'replace' )
+gitStashApply = function(hash, cb){
+    osRunOut("git stash apply " + hash , 'pane_stash_list' , 'replace',
+      function(){ showStashList('append') }
+     )
 }
 
 showRemoteBranches = function(){
@@ -175,11 +179,9 @@ showRemoteBranches = function(){
                 console.log(path)
               }
           }
-
           $('#pane_re_branch').html(sRed(git_command) + " " + sGray(ret_ary.length) + '<br/>')
           $('#pane_re_branch').append(ret_ary.join('<br/>'))
           $('#remote_branch_ct').html(ret_ary.length)
-
         }
     )
 }
@@ -210,6 +212,7 @@ showHooks = function(){
 
       });
 }
+
 showHooksDetail = function(path){
     var command = 'cat ' + path
     osRunCb(command,
@@ -218,7 +221,6 @@ showHooksDetail = function(path){
           $('#hooks_detail').append('<pre class="code m0">' + ret_ary2.join('\n') + '</pre>')
       });
 }
-
 
 showIgnore = function(){
   $('#pane_ignore_detail').html('')
@@ -234,14 +236,12 @@ showIgnore = function(){
           $('#pane_ignore_detail').append(s150(sBold('ignore setting<br/>')) + sRed(git_command) + " " + sGray(ret_ary.length) + '<br/>' +
                                ret_ary.join('<br/>') + '<br/><br/>')
 
-
-            var com2 = "git status --ignored -s | grep '!!'"
-            osRunCb(com2,
-                function(ret_ary2){
-                    $('#pane_ignore_detail').append(s150(sBold('ignored files<br/>')) + sRed(com2) + " " + sGray(ret_ary2.length) + '<br/>' +
-                                         ret_ary2.join('<br/>'))
-                    
-            })
+          var com2 = "git status --ignored -s | grep '!!'"
+          osRunCb(com2,
+              function(ret_ary2){
+                  $('#pane_ignore_detail').append(s150(sBold('ignored files<br/>')) + sRed(com2) + " " + sGray(ret_ary2.length) + '<br/>' +
+                                       ret_ary2.join('<br/>'))                  
+          })
   })
 
 }
@@ -263,7 +263,6 @@ delLocalBranch = function(branchname){
   osRunOut('git branch -d ' + branchname , 'local_branch_details' , 'replace')
   showBranchList('append','list')
 
-
 }
 
 showBranchList = function(action,treeOrList) {
@@ -281,7 +280,7 @@ showBranchList = function(action,treeOrList) {
 
         if (treeOrList == 'list') {
             for (var ind in ret_ary ){
-                var v1 = ret_ary[ind].trim()
+                var v1 = ret_ary[ind]
                 $('#local_branch_details').append(
                   '<span onclick="checkOut(\'' + v1 + '\')" class="btn">' +
                   v1 +'</span> <span onClick="delLocalBranch(\'' + v1 + '\')" class="btn" >del</span><br/>')
@@ -375,6 +374,7 @@ checkOut = function ( branch_name ){
    )
 }
 
+
 // is_refresh 強制再読み込みフラグ
 findLocalRepos = function(is_refresh){ // search
 
@@ -404,6 +404,7 @@ findLocalRepos = function(is_refresh){ // search
   }
 }
 
+
 delGit = function(path,checkword){
 
     console.log('del .Git',path2pjname(path),checkword)
@@ -417,6 +418,8 @@ delGit = function(path,checkword){
     osRunOut( com ,'pane_delete_detail','replace')
     findLocalRepos('refresh')
 }
+
+
 delDir = function(path,checkword){
 
     console.log('delDir',path2pjname(path),checkword)
@@ -430,6 +433,8 @@ delDir = function(path,checkword){
     osRunOut( com ,'pane_delete_detail','replace')
     findLocalRepos('refresh')
 }
+
+
 reInitDir = function(path,checkword){
 
     console.log('del .Git',path2pjname(path),checkword)
@@ -479,7 +484,6 @@ filterLocalRepos = function (filter){
   }
   $('#local_repo_list').append("</table>");
 }
-
 
 showHisRepo = function(){
 
@@ -565,8 +569,6 @@ showDotGit = function(){
   )
 }
 
-
-
 // set local repository
 setRepoPath = function(full_path) {
     console.log(full_path)
@@ -585,13 +587,14 @@ setRepoPath = function(full_path) {
     showHisRepo()
 
     //repository
-    showStashList()
+    showStashList('replace')
     showIgnore()
     showHooks()
     
     //branch
     setCurrentBranchName()
     toggleRepoDescPanes("local_branch",'up') // close
+    makePaneStatus('replace')
 
     showRemoteRepos('replace')
     showRemoteBranches()
@@ -617,7 +620,9 @@ setRepoPath = function(full_path) {
 
     // local branch & remote branch
     showBranchList('replace','list')
-    makePaneLog('')
+
+    //ブランチの初期画面はlog
+    makePaneLog('','line')
 
     showDotGit()
     $('#repo_info').show() // 初回のrepo選択時は隠しているので

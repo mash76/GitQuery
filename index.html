@@ -123,7 +123,7 @@
 
 
             <span id="stash_btncolor" class="btn_silver">
-              <span onClick="showStashList(); toggleRepoDescPanes('pane_stash','toggle')" >stash</span><span id="stash_count" class="s120 bold"></span>
+              <span onClick="showStashList('replace'); toggleRepoDescPanes('pane_stash','toggle')" >stash</span><span id="stash_count" class="s120 bold"></span>
             </span>
             <span onClick="showConfig(); toggleRepoDescPanes('pane_config','toggle')" class="btn">config</span>
             <span onClick="showDotGit(); toggleRepoDescPanes('pane_dotgitfiles','toggle')" class="btn">.git-files</span>
@@ -149,8 +149,6 @@
                     <span onClick="osRunOut('git branch -r','pane_re_branch','replace'); toggleRepoDescPanes('pane_re_branch','toggle')" >
                       branch<span id="remote_branch_ct" class="s120 bold">**remote_branch_ct**</span>
                     </span>
-
-
                 </span>
             </div>
         </td></tr></table>
@@ -160,8 +158,8 @@
         <div id="local_branch" pane="repo" class="code hide detail" >
             new branch <span class="silver s80">git branch branchname01   </span><br/>
 
-            <a href="javascript:void(0);" onClick="$('#branch_name').val('featue/').focus()">feature</a><br/>
-            <a href="javascript:void(0);" onClick="$('#branch_name').val('hotfix/').focus()">hotfix</a><br/>
+            <a href="javascript:void(0);" onClick="$('#branch_name').val('feature/').focus()">feature</a> 
+            <a href="javascript:void(0);" onClick="$('#branch_name').val('hotfix/').focus()">hotfix</a> 
             <a href="javascript:void(0);" onClick="$('#branch_name').val('release/').focus()">release</a><br/>
 
             <input id="branch_name" type="text" placeholder="branch_name" />
@@ -171,8 +169,10 @@
               <span onClick="showBranchList('replace','list'); toggleRepoDescPanes('local_branch','down') " class="btn s120">list</span>
               <span onClick="showBranchList('replace','tree'); toggleRepoDescPanes('local_branch','down') " class="btn s120">tree</span>
               &nbsp;&nbsp;
-              currentBranch
-              allBranch
+              <span class="silver">
+                <span onClick="$(this).attr('class','bold gray')" >currentBranch</span>
+                <span onclick="$(this).attr('class','bold gray')" >allBranch</span>
+              </span>
 
             </div>
             <div id="local_branch_details" ></div>
@@ -256,12 +256,14 @@
         <span id="c_branch" class="s170 bold">**c_branch**</span>
         <span id="latest_commit" class="s80 gray">97f809b  4 minutes ago </span>
 
-          <a href="javascript:void(0)" onClick="makePaneStatus('replace')" class="btn">status</a>
+          <a href="javascript:void(0)" onClick="makePaneStatus('replace'); openPaneCenter('pane_status');" class="btn">
+              status<span id="br_status_ct" class="bold s150">**br_status_ct**</span>
+          </a>
 
           <a href="javascript:void(0)" onClick="makePaneFilelist(''); openPaneCenter('pane_filelist');" >
               files<span id="br_files_ct" class="bold s150">**br_files_ct**</span>
           </a>
-          <a href="javascript:void(0)" onClick="makePaneLog('') " >
+          <a href="javascript:void(0)" onClick="makePaneLog('','line') " >
               commit<span id="br_commit_ct" class="bold s150">**br_commit_ct**</span>
           </a>
           <a href="javascript:void(0)" onClick="makePaneUser(''); openPaneCenter('pane_user');" >
@@ -269,7 +271,7 @@
           </a>
 
         <span onClick="openPaneCenter('pane_gitcommand'); $('#git_usercommand').focus() "  class="btn ">git_command</span>
-        <span onClick="openPaneCenter('pane_debug'); "  class="btn ">debug</span>
+
 
         <!-- pane center -->
 
@@ -298,15 +300,19 @@
 
         <div id="pane_status" pane="center" class="detail code">
 
-          <div class="vm10 fMenu">
-              <a href="javascript:void(0);" onClick=" makePaneStatus('replace'); openPaneCenter('pane_status'); " class="btn s150">status</a>
-              <a href="javascript:void(0);" onClick=" gitAdd(); openPaneCenter('pane_status'); " class="btn s150">add</a>
-              <a href="javascript:void(0);" onClick=" gitReset(); openPaneCenter('pane_status'); " class="btn s150">reset</a>
-              <a href="javascript:void(0);" onClick=" togglePaneStatus('pane_status_commit','toggle')" class="btn s150">commit</a>
-              <a href="javascript:void(0);" onClick=" togglePaneStatus('pane_status_stash','toggle')" class="btn s150">stash</a>
-              <a href="javascript:void(0);" onClick=" prepareGitClean(); togglePaneStatus('pane_status_clean','toggle')" class="btn s150">clean</a>
+          <div class="vm10 fMenu s150">
+
+              <span id="btn_st_status" href="javascript:void(0);" onClick=" setSelect(this); makePaneStatus('replace'); togglePaneStatus('pane_status_status','toggle') " class="btn">status</span>
+              <span id="btn_st_add" href="javascript:void(0);" onClick=" setSelect(this); gitAdd(); togglePaneStatus('pane_status_status','toggle')" class="btn">add</span>
+              <span id="btn_st_reset" href="javascript:void(0);" onClick=" setSelect(this); gitReset(); togglePaneStatus('pane_status_status','toggle')" class="btn">reset</span>
+              <span id="btn_st_commit" href="javascript:void(0);" onClick=" setSelect(this); togglePaneStatus('pane_status_commit','toggle')" class="btn">commit</span>
+              <span id="btn_st_stash" href="javascript:void(0);" onClick=" setSelect(this); togglePaneStatus('pane_status_stash','toggle')" class="btn">stash</span>
+              <span id="btn_st_clean" href="javascript:void(0);" onClick=" setSelect(this); prepareGitClean(); togglePaneStatus('pane_status_clean','toggle')" class="btn">clean</span>
+              <span id="btn_st_debug" onClick="togglePaneStatus('pane_status_debug','toggle'); "  class="btn">debug</span>
 
           </div>
+          <div id="pane_status_status" pane="status" class="hide"> 
+          </div>         
           <div id="pane_status_commit" pane="status" class="hide">
               commit<br/>
               <input id="commit_msg" type="text" placeholder="commit_msg name" />
@@ -322,6 +328,15 @@
               clean
               <button onClick="runGitClean()" >clean</button>
           </div>
+          <div id="pane_status_debug" pane="status" class="hide">
+              <span onClick="debugEditAndCommit()" class="btn s150" >edit>add>Commit</span><br/>
+              <span onClick="debugEditAndStash()" class="btn s150" >edit>add>Stash</span><br/>
+              <span onClick="debugEditAndAdd()" class="btn s150" >edit>add</span><br/>
+              <span onClick="debugEditAndAdd()" class="btn s150" >edit</span>
+
+              <div id="pane_debug_detail"></div>
+          </div>
+
 
           <div id="pane_status_detail"></div>
         </div>
@@ -365,11 +380,40 @@
 
         <div id="pane_log" pane="center" class="detail code ">
             <div class="vm10 fMenu underline">
-                <a href="javascript:void(0);" onClick="makePaneLog($('#filter_log').html())" class="btn s150">log</a>
-                <a href="javascript:void(0);" onClick="osRunOut('git log --graph --oneline ','pane_log_detail','replace')" class="btn s150">tree</a>
 
-                  currentBranch
-                  all
+
+                <span class="btn s150">
+                   <a href="javascript:void(0);" onClick="setSelect(this);
+                                                          _G.log_lineOrTree='line'; 
+                                                          makePaneLog($('#filter_log').html(),_G.log_lineOrTree )" class="bold">line</a>
+                   <a href="javascript:void(0);" onClick="
+                                                         setSelect(this);
+                                                          _G.log_lineOrTree='tree'; 
+                                                          makePaneLog($('#filter_log').html(),_G.log_lineOrTree)" >tree</a>
+                </span>
+
+
+                <span >
+                    branch: 
+                    <a href="javascript:void(0);" class="silver bold" onClick="
+                                                setSelect(this);
+                                                _G.log_all='';
+                                                makePaneLog($('#filter_log').html(),_G.log_lineOrTree) 
+                                                " >current</a>
+                    <a href="javascript:void(0);" class="silver" onclick="
+                                                setSelect(this);
+                                                _G.log_all=' --all ';
+                                                makePaneLog($('#filter_log').html(),_G.log_lineOrTree)
+                                                " >all</a>
+                </span>
+                <span>
+                  remote:
+                  local inclideRemote
+                </span>
+                <span>
+                  sort: 
+                  parentChild time
+                </span>
             </div>
 
             <input type="text" id="filter_log" value="" size=20 placeholder="filter" >
@@ -385,17 +429,11 @@
         <div id="pane_commit" pane="center" class="detail code">
 
         </div>
-        <div id="pane_debug" pane="center" class="detail code">
-            <span onClick="debugEditAndCommit()" class="btn s150" >edit>add>Commit</span><br/>
-            <span onClick="debugEditAndStash()" class="btn s150" >edit>add>Stash</span><br/>
-            <span onClick="debugEditAndNone()" class="btn s150" >edit>add</span>
 
-
-            <div id="pane_debug_detail"></div>
-        </div>
 
         <div id="real_files"></div>
         <div id="debug_out" style="detail"></div>
+         <div id="kakugen" ></div>
 
     </div>
   </body>

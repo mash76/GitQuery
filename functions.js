@@ -20,6 +20,9 @@ local_files =[]
 his_repo =[] // リポジトリ選択履歴
 _G.current_repo_path = ""
 interval_log_filter = null // 入力完了からログ検索までの秒数
+_G.log_all = ""
+_G.log_lineOrTree = 'line'
+
 
 _G.save_path = process.cwd() + '/userdata'
 execOption = { encoding: 'utf8',
@@ -65,6 +68,11 @@ escapeRegExp = function(string) {  return string.replace(/([.*+?^=!:${}()|[\]\/\
 replaceTabSpc = function(str) { return str.replace(/ /ig,'&nbsp;').replace(/\t/ig,'&nbsp;&nbsp;&nbsp;&nbsp;')}
 matchRed = function(str,filter) { return str.replace(new RegExp('(' + filter.trim() + ')','ig'),sRed('$1') ) }
 
+
+setSelect = function (self){
+    $(self).parent().children().attr('class','silver'); 
+    $(self).attr('class','bold');
+}
 
 loadText = function (path){
   console.log(path)
@@ -121,9 +129,9 @@ osRunCb = function(command , cb){
     if (error) console.log('error',error)
     if (stderr) console.log('stderr',stderr)
 
+    //配列化 最終行の改行取り除いて
     ret_ary = []
-    if (stdout != "") ret_ary = stdout.trim().split(/\n/)
-
+    if (stdout != "") ret_ary = stdout.replace(/\n$/,'').split(/\n/) 
 
     if (typeof cb == "function") ret_ary = cb(ret_ary,stderr)
   });
