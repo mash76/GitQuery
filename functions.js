@@ -50,6 +50,11 @@ sBlue=  function(str){ return '<span style="color:blue;">' + str + '</span>'}
 sPink=  function(str){ return '<span style="color:DeepPink;">' + str + '</span>'}
 sGreen= function(str){ return '<span style="color:green;">' + str + '</span>'}
 
+sBlueRev=  function(str){ return '<span style="color:white; background-color:blue;">' + str + '</span>'}
+sPinkRev=  function(str){ return '<span style="color:white; background-color:DeepPink;">' + str + '</span>'}
+sGreenRev= function(str){ return '<span style="color:white; background-color:green;">' + str + '</span>'}
+
+
 sCrimson = function(str){ return '<span style="color:crimson;">' + str + '</span>'}
 
 sGray=  function(str){ return '<span style="color:gray;">' + str + '</span>'}

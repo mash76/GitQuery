@@ -53,7 +53,7 @@ showHisRepo()
 //格言読み込んで10病に1回表示
 _G.kakugenAry = loadText(process.cwd() + '/kakugen.txt').trim().split(/\n/)
 function updateKakugen(){
-  console.log('kakugen' + 1)
+  //console.log('kakugen' + 1)
   $('#kakugen').html('git格言:' + sGray(_G.kakugenAry[ Math.floor(Math.random() * _G.kakugenAry.length)]))
   $('#kakugen').hide().fadeIn(300)
 
@@ -63,7 +63,7 @@ updateKakugen()
 
 
 document.onkeydown = function(e){
-  console.log('metakyu kyu : ',e.metaKey,e.key)
+  //console.log('metakyu kyu : ',e.metaKey,e.key)
 
   if (e.metaKey && e.key == "1") {
       filterLocalRepos('')

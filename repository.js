@@ -477,7 +477,7 @@ filterLocalRepos = function (filter){
 
       var fullpath_disp = sGray(full_path.replace(fname,sGray2(fname)).replace('.Trash',sCrimson('.Trash')))
 
-      $('#local_repo_list').append('<tr><td> <a href="javascript:void(0)" onClick="setRepoPath(\'' + full_path + '\')" class="btn s150">' +
+      $('#local_repo_list').append('<tr><td> <a href="javascript:void(0)" onClick="setMainRepo(\'' + full_path + '\')" class="btn s150">' +
                                 fname_disp + '</span> </td><td> ' +
                                 ' &nbsp; ' + fullpath_disp + '</td><td>' +
                                 '</td></tr>')
@@ -572,12 +572,15 @@ showDotGit = function(){
 //main_repo_name  submodules_list
 setMainRepo = function(full_path){
     $('#main_repo_name').html( '<span onClick="setRepoPath(\'' + full_path + '\')">' + path2pjname(full_path) + '</span>' )
-    setRepoPath(full_path)
 
+
+    console.log('setMainRepo ' + full_path)
     //履歴
-    // _G.his_repo[_G.current_repo_path] = "";
-    // saveJson(_G.save_path　+ '/his_select_repo.txt' , _G.his_repo)
-    // showHisRepo()
+    _G.his_repo[full_path] = "";
+    saveJson(_G.save_path　+ '/his_select_repo.txt' , _G.his_repo)
+    showHisRepo()
+
+    setRepoPath(full_path)
 
     osRunCb('git submodule status',
       function(ret_ary){

@@ -189,9 +189,29 @@ makePaneFileStat = function(filepath){
 
 makePaneDiff = function( diff_command ){
 
-    osRunOut( 'git diff --stat ' + diff_command ,'pane_gitdiff_detail','replace',
-      function(){
-        osRunOut( 'git diff ' + diff_command ,'pane_gitdiff_detail','append')
+    $('#pane_gitdiff_detail').html('')
+    var com1 = 'git diff --stat ' + diff_command 
+    osRunCb( com1,
+      function(ret_ary){
+
+        var ret_out_str = ret_ary.join('\n')
+       ret_out_str = ret_out_str.replace(/(-+)/gm,sBlueRev('$1')).replace(/(\++)/gm,sGreenRev('$1'))
+
+       $('#pane_gitdiff_detail').append(
+            '<br/>' + sRed(escapeHTML(com1)) + " " + sGray(ret_ary.length) + '<br/>' + 
+            '<pre class="detail code" >' + ret_out_str + '</pre>' )
+
+
+        var com2 ='git diff ' + diff_command
+        osRunCb( com2,
+            function(ret_ary2){
+               ret_ary2 = diffColor(ret_ary2)
+               var ret_out_str = ret_ary2.join('\n')
+
+               $('#pane_gitdiff_detail').append(
+                    '<br/>' + sRed(escapeHTML(com2)) + " " + sGray(ret_ary2.length) + '<br/>' + 
+                    '<pre class="detail code" >' + ret_out_str + '</pre>' )
+         })
 
       })
 }
@@ -356,9 +376,11 @@ makePaneStatus = function(action){ // append replace
              ret_ary[ind] = replaceTabSpc(escapeHTML(ret_ary[ind]))
            }
            ret_ary = diffColor(ret_ary)
-           var ret_out_str = ret_ary.join('<br/>')
+           var ret_out_str = ret_ary.join('\n')
 
-           $('#pane_status_detail').append('<br/>' + sRed(escapeHTML(com3)) + " " + sGray(ret_ary.length) + '<br/>' + ret_out_str )
+           $('#pane_status_detail').append(
+                '<br/>' + sRed(escapeHTML(com3)) + " " + sGray(ret_ary.length) + '<br/>' + 
+                '<pre class="detail code" >' + ret_out_str + '</pre>' )
          }
        )
     })
