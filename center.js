@@ -1,4 +1,5 @@
 
+
 makePaneUser = function(filter){
     var git_command = 'git log --pretty=format:"%an" | sort | uniq -c | sort -r '
     if (filter) git_command += " | egrep -i '" + filter + "'"
@@ -237,7 +238,7 @@ makePaneLog = function( filter, lineOrTree ){
                 if (!filter_ary[ind]) continue;
                 str_out = str_out.replace(new RegExp('(' + filter_ary[ind].trim() + ')','ig'),sRed('$1') )
              }
-             $('#pane_log_detail').append('<table>' + str_out + '</table>')
+             $('#pane_log_detail').append('<pre class="detail code"><table>' + str_out + '</table></pre>')
 
             // tree
           // }else{
@@ -296,10 +297,36 @@ makePaneStatus = function(action){ // append replace
        }
 
        console.log(st)
-       console.log(st['??'] )
-       if (typeof st['??'] == "undefined") {
-          console.log('undefinedsilver');
-          $('#btn_st_clean').attr('class','silver')
+      // >> がなければ cleanできない
+      if (st['??'] == undefined) $('#btn_st_clean').addClass('silver')
+
+
+      var staged = false
+      var can_stage = false
+      var can_stash = false
+      for (var ind in st){
+        if (!ind[0].match(/[ \?]/) ) staged = true  // 1文字目が spaceでも?でもない項目があればstage済 > reset使える
+        if (!ind[1].match(/[ ]/) ) can_stage = true  // 2文字目が spaceでない項目があればstage可能 add使える
+        if (ind.match(/[A-Z]/) ) can_stash = true  // 1-2文字目が アルファベット大文字含んでいれば使える
+
+      }
+
+      if (staged){
+          $('#btn_st_reset').removeClass('silver') 
+          $('#btn_st_commit').removeClass('silver') 
+      }else{
+          $('#btn_st_reset').addClass('silver')
+          $('#btn_st_commit').addClass('silver')
+      }
+      if (can_stage){
+          $('#btn_st_add').removeClass('silver') 
+      }else{
+          $('#btn_st_add').addClass('silver')
+      }
+      if (can_stash){
+          $('#btn_st_stash').removeClass('silver') 
+      }else{
+          $('#btn_st_stash').addClass('silver')
       }
 
       // id="btn_st_status"  id="btn_st_add"  

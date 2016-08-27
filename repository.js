@@ -489,7 +489,7 @@ showHisRepo = function(){
 
   $('#his_repo').html("")
   for (var name in _G.his_repo){
-    $('#his_repo').append('<span onClick="setRepoPath(\'' + name + '\');" class="history s80">' + path2pjname(name) + '</span> ');
+    $('#his_repo').append('<span onClick="setMainRepo(\'' + name + '\');" class="history s80">' + path2pjname(name) + '</span> ');
   }
 
 }
@@ -569,6 +569,26 @@ showDotGit = function(){
   )
 }
 
+//main_repo_name  submodules_list
+setMainRepo = function(full_path){
+    $('#main_repo_name').html( '<span onClick="setRepoPath(\'' + full_path + '\')">' + path2pjname(full_path) + '</span>' )
+    setRepoPath(full_path)
+
+    //履歴
+    // _G.his_repo[_G.current_repo_path] = "";
+    // saveJson(_G.save_path　+ '/his_select_repo.txt' , _G.his_repo)
+    // showHisRepo()
+
+    osRunCb('git submodule status',
+      function(ret_ary){
+        for (var ind in ret_ary){
+            var subname = ret_ary[ind].trim().replace(/(.*?\S+)(.*?\S+)(.*?\S+)/,'$2').trim()
+            $('#submodules_list').append('<span onClick="setRepoPath(\'' + path2dir(full_path) + '/' + subname + '\')"> ' + subname+ '</span>')
+        }
+      })
+}
+
+
 // set local repository
 setRepoPath = function(full_path) {
     console.log(full_path)
@@ -580,11 +600,6 @@ setRepoPath = function(full_path) {
     $('#current_repo_name').html( path2pjname(full_path) )
     $('#current_repo_path').html( full_path )
     $('#local_repo_pane').slideUp(10)
-
-    //履歴
-    _G.his_repo[_G.current_repo_path] = "";
-    saveJson(_G.save_path　+ '/his_select_repo.txt' , _G.his_repo)
-    showHisRepo()
 
     //repository
     showStashList('replace')
@@ -603,7 +618,7 @@ setRepoPath = function(full_path) {
     //gitignore edit
     console.log('ignorepath' , path2dir(full_path) + '/.gitignore' )
     var ignore_text = loadText( path2dir(full_path) + '/.gitignore' )
-    $('#ignore_edit').val(ignore_text)
+    if (ignore_text !== false) $('#ignore_edit').val(ignore_text)
     console.log('ignoretext', ignore_text)
 
 

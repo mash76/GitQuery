@@ -74,6 +74,11 @@ setSelect = function (self){
     $(self).attr('class','bold');
 }
 
+setSelectBold = function (self){
+    $(self).parent().children().removeClass('bold'); 
+    $(self).addClass('bold');
+}
+
 loadText = function (path){
   console.log(path)
   if (!fs.existsSync(path)) return false;
@@ -89,6 +94,7 @@ saveJson = function(path,jsondata){
   console.log("save " + path)
   fs.writeFileSync(path, JSON.stringify(jsondata))
 }
+
 
 
 loadJson = function(path){

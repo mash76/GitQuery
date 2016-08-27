@@ -89,6 +89,11 @@
 
     <div id="repo_info" class="m10 hide">
 
+        <span class="silver">MainRepo</span> 
+        <span id="main_repo_name"></span> 
+        <span class="silver">submodules</span>
+        <span id="submodules_list"></span>
+
         <table><tr><td valign=top>
 
             <span id="current_repo_name" class="bold s170">**current_repo**</span>
@@ -300,15 +305,15 @@
 
         <div id="pane_status" pane="center" class="detail code">
 
-          <div class="vm10 fMenu s150">
+          <div class="vm10 fMenu s150 btn">
 
-              <span id="btn_st_status" href="javascript:void(0);" onClick=" setSelect(this); makePaneStatus('replace'); togglePaneStatus('pane_status_status','toggle') " class="btn">status</span>
-              <span id="btn_st_add" href="javascript:void(0);" onClick=" setSelect(this); gitAdd(); togglePaneStatus('pane_status_status','toggle')" class="btn">add</span>
-              <span id="btn_st_reset" href="javascript:void(0);" onClick=" setSelect(this); gitReset(); togglePaneStatus('pane_status_status','toggle')" class="btn">reset</span>
-              <span id="btn_st_commit" href="javascript:void(0);" onClick=" setSelect(this); togglePaneStatus('pane_status_commit','toggle')" class="btn">commit</span>
-              <span id="btn_st_stash" href="javascript:void(0);" onClick=" setSelect(this); togglePaneStatus('pane_status_stash','toggle')" class="btn">stash</span>
-              <span id="btn_st_clean" href="javascript:void(0);" onClick=" setSelect(this); prepareGitClean(); togglePaneStatus('pane_status_clean','toggle')" class="btn">clean</span>
-              <span id="btn_st_debug" onClick="togglePaneStatus('pane_status_debug','toggle'); "  class="btn">debug</span>
+              <span id="btn_st_status" href="javascript:void(0);" onClick=" setSelectBold(this); makePaneStatus('replace'); togglePaneStatus('pane_status_status','toggle') " class="">status</span>
+              <span id="btn_st_add" href="javascript:void(0);" onClick=" setSelectBold(this); gitAdd(); togglePaneStatus('pane_status_status','toggle')" class="">add</span>
+              <span id="btn_st_reset" href="javascript:void(0);" onClick=" setSelectBold(this); gitReset(); togglePaneStatus('pane_status_status','toggle')" class="">reset</span>
+              <span id="btn_st_commit" href="javascript:void(0);" onClick=" setSelectBold(this); togglePaneStatus('pane_status_commit','toggle')" class="">commit</span>
+              <span id="btn_st_stash" href="javascript:void(0);" onClick=" setSelectBold(this); togglePaneStatus('pane_status_stash','toggle')" class="">stash</span>
+              <span id="btn_st_clean" href="javascript:void(0);" onClick=" setSelectBold(this); prepareGitClean(); togglePaneStatus('pane_status_clean','toggle')" class="">clean</span>
+              <span id="btn_st_debug" onClick="togglePaneStatus('pane_status_debug','toggle'); "  class="">debug</span>
 
           </div>
           <div id="pane_status_status" pane="status" class="hide"> 
@@ -322,7 +327,7 @@
           <div id="pane_status_stash" pane="status" class="hide">
               stash <span class="silver s80">git stash comment01 </span><br/>
               <input id="stash_comment" type="text" placeholder="stash comment" />
-              <button onClick="osRunOut('git stash save \'' + $('#stash_comment').val() + '\'','pane_status_detail','replace',function(){ makePaneStatus('append') }); " />stash</button>
+              <button onClick="osRunOut('git stash save \'' + $('#stash_comment').val() + '\'','pane_status_detail','replace',function(){ makePaneStatus('append');showStashList('replace'); }); " />stash</button>
           </div>
           <div id="pane_status_clean" pane="status" class="hide">
               clean
@@ -427,9 +432,8 @@
         </div>
 
         <div id="pane_commit" pane="center" class="detail code">
-
+            
         </div>
-
 
         <div id="real_files"></div>
         <div id="debug_out" style="detail"></div>
