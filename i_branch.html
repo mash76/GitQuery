@@ -49,12 +49,12 @@
 
           <div class="vm10 fMenu s150 btn">
 
-              <span id="btn_st_status" href="javascript:void(0);" onClick=" setSelectBold(this); makePaneStatus('replace'); togglePaneStatus('pane_status_status','toggle') " class="">status</span>
+              <span id="btn_st_status" href="javascript:void(0);" onClick=" setSelectBold(this); makePaneStatus('replace'); togglePaneStatus('pane_status_status','toggle') " >status</span>
               <span id="btn_st_add" href="javascript:void(0);" onClick=" setSelectBold(this); gitAdd(); togglePaneStatus('pane_status_status','toggle')" class="">add</span>
               <span id="btn_st_reset" href="javascript:void(0);" onClick=" setSelectBold(this); gitReset(); togglePaneStatus('pane_status_status','toggle')" class="">reset</span>
-              <span id="btn_st_commit" href="javascript:void(0);" onClick=" setSelectBold(this); togglePaneStatus('pane_status_commit','toggle')" class="">commit</span>
-              <span id="btn_st_stash" href="javascript:void(0);" onClick=" setSelectBold(this); togglePaneStatus('pane_status_stash','toggle')" class="">stash</span>
-              <span id="btn_st_clean" href="javascript:void(0);" onClick=" setSelectBold(this); prepareGitClean(); togglePaneStatus('pane_status_clean','toggle')" class="">clean</span>
+              <span id="btn_st_commit" href="javascript:void(0);" onClick=" setSelectBold(this); togglePaneStatus('pane_status_commit','toggle')" >commit</span>
+              <span id="btn_st_stash" href="javascript:void(0);" onClick=" setSelectBold(this); togglePaneStatus('pane_status_stash','toggle')" >stash</span>
+              <span id="btn_st_clean" href="javascript:void(0);" onClick=" setSelectBold(this); prepareGitClean(); togglePaneStatus('pane_status_clean','toggle')" >clean</span>
               <span id="btn_st_debug" onClick="togglePaneStatus('pane_status_debug','toggle'); "  class="">debug</span>
 
           </div>
@@ -63,7 +63,7 @@
           <div id="pane_status_commit" pane="status" class="hide">
               commit<br/>
               <input id="commit_msg" type="text" placeholder="commit_msg name" />
-              <button onClick="osRunOut('git commit -m \'' + $('#commit_msg').val() + '\'','pane_status_detail','replace'); makePaneStatus('append'); " >commit</button>
+              <button onClick="osRunOut('git commit -m \'' + $('#commit_msg').val() + '\'','pane_status_detail','replace',function(){makePaneStatus('append')});  " >commit</button>
               <br/>
           </div>
           <div id="pane_status_stash" pane="status" class="hide">

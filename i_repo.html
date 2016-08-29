@@ -74,7 +74,8 @@
         <!-- pane repo -->
 
         <div id="local_branch" pane="repo" class="code hide detail" >
-            new branch <span class="silver s80">git branch branchname01   </span><br/>
+            new branch 
+            <span class="silver s80">git branch branchname01   </span><br/>
 
             <a href="javascript:void(0);" onClick="$('#branch_name').val('feature/').focus()">feature</a> 
             <a href="javascript:void(0);" onClick="$('#branch_name').val('hotfix/').focus()">hotfix</a> 
@@ -82,6 +83,13 @@
 
             <input id="branch_name" type="text" placeholder="branch_name" />
             <button onClick="osRunOut('git branch \'' + $('#branch_name').val() + '\'','local_branch_details','replace',function(){ showBranchList('append','list'); tglRepoPane('local_branch','down') });" >add</button>
+            <br/><br/>
+
+            merge branch
+            <span class="silver s80">git merge branchname01 </span><br/>
+            <input id="merge_branch_name" type="text" placeholder="branch_name" />
+            <button onClick="osRunOut('git merge \'' + $('#merge_branch_name').val() + '\'','local_branch_details','replace',function(){ showBranchList('append','list'); tglRepoPane('local_branch','down') });" >add</button>
+
 
             <div class="vm10 fMenu underline">
               <span onClick="showBranchList('replace','list'); tglRepoPane('local_branch','down') " class="btn s120">list</span>
