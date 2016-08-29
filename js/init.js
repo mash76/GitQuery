@@ -54,7 +54,7 @@ showHisRepo()
 _G.kakugenAry = loadText(process.cwd() + '/kakugen.txt').trim().split(/\n/)
 function updateKakugen(){
   //console.log('kakugen' + 1)
-  $('#kakugen').html('git格言:' + sGray(_G.kakugenAry[ Math.floor(Math.random() * _G.kakugenAry.length)]))
+  $('#kakugen').html(sGray(_G.kakugenAry[ Math.floor(Math.random() * _G.kakugenAry.length)]))
   $('#kakugen').hide().fadeIn(300)
 
 }

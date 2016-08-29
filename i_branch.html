@@ -38,7 +38,7 @@
             </span>
 
             <input id="git_usercommand" type="text" size="70" placeholder="git command" />
-            <button onClick="osRunOut($('#git_usercommand').val(),'pane_gitcommand_detail','replace')" placeholder="git command" />run</button>
+            <button onClick="osRunOut($('#git_usercommand').val(),'pane_gitcommand_detail','replace')" placeholder="git command" >run</button>
             <br/>
             
             <div id="pane_gitcommand_info"></div>            
@@ -69,7 +69,7 @@
           <div id="pane_status_stash" pane="status" class="hide">
               stash <span class="silver s80">git stash comment01 </span><br/>
               <input id="stash_comment" type="text" placeholder="stash comment" />
-              <button onClick="osRunOut('git stash save \'' + $('#stash_comment').val() + '\'','pane_status_detail','replace',function(){ makePaneStatus('append');showStashList('replace'); }); " />stash</button>
+              <button onClick="osRunOut('git stash save \'' + $('#stash_comment').val() + '\'','pane_status_detail','replace',function(){ makePaneStatus('append');showStashList('replace'); }); " >stash</button>
           </div>
           <div id="pane_status_clean" pane="status" class="hide">
               clean
@@ -91,7 +91,7 @@
         <div id="pane_file" pane="center" class="detail code">
             File or Dir history<br/>
             <input type="text" id="filter_file" value="" size=60 placeholder="set path" >
-            <button onClick="makePaneFileStat($('#filter_file').val()) " />stash</button>
+            <button onClick="makePaneFileStat($('#filter_file').val()) " >stash</button>
 
             <div id="pane_file_filename" >  </div>
             <div id="pane_file_desc" >  </div>

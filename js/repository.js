@@ -135,8 +135,8 @@ showStashList = function(action){
   })
 }
 
-showRefSpec = function(){
-  var com = 'git refspec'
+showRefLog = function(){
+  var com = 'git reflog'
   osRunOut(com,'pane_refspec','replace')
 
 }

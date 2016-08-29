@@ -46,7 +46,7 @@ makePaneFilelist = function(filter,base_command){
     for (var ind in filter_ary){
        git_command += " | egrep -i '" + escapeRegExp(filter_ary[ind]) + "'"
     }
-    git_command += ' | head -1000'
+    git_command += ' | head -300'
     osRunCb(git_command,
       function( ret_ary){
 
@@ -228,7 +228,7 @@ makePaneLog = function( filter, lineOrTree ){
      for (var ind in filter_ary){
         git_command += " | egrep -i '" + filter_ary[ind] + "'"
      }
-     git_command += ' | head -1000'
+     git_command += ' | head -300'
 
      osRunCb(git_command,
        function(ret_ary){

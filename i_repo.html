@@ -44,7 +44,7 @@
             <span onClick="showConfig(); tglRepoPane('pane_config','toggle')" class="btn">config</span>
             <span onClick="showDotGit(); tglRepoPane('pane_dotgitfiles','toggle')" class="btn">.git-files</span>
 
-            <span onClick="showRefSpec(); tglRepoPane('pane_refspec','toggle')" class="btn">refspec</span>
+            <span onClick="showRefLog(); tglRepoPane('pane_refspec','toggle')" class="btn">reflog</span>
 
         </td><td valign=top >
 
@@ -81,7 +81,7 @@
             <a href="javascript:void(0);" onClick="$('#branch_name').val('release/').focus()">release</a><br/>
 
             <input id="branch_name" type="text" placeholder="branch_name" />
-            <button onClick="osRunOut('git branch \'' + $('#branch_name').val() + '\'','local_branch_details','replace',function(){ showBranchList('append','list'); tglRepoPane('local_branch','down') });" />add</button>
+            <button onClick="osRunOut('git branch \'' + $('#branch_name').val() + '\'','local_branch_details','replace',function(){ showBranchList('append','list'); tglRepoPane('local_branch','down') });" >add</button>
 
             <div class="vm10 fMenu underline">
               <span onClick="showBranchList('replace','list'); tglRepoPane('local_branch','down') " class="btn s120">list</span>
@@ -110,7 +110,7 @@
           new submodule <span class="silver s80">git submodule url://.../.git name01 </span><br/>
           <input id="submodule_url" type="text" placeholder="submodule_url" size="80"  />
           <input id="submodule_name" type="text" placeholder="submodule_name" />
-          <button onClick="gitSubmoduleAdd() " placeholder="git command" />add</button>
+          <button onClick="gitSubmoduleAdd() " placeholder="git command" >add</button>
           <div id="submodule_details" ></div>
 
         </div>
@@ -133,16 +133,16 @@
 
             delete .git directry<br/>
             <input id="delete_name_git" type="text" placeholder="repository_name" />
-            <button onClick="delGit(_G.current_repo_path, $('#delete_name_git').val())" />delete</button>
+            <button onClick="delGit(_G.current_repo_path, $('#delete_name_git').val())" >delete</button>
             <br/>
             delete repo Directory<br/>
             <input id="delete_name_dir" type="text" placeholder="repository_name" />
-            <button onClick="delDir(_G.current_repo_path, $('#delete_name_dir').val())" />delete</button>
+            <button onClick="delDir(_G.current_repo_path, $('#delete_name_dir').val())" >delete</button>
             <br/>
             <div id="pane_delete_detail" ></div>
             Re-Init repo Directory<br/>
             <input id="reinit_name_dir" type="text" placeholder="repository_name" />
-            <button onClick="reInitDir(_G.current_repo_path, $('#reinit_name_dir').val())" />delete</button>
+            <button onClick="reInitDir(_G.current_repo_path, $('#reinit_name_dir').val())" >delete</button>
             <br/>
             <div id="pane_delete_detail" ></div>
         </div>
@@ -150,7 +150,7 @@
 
         <div id="pane_ignore" pane="repo" class="code hide detail" >
             <textarea id="ignore_edit" cols="50" rows="12" ></textarea>
-            <button onClick="updateIgnore($('#ignore_edit').val())"  />update</button>
+            <button onClick="updateIgnore($('#ignore_edit').val())" >update</button>
 
 
             <div id="pane_ignore_detail"  ></div>
@@ -162,7 +162,7 @@
             <br/>
             <input id="remote_name" type="text" placeholder="remote_name" />
             <input id="remote_url" type="text" placeholder="remote_url" />
-            <button onClick="gitRemoteAdd()"  />add</button>
+            <button onClick="gitRemoteAdd()" >add</button>
             <br/>
             <div id="pane_remote_detail" ></div>
 
