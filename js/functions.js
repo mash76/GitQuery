@@ -20,6 +20,7 @@ local_files =[]
 his_repo =[] // リポジトリ選択履歴
 _G.current_repo_path = ""
 interval_log_filter = null // 入力完了からログ検索までの秒数
+
 _G.log_all = ""
 _G.log_lineOrTree = 'line'
 

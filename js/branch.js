@@ -1,5 +1,4 @@
 
-
 makePaneUser = function(filter){
     var git_command = 'git log --pretty=format:"%an" | sort | uniq -c | sort -r '
     if (filter) git_command += " | egrep -i '" + filter + "'"
@@ -29,8 +28,6 @@ makePaneUser = function(filter){
         }
     )
 }
-
-
 
 
 makePaneFilelist = function(filter,base_command){

@@ -1,0 +1,173 @@
+
+        <span class="silver">MainRepo</span> 
+        <span id="main_repo_name"></span> 
+        <span class="silver">submodules</span>
+        <span id="submodules_list"></span>
+
+        <table><tr><td valign=top>
+
+            <span id="current_repo_name" class="bold s170">**current_repo**</span>
+            <span id="current_repo_size" onClick="repoDiskSize(); tglRepoPane('pane_reposize','toggle')" class="bold s150 btn">**current_repo_size**</span>
+            <span onClick="tglRepoPane('pane_delete','toggle')" class="btn red">delete</span>
+            <br/>
+
+            <a id="current_repo_path" href="javascript:void(0);" onClick="$('#repo_edit_pane').slideToggle(10);" class="gray">**current_repo_path**</a>
+            <br/>
+
+            <div class="detail hide" id="repo_edit_pane">
+                Open with
+                <a id="btn_open_finder"href="javascript:void(0);" onClick="osrun('open ' + path2dir(_G.current_repo_path) ); $('#repo_edit_pane').slideUp(10);"  class="btn ">finder</a>
+                <a id="btn_open_atom" href="javascript:void(0);" onClick="osrun('/Applications/Atom.app/Contents/Resources/app/atom.sh ' + path2dir(_G.current_repo_path) ); $('#repo_edit_pane').slideUp(10);"  class="btn ">atom</a>
+                <a id="btn_open_sublime2" href="javascript:void(0);" onClick="osrun('/Applications/Sublime\\ Text\\ 2.app/Contents/SharedSupport/bin/subl ' + path2dir(_G.current_repo_path) ); $('#repo_edit_pane').slideUp(10);"  class="btn ">sublime2</a>
+                <a id="btn_open_sublime3" href="javascript:void(0);" onClick="osrun('/Applications/Sublime\\ Text.app/Contents/SharedSupport/bin/subl ' + path2dir(_G.current_repo_path) ); $('#repo_edit_pane').slideUp(10);"  class="btn ">sublime3</a>
+            </div>
+            <span onClick="showBranchList('replace','list'); tglRepoPane('local_branch','toggle') " >
+              <span class="btn">branch</span><span id="local_branch_ct" class="btn s120 bold">**local_branch_ct**</span>
+            </span>
+
+            <span id="ignore_btncolor" class="btn_silver">
+                <span onClick="showIgnore(); tglRepoPane('pane_ignore','toggle')" >ignore</span>
+            </span>
+
+            <span id="hook_btncolor" class="btn_silver">
+                <span onClick="showHooks(); tglRepoPane('pane_hooks','toggle')" >hooks</span>
+            </span>
+
+            <span id="submodule_btncolor" class="btn_silver">
+              <span onClick="showGitmodules('replace'); tglRepoPane('pane_submodule','toggle')" >submodule</span><span id="submodule_count" class="s120 bold">**submodule_count**</span>
+            </span>
+
+
+            <span id="stash_btncolor" class="btn_silver">
+              <span onClick="showStashList('replace'); tglRepoPane('pane_stash','toggle')" >stash</span><span id="stash_count" class="s120 bold"></span>
+            </span>
+            <span onClick="showConfig(); tglRepoPane('pane_config','toggle')" class="btn">config</span>
+            <span onClick="showDotGit(); tglRepoPane('pane_dotgitfiles','toggle')" class="btn">.git-files</span>
+
+            <span onClick="showRefSpec(); tglRepoPane('pane_refspec','toggle')" class="btn">refspec</span>
+
+        </td><td valign=top >
+
+            <div id="remote_btncolor_1" class="btn_silver" >
+                <span onClick="osRunOut('git fetch','pane_remote_detail','replace'); openPaneCenter('pane_remote')" class="s120">< fetch</span>
+                <br/>
+                <span onClick="osRunOut('git pull' ,'pane_remote_detail','replace'); openPaneCenter('pane_remote')" class="s120">< pull</span>
+                <br/>
+                <span onClick="osRunOut('git push' ,'pane_remote_detail','replace'); openPaneCenter('pane_remote')" class="s120">> push </span>
+                <br/>
+            </div>
+
+        </td><td valign=top>
+
+            <!-- remote -->
+            <div id="remote_btncolor_2" class="btn_silver" style="background:#ffffdd;">
+                <span onClick="showRemoteRepos('replace'); tglRepoPane('pane_remote','toggle')" class="s120 bold">Remote</span>
+                <br/>
+                <span id="remote_menu">
+                    <span onClick="osRunOut('git branch -r','pane_re_branch','replace'); tglRepoPane('pane_re_branch','toggle')" >
+                      branch<span id="remote_branch_ct" class="s120 bold">**remote_branch_ct**</span>
+                    </span>
+                </span>
+            </div>
+        </td></tr></table>
+
+        <!-- pane repo -->
+
+        <div id="local_branch" pane="repo" class="code hide detail" >
+            new branch <span class="silver s80">git branch branchname01   </span><br/>
+
+            <a href="javascript:void(0);" onClick="$('#branch_name').val('feature/').focus()">feature</a> 
+            <a href="javascript:void(0);" onClick="$('#branch_name').val('hotfix/').focus()">hotfix</a> 
+            <a href="javascript:void(0);" onClick="$('#branch_name').val('release/').focus()">release</a><br/>
+
+            <input id="branch_name" type="text" placeholder="branch_name" />
+            <button onClick="osRunOut('git branch \'' + $('#branch_name').val() + '\'','local_branch_details','replace',function(){ showBranchList('append','list'); tglRepoPane('local_branch','down') });" />add</button>
+
+            <div class="vm10 fMenu underline">
+              <span onClick="showBranchList('replace','list'); tglRepoPane('local_branch','down') " class="btn s120">list</span>
+              <span onClick="showBranchList('replace','tree'); tglRepoPane('local_branch','down') " class="btn s120">tree</span>
+              &nbsp;&nbsp;
+              <span class="silver">
+                <span onClick="$(this).attr('class','bold gray')" >currentBranch</span>
+                <span onclick="$(this).attr('class','bold gray')" >allBranch</span>
+              </span>
+
+            </div>
+            <div id="local_branch_details" ></div>
+        </div>
+        <div id="pane_stash" pane="repo" class="code hide detail" >
+            <div id="pane_stash_list" ></div>
+            <div id="pane_stash_detail" ></div>
+
+        </div>
+        <div id="pane_hooks" pane="repo" class="code hide detail" >
+            <div id="hooks_list"  ></div>
+            <br/>
+            <div id="hooks_detail" ></div>
+
+        </div>
+        <div id="pane_submodule" pane="repo" class="code hide detail" >
+          new submodule <span class="silver s80">git submodule url://.../.git name01 </span><br/>
+          <input id="submodule_url" type="text" placeholder="submodule_url" size="80"  />
+          <input id="submodule_name" type="text" placeholder="submodule_name" />
+          <button onClick="gitSubmoduleAdd() " placeholder="git command" />add</button>
+          <div id="submodule_details" ></div>
+
+        </div>
+        <div id="pane_config" pane="repo" class="code hide detail" >
+        </div>
+
+        <div id="pane_refspec" pane="repo" class="code hide detail" >
+        </div>
+
+        <div id="pane_dotgitfiles" pane="repo" class="code hide detail" >
+          <span onClick="$('div[name=file_detail]').toggle();" class="btn">toggle中身</span>
+          <div id="dotgitfiles_detail" class="underline"> </div>
+        </div>
+
+
+        <div id="pane_delete" pane="repo" class="code hide detail" >
+            <span class="red s150 bold">Danger.</span>
+            <span class="red">No going back. Please be certain.</span>
+            <br/>
+
+            delete .git directry<br/>
+            <input id="delete_name_git" type="text" placeholder="repository_name" />
+            <button onClick="delGit(_G.current_repo_path, $('#delete_name_git').val())" />delete</button>
+            <br/>
+            delete repo Directory<br/>
+            <input id="delete_name_dir" type="text" placeholder="repository_name" />
+            <button onClick="delDir(_G.current_repo_path, $('#delete_name_dir').val())" />delete</button>
+            <br/>
+            <div id="pane_delete_detail" ></div>
+            Re-Init repo Directory<br/>
+            <input id="reinit_name_dir" type="text" placeholder="repository_name" />
+            <button onClick="reInitDir(_G.current_repo_path, $('#reinit_name_dir').val())" />delete</button>
+            <br/>
+            <div id="pane_delete_detail" ></div>
+        </div>
+
+
+        <div id="pane_ignore" pane="repo" class="code hide detail" >
+            <textarea id="ignore_edit" cols="50" rows="12" ></textarea>
+            <button onClick="updateIgnore($('#ignore_edit').val())"  />update</button>
+
+
+            <div id="pane_ignore_detail"  ></div>
+        </div>
+        <div id="pane_remote" pane="repo" class="code hide detail" >
+            new remote <span class="silver s80">git remote add branchname01 https://..../.git   </span>
+            <a onClick="osrun('open https://github.com')" class="btn">github</a> 
+            <a onClick="osrun('open https://bitbucket.org')" class="btn">bitbucket</a> 
+            <br/>
+            <input id="remote_name" type="text" placeholder="remote_name" />
+            <input id="remote_url" type="text" placeholder="remote_url" />
+            <button onClick="gitRemoteAdd()"  />add</button>
+            <br/>
+            <div id="pane_remote_detail" ></div>
+
+        </div>
+        <div id="pane_re_branch" pane="repo" class="code hide detail" >
+        </div>
+        <div id="pane_reposize" pane="repo" class="detail code">
+        </div>

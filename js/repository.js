@@ -135,6 +135,12 @@ showStashList = function(action){
   })
 }
 
+showRefSpec = function(){
+  var com = 'git refspec'
+  osRunOut(com,'pane_refspec','replace')
+
+}
+
 showStashDetail = function(hash){
 
   $('#pane_stash_detail').html('')
@@ -249,7 +255,7 @@ showIgnore = function(){
 updateIgnore = function(text){
   saveText( path2dir(_G.current_repo_path) + '/.gitignore' , text)
   showIgnore()
-  toggleRepoDescPanes('pane_ignore','down')
+  tglRepoPane('pane_ignore','down')
 }
 
 repoDiskSize = function(){
@@ -306,6 +312,7 @@ toggleTopPanes = function (key,action){  //action == up down toggle
   if (action == "up" ){
       $('#' + key).slideUp(10)
   }else{
+
       $('#' + key).slideDown(10)
       $('#filter_l_repo').val('')
       filterLocalRepos('')
@@ -314,9 +321,9 @@ toggleTopPanes = function (key,action){  //action == up down toggle
 }
 
 //個別のペーンを出す方式に
-toggleRepoDescPanes = function (key,action){
+tglRepoPane = function (key,action){
 
-  if (!action.match(/up|down|toggle/)) alert('toggleRepoDescPanes action invalid' + action)
+  if (!action.match(/up|down|toggle/)) alert('tglRepoPane action invalid' + action)
 
   if (action == "toggle" ){
     action = "down"
@@ -373,7 +380,6 @@ checkOut = function ( branch_name ){
       }
    )
 }
-
 
 // is_refresh 強制再読み込みフラグ
 findLocalRepos = function(is_refresh){ // search
@@ -589,6 +595,7 @@ setMainRepo = function(full_path){
             $('#submodules_list').append('<span onClick="setRepoPath(\'' + path2dir(full_path) + '/' + subname + '\')"> ' + subname+ '</span>')
         }
       })
+
 }
 
 
@@ -611,7 +618,7 @@ setRepoPath = function(full_path) {
     
     //branch
     setCurrentBranchName()
-    toggleRepoDescPanes("local_branch",'up') // close
+    tglRepoPane("local_branch",'up') // close
     makePaneStatus('replace')
 
     showRemoteRepos('replace')
@@ -644,4 +651,5 @@ setRepoPath = function(full_path) {
 
     showDotGit()
     $('#repo_info').show() // 初回のrepo選択時は隠しているので
+    $('#branch_info').show() // 初回のrepo選択時は隠しているので
 }
