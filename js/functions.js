@@ -154,7 +154,7 @@ osRunCb = function(command , cb){
     ret_ary = []
     if (stdout != "") ret_ary = stdout.replace(/\n$/,'').split(/\n/) 
 
-    if (typeof cb == "function") ret_ary = cb(ret_ary,stderr)
+    if (typeof cb == "function") ret_ary = cb(ret_ary,stderr,command)
   });
 }
 

@@ -62,6 +62,7 @@ setInterval(updateKakugen,8000)
 updateKakugen()
 
 
+
 document.onkeydown = function(e){
   //console.log('metakyu kyu : ',e.metaKey,e.key)
 

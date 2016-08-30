@@ -632,9 +632,54 @@ setRepoPath = function(full_path) {
     showRemoteRepos('replace')
     showRemoteBranches()
 
+    //統計
+    osRunCb('git log --date=short --pretty=format:"%D%x09%ad%x09%h%x09%an%x09%s%x09"',
+      function(ret_ary){
+          var ary_branch = []
+          var c_branch = ""
+          for (var ind in ret_ary){
+            var ary1 = ret_ary[ind].split(/\t/)
+            // branch 名前があれば項目作る
+            if (ary1[0]) {
+                ary_branch[ary1[0]]=[]
+                c_branch = ary1[0]
+            }
+            ary_branch[c_branch].push(ret_ary[ind])
+          }
+          console.log(ary_branch)
+
+          var out_str = ""
+          $('#debug_out').html('')          
+          for (var ind in ary_branch){
+              out_str += s150(ind + ' ' + sRed(ary_branch[ind].length)) + ' '
+
+              //最初の日と最後の日
+              var last_line_ary = ary_branch[ind][0].split(/\t/)
+              var first_line_ary = ary_branch[ind][ ary_branch[ind].length -1 ].split(/\t/)
+
+              out_str += first_line_ary[1] + sGray(' - ') + last_line_ary[1] + '<br/>'        
+
+              var cmd1 = 'git diff --name-only ' + first_line_ary[2] + '...' + last_line_ary[2]
+              osRunCb(cmd1,
+                  function(ret_ary){
+                      $('#debug_out').append(sRed(cmd1) + '<br/>' + ret_ary.join('<br/>') + '<br/>')
+                  })
+
+              for (var ind2 in ary_branch[ind]){
+                  var line = ary_branch[ind][ind2].replace(/.*?\t/,'') // 最初のタブまで除去
+                  //out_str += ' &nbsp; ' + line + '<br/>'
+              }
+
+          }
+
+
+          $('#debug_out').append(out_str)
+
+      })
+
 
     //gitignore edit
-    console.log('ignorepath' , path2dir(full_path) + '/.gitignore' )
+    console.log('ignorepath' ,  path2dir(full_path) + '/.gitignore' )
     var ignore_text = loadText( path2dir(full_path) + '/.gitignore' )
     if (ignore_text !== false) $('#ignore_edit').val(ignore_text)
     console.log('ignoretext', ignore_text)
