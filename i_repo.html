@@ -16,10 +16,12 @@
 
             <div class="detail hide" id="repo_edit_pane">
                 Open with
-                <a id="btn_open_finder"href="javascript:void(0);" onClick="osrun('open ' + path2dir(_G.current_repo_path) ); $('#repo_edit_pane').slideUp(10);"  class="btn ">finder</a>
-                <a id="btn_open_atom" href="javascript:void(0);" onClick="osrun('/Applications/Atom.app/Contents/Resources/app/atom.sh ' + path2dir(_G.current_repo_path) ); $('#repo_edit_pane').slideUp(10);"  class="btn ">atom</a>
+                <a id="btn_open_finder" href="javascript:void(0);" onClick="osrun('open ' + path2dir(_G.current_repo_path) ); $('#repo_edit_pane').slideUp(10);" class="btn ">finder</a>
+                <a id="btn_open_atom" href="javascript:void(0);" onClick="osrun('/Applications/Atom.app/Contents/Resources/app/atom.sh ' + path2dir(_G.current_repo_path) ); $('#repo_edit_pane').slideUp(10);" class="btn ">atom</a>
                 <a id="btn_open_sublime2" href="javascript:void(0);" onClick="osrun('/Applications/Sublime\\ Text\\ 2.app/Contents/SharedSupport/bin/subl ' + path2dir(_G.current_repo_path) ); $('#repo_edit_pane').slideUp(10);"  class="btn ">sublime2</a>
                 <a id="btn_open_sublime3" href="javascript:void(0);" onClick="osrun('/Applications/Sublime\\ Text.app/Contents/SharedSupport/bin/subl ' + path2dir(_G.current_repo_path) ); $('#repo_edit_pane').slideUp(10);"  class="btn ">sublime3</a>
+
+                
             </div>
             <span onClick="showBranchList('replace','list'); tglRepoPane('local_branch','toggle') " >
               <span class="btn">branch</span><span id="local_branch_ct" class="btn s120 bold">**local_branch_ct**</span>

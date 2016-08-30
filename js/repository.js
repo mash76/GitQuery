@@ -267,10 +267,14 @@ updateIgnore = function(text){
 }
 
 repoDiskSize = function(){
-    osRunOut('du -d1 -h ','pane_reposize','replace',
+
+    osRunOut('df -h ','pane_reposize','replace',
         function(){
-            osRunOut('du -d1 -h .git/modules  # submodule repository size','pane_reposize','append')
-        });
+          osRunOut('du -d1 -h ','pane_reposize','append',
+              function(){
+                  osRunOut('du -d1 -h .git/modules  # submodule repository size','pane_reposize','append')
+              })
+        })
 }
 
 delLocalBranch = function(branchname){
