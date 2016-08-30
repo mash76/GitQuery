@@ -60,6 +60,14 @@ showGitClone = function(){
     }
 }
 
+showCommandLog = function(){
+    console.log(111)
+    
+
+    $('#command_log').html( _G.commandlog.join('<br/>') );
+
+}
+
 gitSubmoduleAdd = function(){
 
   var com = "git submodule add '" + $('#submodule_url').val() + "' '" + $('#submodule_name').val() + "'"

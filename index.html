@@ -19,6 +19,8 @@
             <span onClick="$('#shortcut').slideToggle(10)" class="btn" >shortcut</span>
             <span onClick="osRunOut('rm ' + _G.save_path + '/*', 'debug_out','replace')" class="btn" >delCache</span>
             <span onClick="osRunOut('git help -a', 'command_list','replace'); $('#command_list').slideToggle(10)" class="btn" >commandList</span>
+            <span onClick="showCommandLog(); $('#command_log').slideToggle(10)" class="btn" >commandlog</span>
+
 
           </td>
           <td width="50%" align="right" >
@@ -29,6 +31,11 @@
       </table>
 
       <div id="command_list" class="detail hide"></div>
+      <div id="command_log" class="detail hide">
+          <input type="text" id="button">
+          <button>show</button>
+          <div id="command_log_detail" class="detail hide"></div>
+      </div>
       <div id="shortcut" class="detail hide">
           Com 1  - Repository List  <br/>
           <br/>

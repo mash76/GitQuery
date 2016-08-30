@@ -15,6 +15,7 @@ const BrowserWindow = require('electron').remote.BrowserWindow // windowオブ�
 const path = require('path')
 
 _G = []
+
 _G.local_repos =[]
 local_files =[]
 his_repo =[] // リポジトリ選択履歴
@@ -23,6 +24,8 @@ interval_log_filter = null // 入力完了からログ検索までの秒数
 
 _G.log_all = ""
 _G.log_lineOrTree = 'line'
+
+_G.commandlog = []
 
 
 _G.save_path = process.cwd() + '/userdata'
@@ -116,6 +119,8 @@ loadJson = function(path){
 //osコマンド非同期実行 結果出力不要のとき
 osrun = function(command , out_html_id){
   console.log(command)
+  _G.commandlog.push(command)
+
   exec(command,execOption, (error, stdout, stderr) => {
     if (error) console.log('error',error)
     if (stderr) console.log('stderr',stderr)
@@ -124,6 +129,8 @@ osrun = function(command , out_html_id){
 //一行だけ返す sqlを返さない。一行だけ、項目だけ出したい時に
 osRunOneLine = function(command , out_html_id){
   console.log(command)
+  _G.commandlog.push(command)
+
   exec(command,execOption, (error, stdout, stderr) => {
 
     if (error) console.log('error',error)
@@ -136,6 +143,8 @@ osRunOneLine = function(command , out_html_id){
 //独自のコールバックで処理したいとき
 osRunCb = function(command , cb){
   console.log(command)
+  _G.commandlog.push(command)
+
   exec(command,execOption, (error, stdout, stderr) => {
 
     if (error) console.log('error',error)
@@ -157,6 +166,8 @@ osRunOut = function(command , out_html_id , action , cb){
   if (action == 'replace') $('#' + out_html_id ).html('')
 
   console.log(command)
+  _G.commandlog.push(command)
+
   exec(command,execOption, (error, stdout, stderr) => {
 
     if (error) console.log('error',error)
