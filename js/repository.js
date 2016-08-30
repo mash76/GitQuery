@@ -634,7 +634,7 @@ setRepoPath = function(full_path) {
 
     //統計
     osRunCb('git log --date=short --pretty=format:"%D%x09%ad%x09%h%x09%an%x09%s%x09"',
-      function(ret_ary){
+      function(ret_ary,stderr,com){
           var ary_branch = []
           var c_branch = ""
           for (var ind in ret_ary){
@@ -649,31 +649,55 @@ setRepoPath = function(full_path) {
           console.log(ary_branch)
 
           var out_str = ""
-          $('#debug_out').html('')          
+          $('#debug_out').html('')
+          var branch_ind = 1
+
           for (var ind in ary_branch){
-              out_str += s150(ind + ' ' + sRed(ary_branch[ind].length)) + ' '
 
               //最初の日と最後の日
               var last_line_ary = ary_branch[ind][0].split(/\t/)
               var first_line_ary = ary_branch[ind][ ary_branch[ind].length -1 ].split(/\t/)
 
-              out_str += first_line_ary[1] + sGray(' - ') + last_line_ary[1] + '<br/>'        
+              var usernames = []
+              for (var ind2 in ary_branch[ind]){
+                  var line = ary_branch[ind][ind2]
+                  var line_ary = line.split(/\t/)
+                  if (!usernames[line_ary[3]]) usernames[line_ary[3]] = 0
+                  usernames[line_ary[3]]++
+              }
+              var user_name_str = ""
+              for (var name1 in usernames){
+                  user_name_str += name1 + ' ' + sGray(usernames[name1]) + '<br/>'
+              }
 
-              var cmd1 = 'git diff --name-only ' + first_line_ary[2] + '...' + last_line_ary[2]
+              out_str += '<tr><td>' + s150(ind) + '</td>' 
+              out_str += '<td>' + s150(ary_branch[ind].length) + sGray('commit') + '</td>'
+              out_str += '<td>' + user_name_str + '</td>'
+              out_str += '<td nowrap>' + first_line_ary[1] + sGray(' - </td><td nowrap>') + last_line_ary[1] + '</td>'        
+              out_str += '<td nowrap >'  
+              out_str += '  <span id="branch_stat_filect_' + branch_ind + '" class="s150"></span>'  
+              out_str += '  <span onClick="$(\'#branch_stat_' + branch_ind + '\').slideToggle(10)"class="btn">files</span>'  
+              out_str += '  <div id="branch_stat_' + branch_ind + '" class="hide"></div>'
+              out_str += '</td></tr>'
+
+              var cmd1 = 'git diff --name-only ' + first_line_ary[2] + '...' + last_line_ary[2] + '  #' + branch_ind
               osRunCb(cmd1,
-                  function(ret_ary){
-                      $('#debug_out').append(sRed(cmd1) + '<br/>' + ret_ary.join('<br/>') + '<br/>')
+                  function(ret_ary,stderr,p_com){
+                      var id_num = p_com.replace(/.*?#/,'')
+                      $('#branch_stat_'+ id_num).append(sRed(p_com) + '<br/>' + ret_ary.join('<br/>') + '<br/>')
+                      $('#branch_stat_filect_'+ id_num).html(ret_ary.length)
+
+
                   })
 
               for (var ind2 in ary_branch[ind]){
                   var line = ary_branch[ind][ind2].replace(/.*?\t/,'') // 最初のタブまで除去
                   //out_str += ' &nbsp; ' + line + '<br/>'
               }
+              branch_ind++
 
           }
-
-
-          $('#debug_out').append(out_str)
+          $('#debug_out').append('<table>' + out_str + '</table>')
 
       })
 
