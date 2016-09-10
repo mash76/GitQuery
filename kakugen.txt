@@ -13,4 +13,4 @@ gitを複雑に使えば仕事も複雑になる
 考えることまでは自動化できない
 gitを目的化するな
 あなたはgitに使われていないか？
-「ソース管理なんてまったく興味がないが既存のものが悪すぎたから作った」 (LinusTovals)akasatanaakasatana
+「ソース管理なんてまったく興味がないが既存のものが悪すぎたから作った」 (Linus Torvalds)akasatanaakasatana
